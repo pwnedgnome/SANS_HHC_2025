@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On The Wire: Complete Writeup | SANS Holiday Hack Challenge 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #111827;
+            --bg-card-alt: #1a2332;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-orange: #f97316;
+            --accent-purple: #a855f7;
+            --accent-red: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-subtle: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 2rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(6, 182, 212, 0.15) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 40%),
+                radial-gradient(ellipse at 80% 70%, rgba(249, 115, 22, 0.12) 0%, transparent 40%);
+            z-index: 0;
+        }
+
+        /* Triple Signal Animation */
+        .signal-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        .signal-line {
+            position: absolute;
+            height: 2px;
+            animation: signalPulse 4s ease-in-out infinite;
+        }
+
+        .signal-line.wire1 { 
+            top: 25%; 
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            animation-delay: 0s;
+        }
+        .signal-line.spi { 
+            top: 50%; 
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+            animation-delay: 1.3s;
+        }
+        .signal-line.i2c { 
+            top: 75%; 
+            background: linear-gradient(90deg, transparent, var(--accent-orange), transparent);
+            animation-delay: 2.6s;
+        }
+
+        @keyframes signalPulse {
+            0%, 100% { width: 0; left: 0; opacity: 0; }
+            50% { width: 100%; left: 0; opacity: 1; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 1000px;
+        }
+
+        .challenge-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--accent-green);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            margin-bottom: 2rem;
+            animation: fadeSlideDown 0.8s ease-out;
+        }
+
+        .challenge-badge::before {
+            content: '◆';
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            animation: fadeSlideDown 0.8s ease-out 0.1s both;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            animation: fadeSlideDown 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Protocol Cards in Hero */
+        .protocol-preview {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            animation: fadeSlideDown 0.8s ease-out 0.3s both;
+        }
+
+        .protocol-card-mini {
+            background: var(--bg-card);
+            border: 2px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            min-width: 180px;
+        }
+
+        .protocol-card-mini:hover {
+            transform: translateY(-8px);
+        }
+
+        .protocol-card-mini.wire1 { border-color: var(--accent-cyan); }
+        .protocol-card-mini.spi { border-color: var(--accent-purple); }
+        .protocol-card-mini.i2c { border-color: var(--accent-orange); }
+
+        .protocol-card-mini:hover.wire1 { box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2); }
+        .protocol-card-mini:hover.spi { box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2); }
+        .protocol-card-mini:hover.i2c { box-shadow: 0 20px 40px rgba(249, 115, 22, 0.2); }
+
+        .protocol-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .protocol-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .protocol-card-mini.wire1 .protocol-name { color: var(--accent-cyan); }
+        .protocol-card-mini.spi .protocol-name { color: var(--accent-purple); }
+        .protocol-card-mini.i2c .protocol-name { color: var(--accent-orange); }
+
+        .protocol-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Executive Summary */
+        .exec-summary {
+            max-width: 1000px;
+            margin: -6rem auto 4rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-alt) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-orange));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+
+        .summary-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        .summary-content {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            margin-bottom: 2rem;
+        }
+
+        /* Key Chain Visualization */
+        .key-chain {
+            background: var(--bg-card-alt);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .chain-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .chain-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .chain-node {
+            background: var(--bg-card);
+            border: 2px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 160px;
+        }
+
+        .chain-node.wire1 { border-color: var(--accent-cyan); }
+        .chain-node.spi { border-color: var(--accent-purple); }
+        .chain-node.i2c { border-color: var(--accent-orange); }
+
+        .chain-node-protocol {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .chain-node-key {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .chain-node.wire1 .chain-node-key { color: var(--accent-cyan); }
+        .chain-node.spi .chain-node-key { color: var(--accent-purple); }
+        .chain-node.i2c .chain-node-key { color: var(--accent-orange); }
+
+        .chain-arrow {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .final-answer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 1.25rem 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .final-answer-icon {
+            font-size: 2rem;
+        }
+
+        .final-answer-text {
+            text-align: left;
+        }
+
+        .final-answer-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .final-answer-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        /* Main Content */
+        .content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        /* Protocol Section */
+        .protocol-section {
+            margin-bottom: 5rem;
+        }
+
+        .protocol-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .protocol-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--bg-dark);
+        }
+
+        .protocol-number.wire1 { background: var(--accent-cyan); }
+        .protocol-number.spi { background: var(--accent-purple); }
+        .protocol-number.i2c { background: var(--accent-orange); }
+
+        .protocol-title-group h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .protocol-title-group .subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .protocol-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .protocol-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .protocol-overview {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .protocol-overview h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .protocol-overview p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .protocol-diagram {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .diagram-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .waveform-container {
+            flex: 1;
+            background: #0c1219;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .waveform-container svg {
+            width: 100%;
+            height: 80px;
+        }
+
+        /* Result Card */
+        .result-card {
+            background: var(--bg-card-alt);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .result-card.wire1 { border-left: 4px solid var(--accent-cyan); }
+        .result-card.spi { border-left: 4px solid var(--accent-purple); }
+        .result-card.i2c { border-left: 4px solid var(--accent-orange); }
+
+        .result-icon {
+            font-size: 2.5rem;
+        }
+
+        .result-details {
+            flex: 1;
+        }
+
+        .result-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .result-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-top: 0.25rem;
+            word-break: break-all;
+        }
+
+        .result-card.wire1 .result-value { color: var(--accent-cyan); }
+        .result-card.spi .result-value { color: var(--accent-purple); }
+        .result-card.i2c .result-value { color: var(--accent-orange); }
+
+        /* Approach Steps */
+        .approach-steps {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .approach-step {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-num {
+            width: 20px;
+            height: 20px;
+            background: var(--border-subtle);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        /* Tools Used */
+        .tools-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .tools-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tools-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .tool-item {
+            background: var(--bg-card-alt);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tool-icon {
+            font-size: 1.5rem;
+        }
+
+        .tool-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+
+        .tool-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #0c1219;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .code-header {
+            background: var(--bg-card-alt);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background: #ff5f56; }
+        .code-dot.yellow { background: #ffbd2e; }
+        .code-dot.green { background: #27c93f; }
+
+        .code-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        .code-content {
+            padding: 1.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .code-content code {
+            color: var(--text-secondary);
+        }
+
+        .code-comment { color: var(--text-muted); }
+        .code-keyword { color: var(--accent-cyan); }
+        .code-string { color: var(--accent-green); }
+        .code-number { color: var(--accent-amber); }
+
+        /* Technical Appendix */
+        .appendix {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            margin-top: 4rem;
+            overflow: hidden;
+        }
+
+        .appendix-header {
+            background: var(--bg-card-alt);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .appendix-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+        }
+
+        .appendix-badge {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--accent-amber);
+            color: var(--accent-amber);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .appendix-content {
+            padding: 2rem;
+        }
+
+        .appendix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .appendix-table th,
+        .appendix-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .appendix-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-amber);
+            text-transform: uppercase;
+            background: var(--bg-card-alt);
+        }
+
+        .appendix-table td {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 4rem;
+        }
+
+        .footer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(168, 85, 247, 0.1), rgba(249, 115, 22, 0.1));
+            border: 1px solid var(--accent-green);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-badge-icon {
+            font-size: 1.5rem;
+        }
+
+        .footer-badge-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-green);
+        }
+
+        .footer-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="signal-bg">
+            <div class="signal-line wire1"></div>
+            <div class="signal-line spi"></div>
+            <div class="signal-line i2c"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="challenge-badge">SANS Holiday Hack Challenge 2025</div>
+            <h1><span class="gradient-text">On The Wire</span></h1>
+            <p class="hero-subtitle">Decoding Hardware Protocols: 1-Wire → SPI → I²C</p>
+            
+            <div class="protocol-preview">
+                <div class="protocol-card-mini wire1">
+                    <div class="protocol-icon">📡</div>
+                    <div class="protocol-name">1-Wire</div>
+                    <div class="protocol-desc">Timing-based encoding</div>
+                </div>
+                <div class="protocol-card-mini spi">
+                    <div class="protocol-icon">🔐</div>
+                    <div class="protocol-name">SPI</div>
+                    <div class="protocol-desc">XOR encrypted data</div>
+                </div>
+                <div class="protocol-card-mini i2c">
+                    <div class="protocol-icon">🌡️</div>
+                    <div class="protocol-name">I²C</div>
+                    <div class="protocol-desc">Multi-device bus</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Executive Summary -->
+    <div class="exec-summary">
+        <div class="summary-card">
+            <div class="summary-header">
+                <div class="summary-icon">📊</div>
+                <h2>Executive Summary</h2>
+            </div>
+            <div class="summary-content">
+                <p>This challenge presents captured signals from three different hardware communication protocols, each building upon the previous. By analyzing WebSocket data streams from an oscilloscope-style visualization, we decoded timing patterns, applied XOR decryption, and filtered multi-device bus traffic to extract a chained sequence of keys leading to the final answer: a temperature sensor reading.</p>
+            </div>
+            
+            <div class="key-chain">
+                <div class="chain-title">🔗 Key Discovery Chain</div>
+                <div class="chain-flow">
+                    <div class="chain-node wire1">
+                        <div class="chain-node-protocol">1-Wire Decodes To</div>
+                        <div class="chain-node-key">key: "icy"</div>
+                    </div>
+                    <span class="chain-arrow">→</span>
+                    <div class="chain-node spi">
+                        <div class="chain-node-protocol">SPI Decrypts To</div>
+                        <div class="chain-node-key">key: "bananza"</div>
+                    </div>
+                    <span class="chain-arrow">→</span>
+                    <div class="chain-node i2c">
+                        <div class="chain-node-protocol">I²C Reveals</div>
+                        <div class="chain-node-key">addr: 0x3C</div>
+                    </div>
+                </div>
+                <div class="final-answer">
+                    <span class="final-answer-icon">🎄</span>
+                    <div class="final-answer-text">
+                        <div class="final-answer-label">Final Answer</div>
+                        <div class="final-answer-value">32.84°C</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="content">
+        
+        <!-- Part 1: 1-Wire -->
+        <section class="protocol-section">
+            <div class="protocol-header">
+                <div class="protocol-number wire1">1</div>
+                <div class="protocol-title-group">
+                    <h2>1-Wire Protocol</h2>
+                    <div class="subtitle">Dallas Semiconductor's Single-Wire Communication</div>
+                </div>
+            </div>
+            
+            <div class="protocol-content">
+                <div class="protocol-overview">
+                    <h3>📋 The Challenge</h3>
+                    <p>The 1-Wire protocol encodes data through precise pulse timing on a single wire. The bus idles HIGH, with bit values determined by how long the line stays LOW after each falling edge. Short pulses (~15μs) represent binary 1s, while longer pulses (~60μs) represent 0s.</p>
+                    
+                    <div class="approach-steps">
+                        <div class="approach-step"><span class="step-num">1</span> Capture WebSocket data</div>
+                        <div class="approach-step"><span class="step-num">2</span> Find "presence" marker</div>
+                        <div class="approach-step"><span class="step-num">3</span> Measure pulse durations</div>
+                        <div class="approach-step"><span class="step-num">4</span> Decode LSB-first bytes</div>
+                    </div>
+                </div>
+                
+                <div class="protocol-diagram">
+                    <div class="diagram-label">Signal Timing</div>
+                    <div class="waveform-container">
+                        <svg viewBox="0 0 400 80" preserveAspectRatio="none">
+                            <path d="M0,20 L20,20 L20,60 L35,60 L35,20 L55,20 L55,60 L100,60 L100,20 L120,20 L120,60 L135,60 L135,20 L155,20 L155,60 L200,60 L200,20 L220,20 L220,60 L235,60 L235,20 L255,20 L255,60 L300,60 L300,20 L320,20 L320,60 L335,60 L335,20 L400,20" 
+                                  fill="none" stroke="#06b6d4" stroke-width="2.5"/>
+                            <text x="45" y="75" font-family="JetBrains Mono" font-size="10" fill="#10b981">1</text>
+                            <text x="75" y="75" font-family="JetBrains Mono" font-size="10" fill="#ef4444">0</text>
+                            <text x="125" y="75" font-family="JetBrains Mono" font-size="10" fill="#10b981">1</text>
+                            <text x="175" y="75" font-family="JetBrains Mono" font-size="10" fill="#ef4444">0</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-card wire1">
+                <div class="result-icon">🔑</div>
+                <div class="result-details">
+                    <div class="result-label">Decoded Message</div>
+                    <div class="result-value">read and decrypt the SPI bus data using the XOR key: icy</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 2: SPI -->
+        <section class="protocol-section">
+            <div class="protocol-header">
+                <div class="protocol-number spi">2</div>
+                <div class="protocol-title-group">
+                    <h2>SPI Protocol</h2>
+                    <div class="subtitle">Serial Peripheral Interface with XOR Encryption</div>
+                </div>
+            </div>
+            
+            <div class="protocol-content">
+                <div class="protocol-overview">
+                    <h3>📋 The Challenge</h3>
+                    <p>SPI uses a dedicated clock line (SCK) to synchronize data transfer. The MOSI line carries encrypted data that must be sampled at each rising clock edge. Using the XOR key "icy" from Part 1, we decrypt the captured payload to reveal the next clue.</p>
+                    
+                    <div class="approach-steps">
+                        <div class="approach-step"><span class="step-num">1</span> Extract SCK sample points</div>
+                        <div class="approach-step"><span class="step-num">2</span> Capture MOSI values</div>
+                        <div class="approach-step"><span class="step-num">3</span> Correlate timestamps</div>
+                        <div class="approach-step"><span class="step-num">4</span> XOR decrypt with "icy"</div>
+                    </div>
+                </div>
+                
+                <div class="protocol-diagram">
+                    <div class="diagram-label">Clock & Data Correlation</div>
+                    <div class="waveform-container">
+                        <svg viewBox="0 0 400 80" preserveAspectRatio="none">
+                            <!-- Clock -->
+                            <path d="M0,25 L25,25 L25,10 L50,10 L50,25 L75,25 L75,10 L100,10 L100,25 L125,25 L125,10 L150,10 L150,25 L175,25 L175,10 L200,10 L200,25 L225,25 L225,10 L250,10 L250,25 L275,25 L275,10 L300,10 L300,25 L325,25 L325,10 L350,10 L350,25 L400,25" 
+                                  fill="none" stroke="#a855f7" stroke-width="2"/>
+                            <!-- Data -->
+                            <path d="M0,55 L25,55 L25,70 L75,70 L75,55 L125,55 L125,70 L150,70 L150,55 L200,55 L200,70 L275,70 L275,55 L325,55 L325,70 L400,70" 
+                                  fill="none" stroke="#06b6d4" stroke-width="2"/>
+                            <!-- Sample points -->
+                            <circle cx="37" cy="62" r="4" fill="#f59e0b"/>
+                            <circle cx="87" cy="62" r="4" fill="#f59e0b"/>
+                            <circle cx="137" cy="62" r="4" fill="#f59e0b"/>
+                            <circle cx="187" cy="62" r="4" fill="#f59e0b"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-card spi">
+                <div class="result-icon">🔑</div>
+                <div class="result-details">
+                    <div class="result-label">Decrypted Message</div>
+                    <div class="result-value">read and decrypt the I2C bus data using the XOR key: bananza. the temperature sensor address is 0x3C</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 3: I2C -->
+        <section class="protocol-section">
+            <div class="protocol-header">
+                <div class="protocol-number i2c">3</div>
+                <div class="protocol-title-group">
+                    <h2>I²C Protocol</h2>
+                    <div class="subtitle">Multi-Device Bus Analysis & Temperature Extraction</div>
+                </div>
+            </div>
+            
+            <div class="protocol-content">
+                <div class="protocol-overview">
+                    <h3>📋 The Challenge</h3>
+                    <p>I²C is a multi-master, multi-slave bus with 4 devices at different addresses. We must filter transactions for address 0x3C (the temperature sensor), extract the encrypted data bytes, and apply XOR decryption with key "bananza" to reveal the final temperature reading.</p>
+                    
+                    <div class="approach-steps">
+                        <div class="approach-step"><span class="step-num">1</span> Parse SDA/SCL streams</div>
+                        <div class="approach-step"><span class="step-num">2</span> Identify START conditions</div>
+                        <div class="approach-step"><span class="step-num">3</span> Filter for addr 0x3C</div>
+                        <div class="approach-step"><span class="step-num">4</span> XOR decrypt with "bananza"</div>
+                    </div>
+                </div>
+                
+                <div class="protocol-diagram">
+                    <div class="diagram-label">Bus Topology</div>
+                    <div class="waveform-container">
+                        <svg viewBox="0 0 400 80" preserveAspectRatio="none">
+                            <!-- Bus lines -->
+                            <line x1="0" y1="25" x2="400" y2="25" stroke="#f97316" stroke-width="2" opacity="0.6"/>
+                            <line x1="0" y1="35" x2="400" y2="35" stroke="#10b981" stroke-width="2" opacity="0.6"/>
+                            <!-- Devices -->
+                            <rect x="60" y="45" width="50" height="30" rx="4" fill="#1a2332" stroke="#64748b" stroke-width="1"/>
+                            <text x="85" y="65" font-family="JetBrains Mono" font-size="8" fill="#94a3b8" text-anchor="middle">0x48</text>
+                            
+                            <rect x="140" y="45" width="50" height="30" rx="4" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2"/>
+                            <text x="165" y="65" font-family="JetBrains Mono" font-size="8" fill="#10b981" text-anchor="middle">0x3C</text>
+                            
+                            <rect x="220" y="45" width="50" height="30" rx="4" fill="#1a2332" stroke="#64748b" stroke-width="1"/>
+                            <text x="245" y="65" font-family="JetBrains Mono" font-size="8" fill="#94a3b8" text-anchor="middle">0x51</text>
+                            
+                            <rect x="300" y="45" width="50" height="30" rx="4" fill="#1a2332" stroke="#64748b" stroke-width="1"/>
+                            <text x="325" y="65" font-family="JetBrains Mono" font-size="8" fill="#94a3b8" text-anchor="middle">0x29</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-card i2c">
+                <div class="result-icon">🌡️</div>
+                <div class="result-details">
+                    <div class="result-label">Temperature Reading from Sensor 0x3C</div>
+                    <div class="result-value">32.84°C</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Used -->
+        <section class="tools-section">
+            <div class="tools-header">
+                <span style="font-size: 1.5rem;">🛠️</span>
+                <h3>Tools & Techniques</h3>
+            </div>
+            <div class="tools-grid">
+                <div class="tool-item">
+                    <div class="tool-icon">🔍</div>
+                    <div>
+                        <div class="tool-name">Burp Suite</div>
+                        <div class="tool-desc">WebSocket capture</div>
+                    </div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon">🐍</div>
+                    <div>
+                        <div class="tool-name">Python</div>
+                        <div class="tool-desc">Signal decoding</div>
+                    </div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon">💻</div>
+                    <div>
+                        <div class="tool-name">Bash</div>
+                        <div class="tool-desc">Data processing</div>
+                    </div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon">⊕</div>
+                    <div>
+                        <div class="tool-name">XOR Cipher</div>
+                        <div class="tool-desc">Decryption</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Appendix -->
+        <section class="appendix">
+            <div class="appendix-header">
+                <h3>🔬 Technical Appendix</h3>
+                <span class="appendix-badge">Reference</span>
+            </div>
+            <div class="appendix-content">
+                <h4 style="color: var(--accent-amber); margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif;">Protocol Comparison</h4>
+                
+                <table class="appendix-table">
+                    <thead>
+                        <tr>
+                            <th>Protocol</th>
+                            <th>Wires</th>
+                            <th>Encoding</th>
+                            <th>Addressing</th>
+                            <th>Key Challenge</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="color: var(--accent-cyan)">1-Wire</td>
+                            <td>1 (+ GND)</td>
+                            <td>Pulse timing</td>
+                            <td>ROM ID</td>
+                            <td>Timing analysis</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--accent-purple)">SPI</td>
+                            <td>4 (SCK, MOSI, MISO, CS)</td>
+                            <td>Clock-sync</td>
+                            <td>Chip Select</td>
+                            <td>XOR decryption</td>
+                        </tr>
+                        <tr>
+                            <td style="color: var(--accent-orange)">I²C</td>
+                            <td>2 (SDA, SCL)</td>
+                            <td>Clock-sync</td>
+                            <td>7-bit address</td>
+                            <td>Address filtering</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="color: var(--accent-amber); margin: 2rem 0 1rem; font-family: 'Space Grotesk', sans-serif;">Data Extraction Pipeline</h4>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                        <span class="code-title">bash</span>
+                    </div>
+                    <div class="code-content">
+<code><span class="code-comment"># Common pattern: Extract JSON from Burp WebSocket capture</span>
+egrep -o <span class="code-string">'\{.*\}'</span> capture.burp | sort -u > clean.json
+
+<span class="code-comment"># Convert to timestamp,value format and sort chronologically</span>
+sed <span class="code-string">'s/:/,/g'</span> clean.json | sort -k4 -n -t, > sorted.csv
+
+<span class="code-comment"># Pipe to protocol-specific Python decoder</span>
+cat sorted.csv | python3 decode_[protocol].py</code>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--accent-amber); margin: 2rem 0 1rem; font-family: 'Space Grotesk', sans-serif;">XOR Decryption Function</h4>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                        <span class="code-title">python</span>
+                    </div>
+                    <div class="code-content">
+<code><span class="code-keyword">def</span> xor_decrypt(ciphertext_bytes, key):
+    <span class="code-string">"""Repeating-key XOR decryption"""</span>
+    key_bytes = [ord(c) <span class="code-keyword">for</span> c <span class="code-keyword">in</span> key]
+    plaintext = <span class="code-string">""</span>
+    <span class="code-keyword">for</span> i, byte <span class="code-keyword">in</span> enumerate(ciphertext_bytes):
+        plaintext += chr(byte ^ key_bytes[i % len(key_bytes)])
+    <span class="code-keyword">return</span> plaintext
+
+<span class="code-comment"># SPI: xor_decrypt(data, "icy")</span>
+<span class="code-comment"># I2C: xor_decrypt(data, "bananza")</span></code>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-badge">
+            <span class="footer-badge-icon">✓</span>
+            <span class="footer-badge-text">Challenge Complete: On The Wire</span>
+        </div>
+        <p class="footer-text">SANS Holiday Hack Challenge 2025</p>
+    </footer>
+</body>
+</html>

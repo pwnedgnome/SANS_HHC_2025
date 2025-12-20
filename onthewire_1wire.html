@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On The Wire: 1-Wire Protocol | SANS Holiday Hack Challenge 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #111827;
+            --bg-card-alt: #1a2332;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-subtle: #1e293b;
+            --glow-cyan: rgba(6, 182, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 2rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        /* Animated Signal Wave Background */
+        .signal-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            opacity: 0.4;
+        }
+
+        .signal-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            animation: signalPulse 3s ease-in-out infinite;
+        }
+
+        .signal-line:nth-child(1) { top: 20%; animation-delay: 0s; }
+        .signal-line:nth-child(2) { top: 40%; animation-delay: 0.5s; }
+        .signal-line:nth-child(3) { top: 60%; animation-delay: 1s; }
+        .signal-line:nth-child(4) { top: 80%; animation-delay: 1.5s; }
+
+        @keyframes signalPulse {
+            0%, 100% { width: 0; left: 0; opacity: 0; }
+            50% { width: 100%; left: 0; opacity: 1; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .challenge-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--accent-cyan);
+            padding: 0.5rem 1.25rem;
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 2rem;
+            animation: fadeSlideDown 0.8s ease-out;
+        }
+
+        .challenge-badge::before {
+            content: '◆';
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeSlideDown 0.8s ease-out 0.1s both;
+        }
+
+        .hero-subtitle {
+            font-size: 1.35rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            animation: fadeSlideDown 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Hero Diagram - Oscilloscope Style */
+        .hero-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            animation: fadeSlideDown 0.8s ease-out 0.3s both;
+        }
+
+        .oscilloscope {
+            background: var(--bg-card);
+            border: 2px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 
+                0 0 60px rgba(6, 182, 212, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .scope-screen {
+            background: #0c1219;
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scope-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(6, 182, 212, 0.03) 20px, rgba(6, 182, 212, 0.03) 21px),
+                repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(6, 182, 212, 0.03) 20px, rgba(6, 182, 212, 0.03) 21px);
+            pointer-events: none;
+        }
+
+        .waveform {
+            height: 120px;
+            position: relative;
+        }
+
+        .waveform svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .wave-path {
+            fill: none;
+            stroke: var(--accent-cyan);
+            stroke-width: 2.5;
+            filter: drop-shadow(0 0 8px var(--accent-cyan));
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawWave 2s ease-out 0.5s forwards;
+        }
+
+        @keyframes drawWave {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .scope-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Executive Summary */
+        .exec-summary {
+            max-width: 900px;
+            margin: -4rem auto 4rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-alt) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .summary-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .summary-content {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .key-finding {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .key-finding-icon {
+            font-size: 1.5rem;
+        }
+
+        .key-finding-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--accent-green);
+        }
+
+        /* Main Content */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-number {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-cyan);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--bg-dark);
+        }
+
+        .section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Process Flow Diagram */
+        .process-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .process-step {
+            flex: 1;
+            min-width: 140px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .process-step:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15);
+        }
+
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .step-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .process-arrow {
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+        }
+
+        /* Signal Diagram */
+        .signal-diagram {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .diagram-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .diagram-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .timing-diagram {
+            position: relative;
+            height: 200px;
+            background: #0c1219;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .timing-diagram svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .timing-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            fill: var(--text-muted);
+        }
+
+        .timing-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            fill: var(--accent-amber);
+        }
+
+        .bit-annotation {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Decode Visualization */
+        .decode-viz {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .byte-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .byte-cell {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .byte-cell:hover {
+            border-color: var(--accent-cyan);
+            transform: scale(1.05);
+        }
+
+        .byte-binary {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .byte-char {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .byte-hex {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-amber);
+            margin-top: 0.25rem;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #0c1219;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .code-header {
+            background: var(--bg-card-alt);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background: #ff5f56; }
+        .code-dot.yellow { background: #ffbd2e; }
+        .code-dot.green { background: #27c93f; }
+
+        .code-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        .code-content {
+            padding: 1.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .code-content code {
+            color: var(--text-secondary);
+        }
+
+        .code-comment { color: var(--text-muted); }
+        .code-keyword { color: var(--accent-cyan); }
+        .code-string { color: var(--accent-green); }
+        .code-number { color: var(--accent-amber); }
+
+        /* Result Box */
+        .result-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 2px solid var(--accent-green);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .result-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+
+        .result-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            position: relative;
+            word-break: break-all;
+        }
+
+        /* Technical Deep Dive */
+        .technical-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            margin-top: 4rem;
+            overflow: hidden;
+        }
+
+        .technical-header {
+            background: linear-gradient(135deg, var(--bg-card-alt) 0%, var(--bg-card) 100%);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .technical-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .tech-badge {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--accent-amber);
+            color: var(--accent-amber);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .technical-content {
+            padding: 2rem;
+        }
+
+        .tech-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .tech-table th,
+        .tech-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .tech-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--bg-card-alt);
+        }
+
+        .tech-table td {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 4rem;
+        }
+
+        .footer-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .process-flow {
+                flex-direction: column;
+            }
+            
+            .process-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .process-step {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="signal-bg">
+            <div class="signal-line"></div>
+            <div class="signal-line"></div>
+            <div class="signal-line"></div>
+            <div class="signal-line"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="challenge-badge">SANS Holiday Hack Challenge 2025</div>
+            <h1>On The Wire: 1-Wire</h1>
+            <p class="hero-subtitle">Decoding Dallas Semiconductor's Single-Wire Protocol</p>
+            
+            <div class="hero-diagram">
+                <div class="oscilloscope">
+                    <div class="scope-screen">
+                        <div class="waveform">
+                            <svg viewBox="0 0 600 120" preserveAspectRatio="none">
+                                <!-- 1-Wire signal visualization showing reset, presence, and data bits -->
+                                <path class="wave-path" d="
+                                    M0,30 
+                                    L30,30 L30,90 L70,90 L70,30 
+                                    L100,30 L100,90 L120,90 L120,30
+                                    L150,30 L150,90 L210,90 L210,30
+                                    L240,30 L240,90 L255,90 L255,30
+                                    L285,30 L285,90 L300,90 L300,30
+                                    L330,30 L330,90 L390,90 L390,30
+                                    L420,30 L420,90 L435,90 L435,30
+                                    L465,30 L465,90 L525,90 L525,30
+                                    L555,30 L555,90 L570,90 L570,30
+                                    L600,30
+                                "/>
+                            </svg>
+                        </div>
+                        <div class="scope-labels">
+                            <span>RESET</span>
+                            <span>PRESENCE</span>
+                            <span>DATA: 0 1 0 1 0 1 0 0 ...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Executive Summary -->
+    <div class="exec-summary">
+        <div class="summary-card">
+            <div class="summary-header">
+                <div class="summary-icon">📡</div>
+                <h2>Executive Summary</h2>
+            </div>
+            <div class="summary-content">
+                <p>This challenge presents a captured 1-Wire bus signal that contains an encrypted message. By analyzing pulse durations in the WebSocket data stream, we decoded the protocol's timing-based bit encoding: short pulses (~10μs) represent binary 1s, while longer pulses (~60μs) represent 0s. After reconstructing 456 bits into LSB-first bytes and converting to ASCII, the hidden message was revealed.</p>
+            </div>
+            <div class="key-finding">
+                <span class="key-finding-icon">🔑</span>
+                <span class="key-finding-text">read and decrypt the SPI bus data using the XOR key: icy</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="content">
+        <!-- Section 1: The Challenge -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <h2>The Challenge</h2>
+            </div>
+            <p>The challenge presents an oscilloscope-style visualization of captured signals across three hardware protocols: 1-Wire, SPI, and I²C. The goal is to decode each signal to reveal hidden messages. This writeup covers the 1-Wire protocol tab.</p>
+            
+            <div class="process-flow">
+                <div class="process-step">
+                    <div class="step-icon">📊</div>
+                    <div class="step-title">Capture</div>
+                    <div class="step-desc">WebSocket Data</div>
+                </div>
+                <span class="process-arrow">→</span>
+                <div class="process-step">
+                    <div class="step-icon">🔍</div>
+                    <div class="step-title">Analyze</div>
+                    <div class="step-desc">Timing Patterns</div>
+                </div>
+                <span class="process-arrow">→</span>
+                <div class="process-step">
+                    <div class="step-icon">⚡</div>
+                    <div class="step-title">Decode</div>
+                    <div class="step-desc">Bit Extraction</div>
+                </div>
+                <span class="process-arrow">→</span>
+                <div class="process-step">
+                    <div class="step-icon">🔓</div>
+                    <div class="step-title">Reveal</div>
+                    <div class="step-desc">ASCII Message</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Understanding 1-Wire -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <h2>Understanding 1-Wire Protocol</h2>
+            </div>
+            <p>Dallas Semiconductor's 1-Wire protocol transmits data over a single wire using precise pulse timing. The bus idles HIGH, and the master initiates communication with a reset pulse. Devices respond with a presence pulse, followed by data transmission where bit values are determined by how long the line stays LOW.</p>
+            
+            <div class="signal-diagram">
+                <div class="diagram-title">1-Wire Bit Timing Diagram</div>
+                <div class="timing-diagram">
+                    <svg viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet">
+                        <!-- Grid lines -->
+                        <defs>
+                            <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(6,182,212,0.1)" stroke-width="0.5"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)"/>
+                        
+                        <!-- Axis labels -->
+                        <text x="10" y="45" class="timing-label">HIGH</text>
+                        <text x="10" y="145" class="timing-label">LOW</text>
+                        
+                        <!-- Binary 1 - Short pulse -->
+                        <g transform="translate(80,0)">
+                            <path d="M0,50 L0,50 L30,50 L30,130 L45,130 L45,50 L120,50" 
+                                  fill="none" stroke="#06b6d4" stroke-width="3"/>
+                            <text x="60" y="25" class="bit-annotation" fill="#10b981">BIT = 1</text>
+                            <text x="32" y="100" class="timing-value">~15μs</text>
+                            <line x1="30" y1="135" x2="45" y2="135" stroke="#f59e0b" stroke-width="2"/>
+                            <line x1="30" y1="130" x2="30" y2="140" stroke="#f59e0b" stroke-width="2"/>
+                            <line x1="45" y1="130" x2="45" y2="140" stroke="#f59e0b" stroke-width="2"/>
+                        </g>
+                        
+                        <!-- Binary 0 - Long pulse -->
+                        <g transform="translate(280,0)">
+                            <path d="M0,50 L30,50 L30,130 L110,130 L110,50 L180,50" 
+                                  fill="none" stroke="#06b6d4" stroke-width="3"/>
+                            <text x="90" y="25" class="bit-annotation" fill="#ef4444">BIT = 0</text>
+                            <text x="55" y="100" class="timing-value">~60μs</text>
+                            <line x1="30" y1="135" x2="110" y2="135" stroke="#f59e0b" stroke-width="2"/>
+                            <line x1="30" y1="130" x2="30" y2="140" stroke="#f59e0b" stroke-width="2"/>
+                            <line x1="110" y1="130" x2="110" y2="140" stroke="#f59e0b" stroke-width="2"/>
+                        </g>
+                        
+                        <!-- Legend -->
+                        <g transform="translate(500,160)">
+                            <text x="0" y="0" class="timing-label">Threshold: 30μs</text>
+                            <text x="0" y="20" class="timing-label">&lt;30μs = 1</text>
+                            <text x="0" y="40" class="timing-label">&gt;30μs = 0</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Data Capture -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-number">3</div>
+                <h2>Data Capture & Processing</h2>
+            </div>
+            <p>Using Burp Suite's WebSocket history, I captured the real-time signal data being streamed to the visualization. Each JSON message contains a timestamp, voltage level, and optional marker identifying protocol phases like "reset," "presence," and "stop."</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-dot red"></span>
+                    <span class="code-dot yellow"></span>
+                    <span class="code-dot green"></span>
+                    <span class="code-title">Sample WebSocket Data</span>
+                </div>
+                <div class="code-content">
+<code><span class="code-comment">// Reset pulse - master initiates communication</span>
+{<span class="code-string">"line"</span>:<span class="code-string">"dq"</span>,<span class="code-string">"t"</span>:<span class="code-number">1</span>,<span class="code-string">"v"</span>:<span class="code-number">0</span>,<span class="code-string">"marker"</span>:<span class="code-string">"reset"</span>}
+
+<span class="code-comment">// Presence pulse - device acknowledges</span>
+{<span class="code-string">"line"</span>:<span class="code-string">"dq"</span>,<span class="code-string">"t"</span>:<span class="code-number">551</span>,<span class="code-string">"v"</span>:<span class="code-number">0</span>,<span class="code-string">"marker"</span>:<span class="code-string">"presence"</span>}
+
+<span class="code-comment">// Data bits - timing determines value</span>
+{<span class="code-string">"line"</span>:<span class="code-string">"dq"</span>,<span class="code-string">"t"</span>:<span class="code-number">941</span>,<span class="code-string">"v"</span>:<span class="code-number">0</span|}
+{<span class="code-string">"line"</span>:<span class="code-string">"dq"</span>,<span class="code-string">"t"</span>:<span class="code-number">1001</span>,<span class="code-string">"v"</span>:<span class="code-number">1</span>}  <span class="code-comment">// 60μs low = bit 0</span></code>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Decoding Process -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-number">4</div>
+                <h2>Decoding the Signal</h2>
+            </div>
+            <p>The decoder measures each LOW pulse duration by tracking falling edges (1→0) and rising edges (0→1). Pulses under 30μs are classified as binary 1, while longer pulses are binary 0. Since 1-Wire transmits LSB-first, each 8-bit group is reversed before ASCII conversion.</p>
+            
+            <div class="decode-viz">
+                <div class="diagram-title">Byte Decoding Visualization (First 8 Bytes)</div>
+                <div class="byte-grid">
+                    <div class="byte-cell">
+                        <div class="byte-binary">01110010</div>
+                        <div class="byte-char">r</div>
+                        <div class="byte-hex">0x72</div>
+                    </div>
+                    <div class="byte-cell">
+                        <div class="byte-binary">01100101</div>
+                        <div class="byte-char">e</div>
+                        <div class="byte-hex">0x65</div>
+                    </div>
+                    <div class="byte-cell">
+                        <div class="byte-binary">01100001</div>
+                        <div class="byte-char">a</div>
+                        <div class="byte-hex">0x61</div>
+                    </div>
+                    <div class="byte-cell">
+                        <div class="byte-binary">01100100</div>
+                        <div class="byte-char">d</div>
+                        <div class="byte-hex">0x64</div>
+                    </div>
+                    <div class="byte-cell">
+                        <div class="byte-binary">00100000</div>
+                        <div class="byte-char">␣</div>
+                        <div class="byte-hex">0x20</div>
+                    </div>
+                    <div class="byte-cell">
+                        <div class="byte-binary">01100001</div>
+                        <div class="byte-char">a</div>
+                        <div class="byte-hex">0x61</div>
+                    </div>
+                    <div class="byte-cell">
+                        <div class="byte-binary">01101110</div>
+                        <div class="byte-char">n</div>
+                        <div class="byte-hex">0x6E</div>
+                    </div>
+                    <div class="byte-cell">
+                        <div class="byte-binary">01100100</div>
+                        <div class="byte-char">d</div>
+                        <div class="byte-hex">0x64</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Result -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-number">5</div>
+                <h2>The Hidden Message</h2>
+            </div>
+            <p>After processing all 456 bits (57 bytes), the complete message was recovered. The first character appeared as "Ì" (0xCC) — likely a command byte or preamble that precedes the actual ASCII payload.</p>
+            
+            <div class="result-box">
+                <div class="result-label">🎄 Decoded Message</div>
+                <div class="result-value">read and decrypt the SPI bus data using the XOR key: icy</div>
+            </div>
+            
+            <p style="text-align: center; color: var(--text-muted); margin-top: 1.5rem;">This message provides the key needed to decode the SPI challenge — the next step in the investigation.</p>
+        </section>
+
+        <!-- Technical Deep Dive -->
+        <div class="technical-section">
+            <div class="technical-header">
+                <h3>🔬 Technical Deep Dive</h3>
+                <span class="tech-badge">Advanced</span>
+            </div>
+            <div class="technical-content">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif;">1-Wire Protocol Specifications</h4>
+                
+                <table class="tech-table">
+                    <thead>
+                        <tr>
+                            <th>Signal Phase</th>
+                            <th>Duration</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Reset Pulse</td>
+                            <td>480μs min</td>
+                            <td>Master pulls line LOW to initiate</td>
+                        </tr>
+                        <tr>
+                            <td>Presence Pulse</td>
+                            <td>60-240μs</td>
+                            <td>Slave responds after reset</td>
+                        </tr>
+                        <tr>
+                            <td>Write 1</td>
+                            <td>1-15μs LOW</td>
+                            <td>Short pulse = logic HIGH</td>
+                        </tr>
+                        <tr>
+                            <td>Write 0</td>
+                            <td>60-120μs LOW</td>
+                            <td>Long pulse = logic LOW</td>
+                        </tr>
+                        <tr>
+                            <td>Time Slot</td>
+                            <td>60-120μs</td>
+                            <td>Total window per bit</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="color: var(--accent-cyan); margin: 2rem 0 1rem; font-family: 'Space Grotesk', sans-serif;">Complete Decoder Script</h4>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                        <span class="code-title">decode.py</span>
+                    </div>
+                    <div class="code-content">
+<code><span class="code-keyword">#!/usr/bin/env python3</span>
+<span class="code-string">"""1-Wire Protocol Decoder for SANS Holiday Hack 2025"""</span>
+<span class="code-keyword">import</span> sys
+
+start_time = <span class="code-number">0</span>
+in_data = <span class="code-keyword">False</span>
+bit_string = <span class="code-string">""</span>
+BIT_THRESHOLD = <span class="code-number">30</span>  <span class="code-comment"># μs - differentiates 1 vs 0</span>
+
+<span class="code-keyword">for</span> line <span class="code-keyword">in</span> sys.stdin:
+    <span class="code-keyword">try</span>:
+        <span class="code-keyword">if</span> <span class="code-string">'"presence"'</span> <span class="code-keyword">in</span> line:
+            in_data = <span class="code-keyword">True</span>
+            <span class="code-keyword">continue</span>
+        <span class="code-keyword">if not</span> in_data:
+            <span class="code-keyword">continue</span>
+        
+        parts = line.strip().split(<span class="code-string">','</span>)
+        timestamp = <span class="code-keyword">int</span>(parts[<span class="code-number">0</span>])
+        level = <span class="code-keyword">int</span>(parts[<span class="code-number">1</span>])
+        
+        <span class="code-keyword">if</span> level == <span class="code-number">0</span>:
+            start_time = timestamp  <span class="code-comment"># Falling edge</span>
+        <span class="code-keyword">elif</span> level == <span class="code-number">1</span> <span class="code-keyword">and</span> start_time > <span class="code-number">0</span>:
+            duration = timestamp - start_time
+            bit = <span class="code-string">"1"</span> <span class="code-keyword">if</span> duration < BIT_THRESHOLD <span class="code-keyword">else</span> <span class="code-string">"0"</span>
+            bit_string += bit
+            start_time = <span class="code-number">0</span>
+    <span class="code-keyword">except</span>:
+        <span class="code-keyword">continue</span>
+
+<span class="code-comment"># Decode LSB-first bytes to ASCII</span>
+<span class="code-keyword">for</span> i <span class="code-keyword">in</span> <span class="code-keyword">range</span>(<span class="code-number">0</span>, <span class="code-keyword">len</span>(bit_string), <span class="code-number">8</span>):
+    byte = bit_string[i:i+<span class="code-number">8</span>][::-<span class="code-number">1</span>]  <span class="code-comment"># Reverse for MSB</span>
+    <span class="code-keyword">print</span>(<span class="code-keyword">chr</span>(<span class="code-keyword">int</span>(byte, <span class="code-number">2</span>)), end=<span class="code-string">''</span>)</code>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--accent-cyan); margin: 2rem 0 1rem; font-family: 'Space Grotesk', sans-serif;">Data Processing Pipeline</h4>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                        <span class="code-title">bash</span>
+                    </div>
+                    <div class="code-content">
+<code><span class="code-comment"># Extract JSON from Burp capture</span>
+egrep -o <span class="code-string">'\{.*\}'</span> capture.burp | sort -u > clean.json
+
+<span class="code-comment"># Extract timestamp,level pairs and sort chronologically</span>
+cut -f3-5 -d: clean.json | \
+  sed <span class="code-string">'s/,"v":/,/'</span> | \
+  sed <span class="code-string">'s/\}//'</span> | \
+  sort -k1 -t, -n > signal.csv
+
+<span class="code-comment"># Decode the signal</span>
+cat signal.csv | python3 decode.py</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">SANS Holiday Hack Challenge 2025 • On The Wire: 1-Wire Protocol</p>
+    </footer>
+</body>
+</html>
