@@ -1,0 +1,265 @@
+<header>
+  <!-- Delete under here -->
+  <!-- <link rel="stylesheet" href="tmp_css/style.css"> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+  <!-- Delete above here -->
+
+  <h1>On the Wire</h1>
+  <p class="challenge-meta">#️Act 3, Challenge 6: | 📍 Evan next to city hall | Difficulty: ❄️❄️❄️❄️</p>"
+  <img src="images/3_6_onthewire_hero01.png"
+    alt="On the wire robot with straight line mouth (looks sad but looks to be holding back from showing it.)">
+  <p class="image-caption">Cheer up little guy, we'll decode those signals straight away.</p>
+  <p>Last year's hardware hacking challenge introduced us to UART. This year, we get three new protocols to learn:
+    <strong>1-Wire</strong>, <strong>SPI</strong>, and <strong>I²C</strong>.</p>
+
+  <p>These, along with UART, are all embedded protocols. UART, I²C, and SPI are considered the "Big Three" fundamental
+    protocols because they're the most common ways microcontrollers communicate with other chips on a circuit board —
+    typically the first protocols anyone learns in embedded systems. </p>
+
+  <details>
+    <summary>📚 Background: What's an Embedded Protocol? (Click to expand)</summary>
+    <div class="details-content">
+      <p>They're called "embedded protocols" because they're designed for communication within embedded systems: small,
+        dedicated computers built into devices (microcontrollers in appliances, cars, industrial equipment, IoT devices,
+        etc.).</p>
+      <p>Contrasting with other protocol types:</p>
+
+      <table style="border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="border-top: 1px solid; border-bottom: 1px solid; padding: 8px; text-align: left;">Type</th>
+            <th style="border-top: 1px solid; border-bottom: 1px solid; padding: 8px; text-align: left;">Examples</th>
+            <th style="border-top: 1px solid; border-bottom: 1px solid; padding: 8px; text-align: left;">Typical Use
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 8px;">Embedded</td>
+            <td style="padding: 8px;">UART, SPI, I²C, 1-Wire</td>
+            <td style="padding: 8px;">Chip-to-chip on a board</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px;">Networking</td>
+            <td style="padding: 8px;">Ethernet, TCP/IP, WiFi</td>
+            <td style="padding: 8px;">Device-to-device across networks</td>
+          </tr>
+          <tr>
+            <td style="border-bottom: 1px solid; padding: 8px;">Peripheral</td>
+            <td style="border-bottom: 1px solid; padding: 8px;">USB, HDMI, PCIe</td>
+            <td style="border-bottom: 1px solid; padding: 8px;">Device-to-external-hardware</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>At their core, these are low-level protocols that define how to physically generate bits (0s and 1s) through
+        voltage changes on a wire. When hardware hacking, you capture these voltage transitions with a logic analyzer
+        (like a Saleae Logic Pro 8 or an oscilloscope with digital channels), then use protocol decoders to interpret
+        them back into bits, bytes, and meaningful data. The in-browser tool in this challenge simulates what you'd see
+        in something like Saleae's Logic 2 software, where you capture the raw signals and apply protocol decoders to do
+        the heavy lifting.</p>
+
+
+      <p><a href="https://www.youtube.com/watch?v=IjjZcnwkrAg">Video Detailing I2C, SPI, UART </a></p>
+
+      <p>Security researchers use these exact methods to analyze IoT devices, from home routers to security cameras,
+        often finding debug interfaces left exposed on the circuit board. Unfortunately, bad actors use these same
+        techniques to reverse engineer devices, extract firmware, and discover vulnerabilities that they can then
+        exploit remotely over the network. This reconnaissance enables attacks like the Mirai botnet, which hijacked
+        hundreds of thousands of IoT devices to launch massive DDoS attacks."</p>
+    </div>
+  </details>
+
+  <p>While still fundamental, 1-Wire is more specialized. It is primarily used for specific parts like Dallas/Maxim
+    temperature sensors or "iButton" keys. It is often learned slightly later because it relies on very precise timing
+    that can be harder to implement by hand than the others.</p>
+
+  <p>By analyzing WebSocket data streams from an oscilloscope-style visualization, we decoded timing patterns, applied
+    XOR decryption, and filtered multi-device bus traffic to extract a chained sequence of keys leading to the final
+    answer: a temperature sensor reading.</p>
+
+  <p>Let's dive in!</p>
+
+</header>
+
+<section>
+  <h2>💡 Key Hints</h2>
+  <p>The provided hints were a lot to digest. Here are the main points:</p>
+  <ul>
+    <li>Identify protocol from wire names (e.g., dq → 1-Wire; mosi/sck → SPI; sda/scl → I²C).</li>
+    <li>Connect to a WebSocket endpoint and observe the data format.</li>
+    <li>The server continuously broadcasts signal data in a loop - you can connect at any time.</li>
+  </ul>
+  <details>
+    <summary>📄 View Full Hints (Click to expand)</summary>
+    <div class="details-content">
+      <h2>Hint 1:</h2>
+      <p><strong>Key concept - Clock vs. Data signals:</strong></p>
+      <ul>
+        <li>Some protocols have separate clock and data lines (like SPI and I2C)</li>
+        <li>For clocked protocols, you need to sample the data line at specific moments defined by the clock</li>
+        <li>The clock signal tells you when to read the data signal</li>
+      </ul>
+      <p><strong>For 1-Wire (no separate clock):</strong></p>
+      <ul>
+        <li>Information is encoded in pulse widths (how long the signal stays low or high)</li>
+        <li>Different pulse widths represent different bit values</li>
+        <li>Look for patterns in the timing between transitions</li>
+      </ul>
+      <p><strong>For SPI and I2C:</strong></p>
+      <ul>
+        <li>Identify which line is the clock (SCL for I2C, SCK for SPI)</li>
+        <li>Data is typically valid/stable when the clock is in a specific state (high or low)</li>
+        <li>You need to detect clock edges (transitions) and sample data at those moments</li>
+      </ul>
+      <p><strong>Technical approach</strong>:</p>
+      <ul>
+        <li>Sort frames by timestamp</li>
+        <li>Detect rising edges (0&rarr;1) and falling edges (1&rarr;0) on the clock line</li>
+        <li>Sample the data line's value at each clock edge</li>
+      </ul>
+
+      <h2>Hint 2:</h2>
+
+      <p>What you're dealing with:</p>
+
+      <ul>
+        <li>You have access to WebSocket endpoints that stream digital signal data</li>
+        <li>Each endpoint represents a physical wire in a hardware communication system</li>
+        <li>The data comes as JSON frames with three properties: line (wire name), t (timestamp), and v (value: 0 or 1)
+        </li>
+        <li>The server continuously broadcasts signal data in a loop - you can connect at any time</li>
+        <li>This is a multi-stage challenge where solving one stage reveals information needed for the next</li>
+      </ul>
+
+      <p>Where to start:</p>
+      <ul>
+        <li>Connect to a WebSocket endpoint and observe the data format</li>
+        <li>The server automatically sends data every few seconds - just wait and collect</li>
+        <li>Look for documentation on the protocol types mentioned (1-Wire, SPI, I2C)</li>
+        <li>Consider that hardware protocols encode information in the timing and sequence of signal transitions, not
+          just the values themselves</li>
+        <li>Consider capturing the WebSocket frames to a file so you can work offline</li>
+      </ul>
+
+      <h2>Hint 3:</h2>
+
+      <p>Stage-by-stage approach</p>
+      <ol>
+        <li>Connect to the captured wire files or endpoints for the relevant wires.</li>
+        <li>Collect all frames for the transmission (buffer until inactivity or loop boundary).</li>
+        <li>Identify protocol from wire names (e.g., dq → 1-Wire; mosi/sck → SPI; sda/scl → I²C).</li>
+        <li>Decode the raw signal:</li>
+        <ul>
+          <li>Pulse-width protocols: locate falling→rising transitions and measure low-pulse width.</li>
+          <li>Clocked protocols: detect clock edges and sample the data line at the specified sampling phase.</li>
+        </ul>
+        <li>Assemble bits into bytes taking the correct bit order (LSB vs MSB).
+        <li>Convert bytes to text (printable ASCII or hex as appropriate).</li>
+        <li>Extract information from the decoded output — it contains the XOR key or other hints for the next stage.
+        </li>
+      </ol>
+      <ol>
+        <li>Stage 1 decoding to recover raw bytes (they will appear random).</li>
+        <li>Apply XOR decryption using the key obtained from the previous stage.</li>
+        <li>Inspect decrypted output for next-stage keys or target device information.</li>
+      </ol>
+      <ul>
+        <li>Multiple 7-bit device addresses share the same SDA/SCL lines.</li>
+        <li>START condition: SDA falls while SCL is high. STOP: SDA rises while SCL is high.</li>
+        <li>First byte of a transaction = (7-bit address &lt;&lt; 1) | R/W. Extract address with address = first_byte
+          &gt;&gt; 1.</li>
+        <li>Identify and decode every device’s transactions; decrypt only the target device’s payload.</li>
+        <li>Print bytes in hex and as ASCII (if printable) — hex patterns reveal structure.</li>
+        <li>Check printable ASCII range (0x20–0x7E) to spot valid text.</li>
+        <li>Verify endianness: swapping LSB/MSB will quickly break readable text.</li>
+        <li>For XOR keys, test short candidate keys and look for common English words.</li>
+        <li>If you connect mid-broadcast, wait for the next loop or detect a reset/loop marker before decoding.</li>
+        <li>Buffering heuristic: treat the stream complete after a short inactivity window (e.g., 500 ms) or after a
+          full broadcast loop.</li>
+        <li>Sort frames by timestamp per wire and collapse consecutive identical levels before decoding to align with
+          the physical waveform.</li>
+
+</section>
+
+<section>
+  <h2>The Journey</h2>
+  <section>
+    <h3>Obtaining and preparing (sanitizing) the data.</h3>
+  </section>
+
+  <p>The challenge presents us with an oscilloscope animation on the body of a robot. There are three tabs for the three
+    challenges, 1-Wire, SPI, and I²C.</p>
+
+  <img src="images/a3c6_oscil01.png" alt="1-Wire">
+  <img src="images/a3c6_oscil02.png" alt="SPI">
+  <img src="images/a3c6_oscil03.png" alt="I2C">
+
+  <p>As one of the hints mentions, we look at the WebSockets for the raw data. This can be obtained using your browser's
+    developer tools. (See appendices for background info on <a href"#appendix-2">WebSockets</a> and developer tools)
+  </p>
+
+  <section>
+    <h3>1-Wire</h3>
+  </section>
+  <section>
+    <h4>1-Wire Background</h4>
+  </section>
+  <section>
+    <h4>Solving 1-Wire</h4>
+  </section>
+
+  <section>
+    <h3>SPI</h3>
+  </section>
+  <section>
+    <h4>SPI Background</h4>
+  </section>
+  <section>
+    <h4>Solving SPI</h4>
+  </section>
+
+  <section>
+    <h3>I²C</h3>
+  </section>
+  <section>
+    <h4>I²C Background</h4>
+  </section>
+  <section>
+    <h4>Solving I²C</h4>
+  </section>
+
+</section>
+
+<section><h2>Appendices</h2>
+
+  <details id="appendix-1">
+    <summary>Appendix 1: Challenge Descriptions</summary>
+    <h3>Classic Mode Description</h3>
+    <p> Help Evan next to city hall hack this gnome and retrieve the temperature value reported by the I²C device at
+      address 0x3C.The temperature data is XOR-encrypted, so you’ll need to work through each communication stage to
+      uncover the necessary keys. Start with the unencrypted data being transmitted over the 1-wire protocol.
+    <h3>CTF Mode Description</h3>
+    <p> So here's the deal - there are some seriously bizarre signals floating around this area. Not your typical radio
+      chatter or WiFi noise, but something... different. I've been trying to make sense of the patterns, but it's like
+      trying to build a robot hand out of a coffee maker - you need the right approach. Think you can help me decode
+      whatever weirdness is being transmitted out there?</p>
+  </details>
+
+  <details id="appendix-2">
+    <summary>Appendix 2: 📚 Background Info - WebSockets</summary>
+    <div class="" details-content"">
+      <p></p>
+    </div>
+  </details>
+
+  <details id="appendix-3">
+    <summary>Appendix 3: 📚 Background Info - Developer Tools</summary>
+    <div class="" details-content"">
+      <p></p>
+    </div>
+  </details>
+</section>
