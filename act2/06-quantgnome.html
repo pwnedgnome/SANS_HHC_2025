@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantgnome Leap | SANS Holiday Hack 2025</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../../index.html"><img src="../../images/hhc-logo.png" alt="Holiday Hack 2025"
+                    class="sidebar-logo"></a>
+        </div>
+        <div class="nav-section">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Overview</a></li>
+                <li><a href="../../map.html">World Map</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Act 1</h3>
+            <ul class="nav-list">
+                <li><a href="../act1/01-orientation.html">1. Holiday Hack Orientation</a></li>
+                <li><a href="../act1/02-defang.html">2. It's All About Defang</a></li>
+                <li><a href="../act1/03-neighborhood.html">3. Neighborhood Watch Bypass</a></li>
+                <li><a href="../act1/04-gift-tracking.html">4. Gift-Tracking Port Mystery</a></li>
+                <li><a href="../act1/05-visual-network.html">5. Visual Networking Thinger</a></li>
+                <li><a href="../act1/06-visual-firewall.html">6. Visual Firewall Thinger</a></li>
+                <li><a href="../act1/07-nmap.html">7. Intro to Nmap</a></li>
+                <li><a href="../act1/08-blob-storage.html">8. Blob Storage Challenge</a></li>
+                <li><a href="../act1/09-spare-key.html">9. Spare Key</a></li>
+                <li><a href="../act1/10-open-door.html">10. The Open Door</a></li>
+                <li><a href="../act1/11-owner.html">11. Owner</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 2</h3>
+            <ul class="nav-list">
+                <li><a href="01-retro.html">1. Retro Recovery</a></li>
+                <li><a href="02-mail.html">2. Mail Detective</a></li>
+                <li><a href="03-idorable.html">3. IDORable Bistro</a></li>
+                <li><a href="04-dosis.html">4. Dosis Network Down</a></li>
+                <li><a href="05-gnome-identity.html">5. Rogue Gnome Identity Provider</a></li>
+                <li><a href="06-quantgnome.html" class="active">6. Quantgnome Leap</a></li>
+                <li><a href="07-reverse.html">7. Going in Reverse</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 3</h3>
+            <ul class="nav-list">
+                <li><a href="../act3/01-gnome-tea.html">1. Gnome Tea</a></li>
+                <li><a href="../act3/02-hack-gnome.html">2. Hack-a-Gnome</a></li>
+                <li><a href="../act3/03-snowcat.html">3. Snowcat RCE & Priv Esc</a></li>
+                <li><a href="../act3/04-schrodinger.html">4. Schrödinger's Scope</a></li>
+                <li><a href="../act3/05-snowglobe.html">5. Find & Shutdown Snowglobe</a></li>
+                <li><a href="../act3/06-wire.html">6. On the Wire</a></li>
+                <li><a href="../act3/07-freeski.html">7. FreeSki</a></li>
+                <li><a href="../act3/08-snowblind.html">8. Snowblind Ambush</a></li>
+            </ul>
+        </div>
+
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT START                       -->
+            <!-- ============================================= -->
+
+            <header>
+                <h1>Quantgnome Leap</h1>
+                <p class="challenge-meta">Act 2, Challenge 6 | 📍 Grand Hotel Lobby | Difficulty: ❄️❄️</p>
+                <figure>
+                    <img src="images/a2c6_quantgnome_hero.gif" style="display: block; margin: 0 auto;"
+                        alt="The challenge intro animation depicting the QuantGnome in a superposition state—a visual metaphor for the Qubits we are about to protect against.">
+                    <figcaption>Here? Gone? Both? The Quantgnome defies classical observation.</figcaption>
+                </figure>
+                <p>Quantum computing is coming for our keys, but are we ready to leap? This challenge takes us on a
+                    journey from vulnerable RSA to the cutting edge of hybrid post-quantum cryptography, proving that
+                    the future of security is already here...if you know where to look.</p>
+            </header>
+
+            <!-- Challenge Overview -->
+            <section>
+                <h2>Challenge Overview</h2>
+                <p>Quantgnome Leap explores the transition from classical to Post-Quantum Cryptography (PQC) within an
+                    SSH environment. Players must navigate a chain of users, each secured by progressively stronger
+                    cryptographic algorithms (from RSA to Ed25519 to Hybrid ML-DSA), utilizing the Open Quantum Safe
+                    (OQS) framework to understand how modern protocols are evolving to resist quantum threats."</p>
+                <details>
+                    <!-- Side Note: What about the Quantgnome in the box animation? -->
+                    <summary>Side Note: What about the Quantgnome in the box animation?</summary>
+                    <p>The gnome vanishing and reappearing inside a box is a direct reference
+                        to the Schrödinger's Cat paradox. In quantum mechanics, a system can exist in a "Superposition"
+                        of states (e.g., the gnome is both there and not there) until it is observed.
+
+                        This isn't just flavor text. It represents the fundamental danger to our cryptography. Unlike
+                        classical bits (0 or 1), Qubits utilize this superposition to perform vast calculations
+                        simultaneously. This computational parallelism is what allows algorithms like Shor's Algorithm
+                        to factor large primes exponentially faster than classical computers, necessitating the shift to
+                        Post-Quantum Cryptography that this challenge explores.</p>
+                </details>
+                <!-- Background Info: The Quantum Threat & Defining "Post-Quantum" -->
+                <details>
+                    <summary>Background Info: The Quantum Threat & Defining "Post-Quantum"</summary>
+
+                    <h4>The Threat: Why RSA is Doomed</h4>
+                    <p> Classical encryption (like RSA and Elliptic Curve) forms the backbone of the internet. Its
+                        security relies on specific mathematical problems—like factoring massive prime numbers—that are
+                        incredibly difficult for classical computers to solve. </p>
+                    <ul>
+                        <li><strong>Classical Computers:</strong> Operate on bits (0s and 1s). Factoring a 2048-bit key
+                            would take a standard supercomputer billions of years.</li>
+                        <li>
+                            <strong>Quantum Computers:</strong> Operate on <strong>Qubits</strong>, allowing for
+                            superposition. They leverage <strong>Shor's Algorithm</strong>, a method developed by Peter
+                            Shor in 1994 that efficiently finds the prime factors of large integers. While a classical
+                            computer might take billions of years to factor an RSA key, a sufficiently powerful quantum
+                            computer using Shor's algorithm could do it in minutes, rendering current SSH, TLS, and
+                            banking security obsolete.
+                        </li>
+                    </ul>
+
+                    <h4>What does "Post-Quantum Cryptography" (PQC) actually mean?</h4>
+                    <p> The term "Post-Quantum" refers to the era <em>after</em> quantum computers become powerful
+                        enough to break current encryption. Therefore, <strong>Post-Quantum Cryptography</strong> does
+                        <em>not</em> mean using quantum computers to encrypt data.
+                    </p>
+                    <p> Instead, PQC refers to <strong>new cryptographic algorithms designed to run on today's classical
+                            computers</strong> but based on different branches of mathematics (like Lattice theory or
+                        Multivariate equations) that are believed to be immune to quantum attacks. </p>
+
+                </details>
+                <!-- Background Info: What is Open Quantum Safe? -->
+                <details>
+                    <summary>Background Info: What is Open Quantum Safe?</summary>
+
+                    <h4>The Project</h4>
+                    <p> This challenge is built entirely on the <strong>Open Quantum Safe (OQS)</strong> project, an
+                        initiative managed by the Linux Foundation. Their goal is to support the transition to
+                        quantum-resistant cryptography by developing and prototyping these new algorithms. </p>
+
+                    <h4>Key Components</h4>
+                    <ul>
+                        <li><strong>liboqs:</strong> An open-source C library that contains implementations of the
+                            NIST-selected PQC algorithms (like Kyber, Dilithium/ML-DSA, Falcon, and SPHINCS+).</li>
+                        <li><strong>OQS-OpenSSH:</strong> A fork of the standard OpenSSH client and server. This is the
+                            software running on the challenge server (<code>pqc-server.com</code>).</li>
+                    </ul>
+
+                    <h4>Relevance to the Challenge</h4>
+                    <p> This explains why the SSH client behaved uniquely. The OQS-patched client is programmed to
+                        recognize and auto-load experimental key types (like <code>id_mayo2</code>) that a standard SSH
+                        client would ignore. It also enables <strong>"Hybrid" keys</strong>—a mechanism that combines a
+                        classical key (like ECDSA) with a PQC key to ensure security even if the new PQC algorithm turns
+                        out to have a flaw. </p>
+
+                </details>
+
+
+            </section>
+
+            <!-- Finding and Using the First Key -->
+            <section>
+                <h2>Finding and Using the First Key</h2>
+                <p>We begin our journey in the terminal as the user <code>qgnome</code>. Following
+                    the hint about hidden directories, we find the <code>.ssh</code> directory with
+                    a standard RSA key pair (<code>id_rsa</code> and <code>id_rsa.pub</code>).</p>
+                <div class="code-block">
+                    <div class="code-title">Bash</div>
+                    <pre>qgnome@quantgnome_leap:~$ <span class="user-input">ls -l ~/.ssh/</span>
+ -rw-r--r--    1 qgnome   qgnome        560 Oct 29 00:29 id_rsa.pub
+-rw-------    1 qgnome   qgnome       2590 Oct 29 00:29 id_rsa
+</pre>
+                </div>
+                <p>
+                    The permissions on id_rsa are 600 (-rw-------), meaning only the owner (qgnome) can read it.
+                    This
+                    is the classic setup for an identity key.</p>
+                <!-- Background Info: Anatomy of an SSH Key Pair -->
+                <details>
+                    <summary>Background Info: Anatomy of an SSH Key Pair</summary>
+
+                    <h4>1. Asymmetric Cryptography (The Lock and Key)</h4>
+                    <p>
+                        SSH relies on <strong>asymmetric encryption</strong>, which uses two mathematically linked keys:
+                    </p>
+                    <ul>
+                        <li><strong>The Public Key (<code>id_rsa.pub</code>):</strong> This acts like a padlock. You can
+                            give it to anyone (or place it on a server). It encrypts data or verifies signatures.</li>
+                        <li><strong>The Private Key (<code>id_rsa</code>):</strong> This is the physical key that opens
+                            the padlock. It must be kept secret. It is used to decrypt data or sign authentication
+                            challenges.</li>
+                    </ul>
+
+                    <h4>2. Why permissions 600?</h4>
+                    <p>
+                        I noted the permissions were set to <code>600</code> (<code>-rw-------</code>). This is a
+                        critical security requirement enforced by the OpenSSH client.
+                    </p>
+                    <p>
+                        Since Linux is a multi-user system, if a private key were readable by "Group" or "World" (e.g.,
+                        <code>644</code>), another user on the system could copy it and impersonate the owner. If
+                        OpenSSH detects permissions are too open, it will essentially say "This key is unsafe" and
+                        refuse to use it.
+                    </p>
+
+                    <h4>3. The Math (The Vulnerability)</h4>
+                    <p>
+                        This specific key is <strong>RSA</strong>. It is generated by multiplying two massive prime
+                        numbers together. Its security relies on the fact that while multiplying is easy,
+                        <em>factoring</em> the result back into primes is computationally infeasible for classical
+                        computers.
+                    </p>
+                    <p>
+                        <em>This is exactly where the Quantum Threat lies: Shor's Algorithm turns that "infeasible"
+                            factoring problem into an easy one.</em>
+                    </p>
+
+                </details>
+                <p>Following the hint regarding SSH key comments, I inspected the public key and found the
+                    comment <code>gnome1</code>. Usually, when generating a key, the comment defaults to
+                    <code>user@hostname</code>.
+                    The explicit label strongly suggests that this private key allows authentication as the user
+                    <code>gnome1</code>.
+                </p>
+                <div class="code-block">
+                    <div class="code-title">Bash</div>
+                    <pre>qgnome@quantgnome_leap:~$ <span class="user-input">cat ~/.ssh/id_rsa.pub</span>
+ssh-rsa AAAAB...[snip]...GkE07pWU= gnome1</pre>
+                </div>
+                <p>I attempted to SSH into the localhost as the <code>gnome1</code> user. Since the key
+                    <code>id_rsa</code> is in the default .ssh path,
+                    the SSH client automatically attempts to use it for authentication.
+                </p>
+                <div class="code-block">
+                    <div class="code-title">Bash</div>
+                    <pre>qgnome@quantgnome_leap:~$ <span class="user-input">ssh gnome1@localhost</span>
+#############################################################################################################
+
+<span style="color: cyan;">Welcome, gnome1 user! You made the first leap!</span>
+
+You authenticated with an RSA key, but that isn't very secure in a post-quantum world. RSA depends on large 
+prime numbers, which a quantum computer can easily solve with something like Shor's algorithm.
+
+Take a look around and see if you can find a way to login to the gnome2 account.
+
+#############################################################################################################
+gnome1@pqc-server:~$ </pre>
+                </div>
+                <p>Success! We are now logged in as the user <code>gnome1</code>.</p>
+            </section>
+
+            <!-- Repeating the Process -->
+            <section>
+                <h2>Repeating the Process</h2>
+                <p>From here, the challenge became a lesson in cryptographic evolution. Each user's <code>.ssh</code> directory
+                    contained a private key allowing movement to the next user. I followed the chain, analyzing the key
+                    types at every "Leap."
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Leap Path</th>
+                            <th>Key Algorithm</th>
+                            <th>Classification</th>
+                            <th>Analysis & Security Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>qgnome → gnome1</strong></td>
+                            <td><strong>RSA</strong><br><code>id_rsa</code></td>
+                            <td>Classical</td>
+                            <td><strong>Vulnerable.</strong> Relies on factoring large primes. Easily broken by Shor's
+                                Algorithm on a quantum computer.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>gnome1 → gnome2</strong></td>
+                            <td><strong>Ed25519</strong><br><code>id_ed25519</code></td>
+                            <td>Classical (ECC)</td>
+                            <td><strong>Vulnerable.</strong> Uses Elliptic Curve (Discrete Logarithm). More efficient
+                                than RSA, but still not quantum-safe.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>gnome2 → gnome3</strong></td>
+                            <td><strong>MAYO</strong><br><code>id_mayo2</code></td>
+                            <td>Experimental PQC</td>
+                            <td><strong>Experimental.</strong> A Multivariate Quadratic scheme. Promising for embedded
+                                devices (small signatures) but pending standardization.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>gnome3 → gnome4</strong></td>
+                            <td><strong>ECDSA P-256 + SPHINCS+</strong><br><code>...sphincssha2128...</code></td>
+                            <td>Hybrid (Level 1)</td>
+                            <td><strong>Quantum Agility.</strong> Combines trusted classical ECC with hash-based PQC. If
+                                one fails, the other protects the session.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>gnome4 → admin</strong></td>
+                            <td><strong>ECDSA P-521 + ML-DSA-87</strong><br><code>...mldsa87</code></td>
+                            <td>Hybrid (Level 5)</td>
+                            <td><strong>Gold Standard.</strong> Pairs a massive elliptic curve with CRYSTALS-Dilithium.
+                                The highest assurance level (≈AES-256) available.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <details>
+                    <summary>Side Note: Banners at each leap stage</summary>
+                    <p>At each successful SSH login, a banner provided context about the cryptographic leap just made.
+                        These messages reinforced the educational aspect of the challenge, explaining why each new
+                        algorithm was more secure against quantum threats than the last.</p>
+                    <div class="code-block">
+                        <div class="code-title">Bash</div>
+                        <pre>gnome1@pqc-server:~$ ssh gnome2@localhost
+
+#############################################################################################################
+
+<span style="color: cyan;">Welcome, gnome2 user! You made the second leap!</span>
+
+You authenticated with an ED25519 key, smaller than an RSA key, but still not secure in a 
+post-quantum world due to Shor's algorithm.
+
+Take a look around and see if you can find a way to login to the gnome3 account.
+
+#############################################################################################################
+
+gnome2@pqc-server:~$ ssh gnome3@localhost
+
+#############################################################################################################
+
+<span style="color: cyan;">Welcome, gnome3 user! You made the third leap!</span>
+
+You authenticated with a MAYO post-quantum key. 
+A post-quantum cryptographic algorithm with promising results for embedded systems. HOWEVER, use MAYO 
+with caution! Wait for a standardized implementation (if/when that happens).
+
+Take a look around and see if you can find a way to login to the gnome4 account.
+
+#############################################################################################################
+
+gnome3@pqc-server:~$ ssh gnome4@localhost
+
+#############################################################################################################
+
+<span style="color: cyan;">Welcome, gnome4 user! You made the fourth leap!</span>
+
+You authenticated with a post-quantum hybrid key! What does that mean? A blended approach with proven 
+classical cryptography and post-quantum cryptography.
+
+In this case, you authenticated with a NIST P-256 ECDSA key (a classical elliptic curve) that also uses 
+post-quantum SPHINCS+ (standardized by NIST in FIPS 205 as SLH-DSA). That makes this key extremely robust. 
+According to NIST, this is a security level 1 key, which means this key is at least as strong as AES128.
+
+Instead of a single exchange/signature (as with RSA or ED25519), this key produces two (one classical and 
+one post-quantum) that are both checked together. If one fails, authentication fails. A hybrid approach is a 
+great first step when testing and implementing post-quantum cryptography, giving organizations 'Quantum 
+Agility'.
+
+Take a look around and see if you can find a way to login to the admin account.
+
+#############################################################################################################
+gnome4@pqc-server:~$ ssh admin@localhost
+
+#############################################################################################################
+
+You made the <span style="color: green;">QuantGnome Leap!</span> <span style="color: red;">Your final stop.</span>
+
+You authenticated with another hybrid post-quantum key. What is different about this key? It uses the NIST 
+P-521 elliptic curve (roughly equivalent to a 15360-bit RSA key) paired with ML-DSA-87. According to NIST, 
+ML-DSA-87 is a security level 5 algorithm, which provides the highest security level and is meant for the 
+most secure environments. NIST standardized CRYSTALS-Dilithium as ML-DSA in FIPS 204 with three defined 
+security levels:
+
+- ML-DSA-44: Security Level 2 - At least as strong as SHA256/SHA3-256
+- ML-DSA-65: Security Level 3 - At least as strong as AES192
+- ML-DSA-87: Security Level 5 - At least as strong as AES256
+
+This is one of the strongest hybrid keys available in post-quantum cryptography. The other 
+extremely strong security level 5 algorithms all use a combination of the NIST P-521 elliptic curve and one 
+of the following PQC algorithms:
+
+- falcon1024: Falcon (FN-DSA) with a 1024 lattice dimensional size
+- sphincssha2256fsimple: SLH-DSA (SPHINCS+) using SHA2 256 and fast signature generation (hence 
+the 'f' in the algorithm name)
+- mayo5: MAYO-5 is the highest of the four MAYO security levels
+
+This entire build/system is based off of the Linux Foundation's Open Quantum Safe (OQS) initiative. It uses 
+the OQS liboqs library which provides PQC algorithm support.
+You can find out more about the OQS initiative at https://openquantumsafe.org/.
+
+Next Step: You now have access to a directory in the same location as the SSH daemon. Time to 
+look around for your final flag.
+#############################################################################################################
+admin@quantgnome_leap:~$</pre>
+                </details>
+            </section>
+
+            <!-- Finding the Flag -->
+            <section>
+                <h2>Finding the Flag</h2>
+                <p>In the admin's account, I did a find command to locate the flag file.</p>
+                <div class="code-block">
+                    <div class="code-title">Bash</div>
+                    <pre>admin@quantgnome_leap:~$ <span class="user-input">find / -name flag 2&gt;/dev/null</span>
+/opt/oqs-ssh/flag
+/opt/oqs-ssh/flag/flag
+admin@quantgnome_leap:~$ <span class="user-input">cat /opt/oqs-ssh/flag/flag</span>
+<span class="redbox">HHC{L3aping_0v3r_Quantum_Crypt0}</span></pre>
+                </div>
+                <div class="flag">🚩 <strong>Flag:</strong> HHC{L3aping_0v3r_Quantum_Crypt0}</div>
+            </section>
+
+            <!-- Finding the Special Tool -->
+            <section>
+                <h2>Finding the Special Tool</h2>
+                <p>A hint mentioned a special tool that generates post-quantum cryptographic keys.
+                    I found <code>pqc-keygen</code> in the /usr/local/bin directory. It generates and inspects
+                    classical, PQC, and hybrid keys. Here's the inspection of the keys we generated during the
+                    challenge. It's meant to show the variety of algorithms and their security levels
+                    and that "Post-Quantum" isn't a single solution. It's a complex menu of choices.
+
+                </p>
+                <div class="code-block">
+                    <div class="code-title">Bash</div>
+                    <pre>admin@quantgnome_leap:/tmp/keys$ <span class="user-input">pqc-keygen -t -p /tmp/keys</span>
+Algorithm                             Bits  NIST    Kind   
+------------------------------------  ----  ----  ---------
+sphincssha2128fsimple                   32   1          PQC
+sphincssha2256fsimple                   64   5          PQC
+ed25519                                256   0    Classical
+ecdsa-nistp256-sphincssha2128fsimple   288   1       Hybrid
+ecdsa-nistp521-sphincssha2256fsimple   585   5       Hybrid
+falcon512                              897   1          PQC
+ecdsa-nistp256-falcon512              1153   1       Hybrid
+mldsa-44                              1312   0          PQC
+ecdsa-nistp256-mldsa-44               1568   1       Hybrid
+falcon1024                            1793   5          PQC
+mldsa-65                              1952   0          PQC
+rsa-2048                              2048   0    Classical
+ecdsa-nistp521-falcon1024             2314   5       Hybrid
+ecdsa-nistp384-mldsa-65               2336   3       Hybrid
+mldsa-87                              2592   0          PQC
+mayo3                                 2986   3          PQC
+rsa-3072                              3072   1    Classical
+rsa3072-sphincssha2128fsimple         3104   1       Hybrid
+ecdsa-nistp521-mldsa-87               3113   5       Hybrid
+ecdsa-nistp384-mayo3                  3370   3       Hybrid
+rsa3072-falcon512                     3969   1       Hybrid
+rsa-4096                              4096   1    Classical
+rsa3072-mldsa-44                      4384   0       Hybrid
+mayo2                                 4912   1          PQC
+ecdsa-nistp256-mayo2                  5168   1       Hybrid
+mayo5                                 5554   5          PQC
+ecdsa-nistp521-mayo5                  6075   5       Hybrid
+rsa3072-mayo2                         7984   1       Hybrid
+------------------------------------  ----  ----  ---------
+
+You can use 'ssh-keygen -l -f &lt;private key&gt;' to see the bit size of a key.
+Next step, SSH into pqc-server.com.</pre>
+                </div>
+
+                <!-- Understanding the NIST Column (Security Levels) -->
+                <details>
+                    <summary>Understanding the NIST Column (Security Levels)</summary>
+                    <p><strong>NIST</strong> column in the <code>pqc-keygen</code> output refers to the five specific
+                        security categories defined by NIST during the PQC standardization process. These levels map the
+                        difficulty of breaking the new algorithms to well-known symmetric encryption standards:</p>
+                    <ul>
+                        <li><strong>Level 1:</strong> Equivalent to <strong>AES-128</strong> (Fastest, Smallest Keys)
+                        </li>
+                        <li><strong>Level 3:</strong> Equivalent to <strong>AES-192</strong> (Balanced)</li>
+                        <li><strong>Level 5:</strong> Equivalent to <strong>AES-256</strong> (Maximum Security, Larger
+                            Keys)</li>
+                    </ul>
+
+                    <p>
+                        <em>Observation: Note that <code>rsa-2048</code> and <code>ed25519</code> are marked as
+                            <strong>0</strong>. In the context of a quantum adversary, they provide zero bits of
+                            security.</em>
+                    </p>
+                </details>
+
+                <!-- Side Notes: Using pqc-keygen -->
+                <details>
+                    <summary>Side Notes: Using pqc-keygen</summary>
+                    <div class="code-block">
+                        <div class="code-title">Bash</div>
+                        <pre>admin@quantgnome_leap:/tmp/keys$ <span class="user-input">pqc-keygen --help</span>
+usage: pqc-keygen [-h] [-p PATH] [-t] [-f]
+
+Generate or inspect PQC / classical SSH keys
+
+options:
+  -h, --help            show this help message and exit
+  -p PATH, --path PATH  Destination directory for keys
+  -t, --table           Show table (requires existing keys)
+  -f, --force           Overwrite existing keys without prompt
+
+admin@quantgnome_leap:/tmp/keys$ <span class="user-input">pqc-keygen -p /tmp/keys</span>
+
+— Summary -> Total algorithms = 28 | ✔ Keys generated = 28
+
+Next, use -t to display key characteristics.
+</pre>
+                    </div>
+                </details>
+
+            </section>
+
+            <!-- Appendix Section -->
+            <section class="technical-appendix">
+
+                <!-- Challenge Reference Material -->
+                <div class="deep-dive-topic">
+                    <h3>Challenge Reference Material</h3>
+                    <h4>Challenge Descriptions</h4>
+                    <h5>Classic Mode Description</h5>
+                    <p> Charlie in the hotel has quantum gnome mysteries waiting to be solved. What is the flag that you
+                        find?</p>
+                    <h5>CTF Mode Description</h5>
+                    <p> I just spotted a mysterious gnome - he winked and vanished, or maybe he's still here? Things are
+                        getting strange, and I think we've wandered into a quantum conundrum! If you help me unravel
+                        these riddles, we might just outsmart future quantum computers. Cryptic puzzles, quirky gnomes,
+                        and post-quantum secrets—will you leap with me?</p>
+                    <h4>Official Hints</h4>
+                    <ul>
+                        <li>When you give a present, you often put a label on it to let someone know that the present is
+                            for them. Sometimes you even say who the present is from. The label is always put on the
+                            outside of the present so the public knows the present is for a specific person. SSH keys
+                            have something similar called a comment. SSH keys sometimes have a comment that can help
+                            determine who and where the key can be used.</li>
+                        <li>If you want to create SSH keys, you would use the ssh-keygen tool. We have a special tool
+                            that generates post-quantum cryptographic keys. The suffix is the same as ssh-keygen. It is
+                            only the first three letters that change.</li>
+                        <li>User keys are like presents. The keys are kept in a hidden location until they need to be
+                            used. Hidden files in Linux always start with a dot. Since everything in Linux is a file,
+                            directories that start with a dot are also...hidden!</li>
+                        <li>Process information is very useful to determine where an application configuration file is
+                            located. I bet there is a secret located in that application directory, you just need the
+                            right user to read it!</li>
+                    </ul>
+                </div>
+            </section>
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT END                         -->
+            <!-- ============================================= -->
+
+            <div class="nav-buttons">
+                <a href="05-gnome-identity.html" class="nav-btn">← Rogue Gnome Identity Provider</a>
+                <footer>
+                    <p>&copy; 2025 James Mar – SANS Holiday Hack Challenge Write-up</p>
+                    <a href="#" class="back-to-top">↑ Back to Top</a>
+                </footer>
+                <a href="07-reverse.html" class="nav-btn">Going in Reverse →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+
+</html>

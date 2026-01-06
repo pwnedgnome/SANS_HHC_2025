@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It's All About Defang | SANS Holiday Hack 2025</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../../index.html"><img src="../../images/hhc-logo.png" alt="Holiday Hack 2025"
+                    class="sidebar-logo"></a>
+        </div>
+        <div class="nav-section">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Overview</a></li>
+                <li><a href="../../map.html">World Map</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Act 1</h3>
+            <ul class="nav-list">
+                <li><a href="01-orientation.html">1. Holiday Hack Orientation</a></li>
+                <li><a href="02-defang.html" class="active">2. It's All About Defang</a></li>
+                <li><a href="03-neighborhood.html">3. Neighborhood Watch Bypass</a></li>
+                <li><a href="04-gift-tracking.html">4. Gift-Tracking Port Mystery</a></li>
+                <li><a href="05-visual-network.html">5. Visual Networking Thinger</a></li>
+                <li><a href="06-visual-firewall.html">6. Visual Firewall Thinger</a></li>
+                <li><a href="07-nmap.html">7. Intro to Nmap</a></li>
+                <li><a href="08-blob-storage.html">8. Blob Storage Challenge</a></li>
+                <li><a href="09-spare-key.html">9. Spare Key</a></li>
+                <li><a href="10-open-door.html">10. The Open Door</a></li>
+                <li><a href="11-owner.html">11. Owner</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 2</h3>
+            <ul class="nav-list">
+                <li><a href="../act2/01-retro.html">1. Retro Recovery</a></li>
+                <li><a href="../act2/02-mail.html">2. Mail Detective</a></li>
+                <li><a href="../act2/03-idorable.html">3. IDORable Bistro</a></li>
+                <li><a href="../act2/04-dosis.html">4. Dosis Network Down</a></li>
+                <li><a href="../act2/05-gnome-identity.html">5. Rogue Gnome Identity Provider</a></li>
+                <li><a href="../act2/06-quantgnome.html">6. Quantgnome Leap</a></li>
+                <li><a href="../act2/07-reverse.html">7. Going in Reverse</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 3</h3>
+            <ul class="nav-list">
+                <li><a href="../act3/01-gnome-tea.html">1. Gnome Tea</a></li>
+                <li><a href="../act3/02-hack-gnome.html">2. Hack-a-Gnome</a></li>
+                <li><a href="../act3/03-snowcat.html">3. Snowcat RCE & Priv Esc</a></li>
+                <li><a href="../act3/04-schrodinger.html">4. Schrödinger's Scope</a></li>
+                <li><a href="../act3/05-snowglobe.html">5. Find & Shutdown Snowglobe</a></li>
+                <li><a href="../act3/06-wire.html">6. On the Wire</a></li>
+                <li><a href="../act3/07-freeski.html">7. FreeSki</a></li>
+                <li><a href="../act3/08-snowblind.html">8. Snowblind Ambush</a></li>
+            </ul>
+        </div>
+
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT START                       -->
+            <!-- ============================================= -->
+
+            <header>
+                <h1>It's All About Defang</h1>
+                <p class="challenge-meta">Act 1, Challenge 2 | 📍 Ed's Office | Difficulty: ❄️</p>
+                <figure>
+                    <img src="images/a1c2_hero.png" style="display: block; margin: 0 auto;" alt="">
+                    <figcaption>Those caps and emojis are always a dead giveaway of a scam.</figcaption>
+                </figure>
+                <p>A phishing email is targeting the Dosis Neighborhood, and it's up to you to extract and neutralize
+                    the threat. But the SOC tools are half-broken, and you'll need to dig into the source code to unlock
+                    their full potential.</p>
+            </header>
+
+            <!-- Challenge Overview -->
+            <section>
+                <h2>Challenge Overview</h2>
+                <p>
+                    In this challenge, we're a Security Operations Center (SOC) analyst, a cybersecurity professional
+                    who
+                    monitors, detects, and responds to threats. Our mission: triage a phishing email targeting the Dosis
+                    Neighborhood by extracting and defanging its Indicators of Compromise (IOCs) using a web-based SOC
+                    tool.</p>
+                <img src="images/a1c2_home.png" alt="SOC Tool Home Screen">
+            </section>
+
+
+            <!-- Fixing RegEx -->
+            <section>
+                <h2>Fixing the Reference Regex Patterns</h2>
+                <p>The Reference tab provides regex patterns for extracting IOCs, but as the "Work in Progress" banner
+                    warns, these have some errors. By examining the JavaScript source code, we can find more
+                    complete patterns defined in the <code>commonPatterns</code> object:
+                </p>
+                <div class="code-block">
+                    <div class="code-title">JavaScript - main.js line 135</div>
+                    <pre><code class="language-javascript">const commonPatterns = {
+    domains: "[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)+",
+    ips: "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b",
+    urls: "https?://[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)+(:[0-9]+)?(/[^\\s]*)?",
+    emails: "\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\\b"
+};</code></pre>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>IOC Type</th>
+                            <th>Reference Tab Pattern</th>
+                            <th>From main.js, commonPatterns</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Domains</td>
+                            <td><code>[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+</code></td>
+                            <td><code>[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+</code></td>
+                        </tr>
+                        <tr>
+                            <td>IPs</td>
+                            <td><code>\d{1,3}\.\d{1,3}\.\d{1,3}</code></td>
+                            <td><code><span class="redbox">\b</span>\d{1,3}\.\d{1,3}\.\d{1,3}<span class="redbox">\.\d{1,3}\b</span></code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>URLs</td>
+                            <td><code>http://[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:[0-9]+)?(/[^\s]*)?</code></td>
+                            <td><code>http<span class="redbox">s?</span>//[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:[0-9]+)?(/[^\s]*)?</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Emails</td>
+                            <td><code>\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b</code></td>
+                            <td><code>\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>Here's a breakdown of the differences:</p>
+                <ul>
+                    <li>Domains: no change. However, I created this improved one:
+                        <code>[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)<span class="redbox">*\.[a-z]{2,}</span></code>. It requires
+                        a valid TLD (top-level
+                        domain) of at least 2 lowercase letters, which significantly reduces false positives by avoiding
+                        matches on strings like version numbers or partial hostnames.
+                    </li>
+                    <li>IPs: Missing octet and word boundaries added.</li>
+                    <li>URLs: added <code>s?</code> to add matching on https.</li>
+                    <li>Emails: no change.</li>
+                </ul>
+            </section>
+
+            <!-- Removing False Positives -->
+            <section>
+                <h2>Removing False Positives</h2>
+                <p>
+                    We use the updated patterns and extract IOCs. Then we need to manually remove legitimate assets that
+                    belong to the victim
+                    organization. These are not malicious indicators. They're the target of the phishing attack, not the
+                    source.
+                </p>
+
+                <img src="images/a1c2_rm_falsepos.png" alt="Domain regex and false positive removals">
+                <p>Domains to Remove</p>
+
+                <ul>
+                    <li><code>dosisneighborhood.corp</code> — The victim's internal domain</li>
+                    <li><code>renovation-planner.exe</code> — Not a domain. This is a filename incorrectly matched
+                        because it
+                        contains a dot</li>
+                </ul>
+
+                <p>IPs to Remove</p>
+
+                <ul>
+                    <li><code>10.0.0.5</code> — The victim's internal mail server</li>
+                </ul>
+
+                <p>URLs to Remove</p>
+                <p>None — all extracted URLs point to the attacker's infrastructure</p>
+                <p>Emails to Remove</p>
+
+                <ul>
+                    <li><code>residents@dosisneighborhood.corp</code> — The victim's email address (recipient of the
+                        phishing email)
+                    </li>
+                    <li><code>holiday2025-kitchen@dosisneighborhood.corp</code> — Not a real email; this is the
+                        Message-ID header, a
+                        unique identifier for the email</li>
+                </ul>
+                
+            </section>
+
+            <!-- Defanging IOCs with SED Commands -->
+            <section>
+                <h2>Defanging IOCs with SED Commands</h2>
+                <p>Once we've extracted and cleaned our IOCs, we need to "defang" them (neutralizing malicious
+                    indicators so they can't be accidentally clicked or executed). The challenge provides quick-defang
+                    buttons for individual transformations:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Button</th>
+                            <th>SED Command</th>
+                            <th>Transformation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>. → [.]</td>
+                            <td><code>s/\./[.]/g</code></td>
+                            <td>Replaces dots with <code>[.]</code></td>
+                        </tr>
+                        <tr>
+                            <td>@ → [@]</td>
+                            <td><code>s/@/[@]/g</code></td>
+                            <td>Replaces @ symbols with <code>[@]</code></td>
+                        </tr>
+                        <tr>
+                            <td>HTTP → HXXP</td>
+                            <td><code>s/http/hxxp/g</code></td>
+                            <td>Replaces http with hxxp</td>
+                        </tr>
+                        <tr>
+                            <td>:// → [://]</td>
+                            <td><code>s/:\/\//[://]/g</code></td>
+                            <td>Replaces :// with <code>[://]</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>The interface allows chaining multiple SED commands by separating them with semicolons, but
+                    it's a lot of copying and pasting. Rather than
+                    clicking each button individually, we can apply all defanging rules in a single command:</p>
+                <code>s/\./[.]/g; s/@/[@]/g; s/http/hxxp/g; s/:\/\//[://]/g</code>
+                <p>Enter this in the "Custom SED Command(s)" field and click Apply to defang all IOCs at once.
+                    Finally, click the
+                    "Send to Security Team button" to complete the challenge.</p>
+                <img src="images/a1c2_fin.png" alt="Finish Screen">
+
+            </section>
+
+            <!-- Enabling Hidden Features with JavaScript-->
+            <section>
+                <h2>Alternate Solution: Enabling Hidden Features with JavaScript</h2>
+                <p>While the manual approach works, we can streamline the process by enabling the application's hidden
+                    functionality. The JavaScript source reveals two useful features that aren't fully implemented in
+                    the UI:</p>
+
+                <ul>
+                    <li>Extract Common — Applies working regex patterns and extracts all IOC types. </li>
+                    <li>Apply All Defanging — Marked as "WIP" but fully functional in the code </li>
+                </ul>
+
+
+                <h3>Streamlined Workflow</h3>
+                <ol>
+                    <li>Run 1st set of commands in Dev Tools console to use the common patterns and my enhanced one for
+                        domains.
+                        Then click newly added green "EXTRACT COMMON" button.
+                        <div class="code-block">
+                            <div class="code-title">JavaScript - Command Set 1: Add Extract Common button</div>
+                            <pre><code class="language-javascript">commonPatterns.domains = "[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.[a-z]{2,}";
+const extractBtn = document.createElement('button'); extractBtn.id = 'extract-common';
+extractBtn.className = 'action-button secondary-button'; 
+extractBtn.innerHTML = '&lt;i class="fas fa-magic"&gt;&lt;/i&gt; Extract Common';
+document.querySelector('.pattern-info-box').after(extractBtn);
+initialize();        
+</code></pre><img src="images/a1c2_extract_common.png" alt="Extract common button">
+                        </div>
+
+                    </li>
+                    <li>Manually delete false positives (see list above). <img src="images/a1c2_alt1_2.png" alt=""></li>
+                    <li>While in the Defang and Report tab, run the 2nd set of commands in Dev Tools console
+                        to disable the WIP (work in progress) button and
+                        enable the defang all button. Click the "APPLY ALL DEFANGING" button.
+                        <div class="code-block">
+                            <div class="code-title">JavaScript - Command Set 2: Enable Apply All Defanging button</div>
+                            <pre><code class="language-javascript">document.getElementById('defang-standard').classList.remove('wip-button');
+document.getElementById('defang-standard').onclick = applyStandardDefanging;</code></pre>
+                        </div><img src="images/a1c2_defang_all.png" alt="Apply All Defanging">
+                    </li>
+                    <li>Click the "Send to Security Team button" to complete the challenge.</li>
+                </ol>
+            </section>
+
+
+            <!-- Appendix Section -->
+            <section class="technical-appendix">
+
+                <!-- Challenge Reference Material -->
+                <div class="deep-dive-topic">
+                    <h3>Challenge Reference Material</h3>
+                    <h4>Challenge Descriptions</h4>
+                    <h5>Classic Mode Description</h5>
+                    <p> Find Ed Skoudis upstairs in City Hall and help him troubleshoot a clever phishing tool in his
+                        cozy office.</p>
+                    <h5>CTF Mode Description</h5>
+                    <p> Oh gosh, I could talk for hours about this stuff but I really need your help! The team has been
+                        working on this new SOC tool that helps triage phishing emails...and there are some...issues. We
+                        have had some pretty sketchy emails coming through and we need to make sure we block ALL of the
+                        indicators of compromise. Can you help me? No pressure...</p>
+
+                    <h4>Official Hints</h4>
+                    <ul>
+                        <li>Remember, the new Phishing Threat Analysis Station (PTAS) is still under construction. Even
+                            though the regex patterns are provided, they haven't been fine tuned. Some of the matches
+                            may
+                            need to be manually removed.</li>
+                        <li>The PTAS does a pretty good job at defanging, however, the feature we are still working on
+                            is
+                            one that defangs ALL scenarios. For now, you will need to write a custom <code>sed</code>
+                            command combining
+                            all defang options.</li>
+                    </ul>
+                </div>
+            </section>
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT END                         -->
+            <!-- ============================================= -->
+
+            <div class="nav-buttons">
+                <a href="01-orientation.html" class="nav-btn">← Holiday Hack Orientation</a>
+                <footer>
+                    <p>&copy; 2025 James Mar – SANS Holiday Hack Challenge Write-up</p>
+                    <a href="#" class="back-to-top">↑ Back to Top</a>
+                </footer> <a href="03-neighborhood.html" class="nav-btn">Neighborhood Watch Bypass →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spare Key | SANS Holiday Hack 2025</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../../index.html"><img src="../../images/hhc-logo.png" alt="Holiday Hack 2025"
+                    class="sidebar-logo"></a>
+        </div>
+        <div class="nav-section">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Overview</a></li>
+                <li><a href="../../map.html">World Map</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Act 1</h3>
+            <ul class="nav-list">
+                <li><a href="01-orientation.html">1. Holiday Hack Orientation</a></li>
+                <li><a href="02-defang.html">2. It's All About Defang</a></li>
+                <li><a href="03-neighborhood.html">3. Neighborhood Watch Bypass</a></li>
+                <li><a href="04-gift-tracking.html">4. Gift-Tracking Port Mystery</a></li>
+                <li><a href="05-visual-network.html">5. Visual Networking Thinger</a></li>
+                <li><a href="06-visual-firewall.html">6. Visual Firewall Thinger</a></li>
+                <li><a href="07-nmap.html">7. Intro to Nmap</a></li>
+                <li><a href="08-blob-storage.html">8. Blob Storage Challenge</a></li>
+                <li><a href="09-spare-key.html" class="active">9. Spare Key</a></li>
+                <li><a href="10-open-door.html">10. The Open Door</a></li>
+                <li><a href="11-owner.html">11. Owner</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 2</h3>
+            <ul class="nav-list">
+                <li><a href="../act2/01-retro.html">1. Retro Recovery</a></li>
+                <li><a href="../act2/02-mail.html">2. Mail Detective</a></li>
+                <li><a href="../act2/03-idorable.html">3. IDORable Bistro</a></li>
+                <li><a href="../act2/04-dosis.html">4. Dosis Network Down</a></li>
+                <li><a href="../act2/05-gnome-identity.html">5. Rogue Gnome Identity Provider</a></li>
+                <li><a href="../act2/06-quantgnome.html">6. Quantgnome Leap</a></li>
+                <li><a href="../act2/07-reverse.html">7. Going in Reverse</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 3</h3>
+            <ul class="nav-list">
+                <li><a href="../act3/01-gnome-tea.html">1. Gnome Tea</a></li>
+                <li><a href="../act3/02-hack-gnome.html">2. Hack-a-Gnome</a></li>
+                <li><a href="../act3/03-snowcat.html">3. Snowcat RCE & Priv Esc</a></li>
+                <li><a href="../act3/04-schrodinger.html">4. Schrödinger's Scope</a></li>
+                <li><a href="../act3/05-snowglobe.html">5. Find & Shutdown Snowglobe</a></li>
+                <li><a href="../act3/06-wire.html">6. On the Wire</a></li>
+                <li><a href="../act3/07-freeski.html">7. FreeSki</a></li>
+                <li><a href="../act3/08-snowblind.html">8. Snowblind Ambush</a></li>
+            </ul>
+        </div>
+
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT START                       -->
+            <!-- ============================================= -->
+
+            <header>
+                <h1>Spare Key</h1>
+                <p class="challenge-meta">Act 1, Challenge 9 | 📍 The Neighborhood (West Side, Frozen Pond) |
+                    Difficulty: ❄️</p>
+                <figure>
+                    <img src="images/a1c9_hero.png" style="display: block; margin: 0 auto;" alt="Goose Barry">
+                    <figcaption>Migrating to the cloud is easy; keeping your keys off the front porch is the hard part.
+                    </figcaption>
+                </figure>
+                <p>In the cloud, a single misconfigured container can quietly expose the keys to the kingdom. This
+                    challenge tasks us with hunting down a careless infrastructure leak in an Azure environment before
+                    the wrong person finds it.</p>
+            </header>
+
+            <!-- Scenario Overview -->
+            <section>
+                <h2>Challenge Overview</h2>
+                <p>The Neighborhood HOA has deployed a static website on Azure Storage for their community.
+                    Unfortunately, an administrator made a critical error by uploading an infrastructure configuration
+                    file alongside the public web content. We must identify this leak using the Azure CLI to secure the
+                    tenant.</p>
+            </section>
+
+            <!-- 1. Surveying the Landscape-->
+            <section>
+                <h2>1. Surveying the Landscape</h2>
+                <blockquote>
+                    🎄 Welcome to the Spare Key! 🎄<br>
+                    You're connected to a read-only Azure CLI session in "The Neighborhood" tenant.<br>
+                    Your mission: Someone left a spare key out in the open. Find WHERE it is.<br>
+                    Connecting you now... ❄️<br>
+                    <br>
+                    Let's start by listing all resource groups<br>
+                    $ az group list -o table<br>
+                    This will show all resource groups in a readable table format.
+                </blockquote>
+                <p>
+                    We begin with a read-only Azure CLI session. The first step in any cloud assessment is establishing
+                    situational awareness. We list the resource groups to understand the tenant structure.
+                </p>
+                <div class="code-block">
+                    <div class="code-title">Azure CLI</div>
+                    <pre>neighbor@585e2adb8f69:~$ <span class="user-input">az group list -o table</span>
+Name                 Location    ProvisioningState
+-------------------  ----------  -------------------
+rg-the-neighborhood  eastus      Succeeded
+rg-hoa-maintenance   eastus      Succeeded
+rg-hoa-clubhouse     eastus      Succeeded
+rg-hoa-security      eastus      Succeeded
+rg-hoa-landscaping   eastus      Succeeded
+    </pre>
+                </div>
+            </section>
+
+
+            <!-- 2. Locating the Storage Assets -->
+            <section>
+                <h2>2. Locating the Storage Assets</h2>
+                <blockquote>
+                    Now let's find storage accounts in the neighborhood resource group 📦<br>
+                    $ az storage account list --resource-group rg-the-neighborhood -o table<br>
+                    This shows what storage accounts exist and their types.
+                </blockquote>
+                <p>
+
+                    The scenario hint points toward a website. In Azure, static websites are often hosted within Storage
+                    Accounts. We target rg-the-neighborhood to list the storage accounts contained within.
+
+                </p>
+                <div class="code-block">
+                    <div class="code-title">Azure CLI</div>
+                    <pre>neighbor@585e2adb8f69:~$ <span class="user-input">az storage account list --resource-group rg-the-neighborhood -o table</span>
+Name             Kind         Location    ResourceGroup        ProvisioningState
+---------------  -----------  ----------  -------------------  -------------------
+neighborhoodhoa  StorageV2    eastus      rg-the-neighborhood  Succeeded
+hoamaintenance   StorageV2    eastus      rg-hoa-maintenance   Succeeded
+hoaclubhouse     StorageV2    eastus      rg-hoa-clubhouse     Succeeded
+hoasecurity      BlobStorage  eastus      rg-hoa-security      Succeeded
+hoalandscaping   StorageV2    eastus      rg-hoa-landscaping   Succeeded    
+    </pre>
+                </div>
+
+            </section>
+
+
+            <!-- 3. Identifying the Static Website -->
+            <section>
+                <h2>3. Identifying the Static Website</h2>
+                <blockquote>
+                    Someone mentioned there was a website in here.<br>
+                    maybe a static website?<br>
+                    try:$ az storage blob service-properties show --account-name &lt;insert_account_name&gt; --auth-mode login
+                </blockquote>
+                <p>
+                    We need to confirm if neighborhoodhoa is configured to serve web content. We query the service
+                    properties to check if the static website feature is enabled. The 404.html and index.html properties
+                    indicate that it is indeed configured for static website hosting.
+                </p>
+                <div class="code-block">
+                    <div class="code-title">Azure CLI</div>
+                    <pre>neighbor@585e2adb8f69:~$ <span class="user-input">az storage blob service-properties show --account-name neighborhoodhoa --auth-mode login</span>
+{
+  "enabled": true,
+  "errorDocument404Path": "404.html",
+  "indexDocument": "index.html"
+}</pre>
+                </div>
+
+            </section>
+
+
+            <!-- 4. Enumerating Containers -->
+            <section>
+                <h2>4. Enumerating Containers</h2>
+                <blockquote>
+                    Let's see what 📦 containers exist in the storage account<br>
+                    💡 Hint: You will need to use az storage container list<br>
+                    We want to list the container and its public access levels.
+                </blockquote>
+                <p>
+                    With the static site confirmed, we list the containers. Azure static websites automatically use a
+                    specific container named <code>$web</code> to host content. We check the containers and their public
+                    access
+                    levels.
+                </p>
+                <div class="code-block">
+                    <div class="code-title">Azure CLI</div>
+                    <pre>neighbor@585e2adb8f69:~$ <span class="user-input">az storage container list --account-name neighborhoodhoa --auth-mode login</span>
+[
+  {
+    "name": "$web",
+    "properties": {
+      "lastModified": "2025-09-20T10:30:00Z",
+      "publicAccess": null
+    }
+  },
+  {
+    "name": "public",
+    "properties": {
+      "lastModified": "2025-09-15T14:20:00Z",
+      "publicAccess": "Blob"
+    }
+  }
+]</pre>
+                </div>
+
+            </section>
+
+
+            <!-- 5. Hunting for Anomalies -->
+            <section>
+                <h2>5. Hunting for Anomalies</h2>
+                <blockquote>
+                    Examine what files are in the static website container<br>
+                    💡 hint: when using --container-name you might need '&lt;name&gt;'<br>
+                        Look 👀 for any files that shouldn't be publicly accessible!
+                </blockquote>
+                <p>
+                    We examine the contents of the <code>$web</code> container. While we expect HTML files, we are
+                    looking for
+                    anything that looks like an infrastructure configuration file that was uploaded by mistake. The
+                    presence of a file named <code>iac/terraform.tfvars</code> is a red flag, as it contains sensitive
+                    configuration details. It should never be in a public web directory.
+                </p>
+                <div class="code-block">
+                    <div class="code-title">Azure CLI</div>
+                    <pre>neighbor@585e2adb8f69:~$ <span class="user-input">az storage blob list --account-name neighborhoodhoa --container-name '$web' --auth-mode login</span>
+[
+  {
+    "name": "index.html",
+    "properties": {
+      "contentLength": 512,
+      "contentType": "text/html",
+      "metadata": {
+        "source": "hoa-website"
+      }
+    }
+  },
+  {
+    "name": "about.html",
+    "properties": {
+      "contentLength": 384,
+      "contentType": "text/html",
+      "metadata": {
+        "source": "hoa-website"
+      }
+    }
+  },
+  {
+    "name": "iac/terraform.tfvars",
+    "properties": {
+      "contentLength": 1024,
+      "contentType": "text/plain",
+      "metadata": {
+        <span class="redbox">"WARNING": "LEAKED_SECRETS"</span>
+      }
+    }
+  }
+]</pre>
+                </div>
+
+            </section>
+
+            <!-- 6. Exfiltrating the Secret -->
+            <section>
+                <h2>6. Exfiltrating the Secret</h2>
+                <blockquote>
+                    Take a look at the files here, what stands out?<br>
+                    Try examining a suspect file 🕵️:<br>
+                    💡 hint: --file /dev/stdout | less will print to your terminal 💻.
+                </blockquote>
+                <p>
+                    We download the suspicious Terraform file to inspect its contents.
+                    Inside the file, we find the "Spare Key" we were looking for.</p>
+                <!-- warning box -->
+                <div class="warning-box">
+                    <strong>Warning:</strong> A specific section reveals a hardcoded
+                    SAS token with an incredibly unsafe expiration date. This token grants full access to the storage
+                    account and is valid until January 1, 2100. This is a critical security vulnerability that must be
+                    reported immediately.
+                </div>
+
+                <div class="code-block">
+                    <div class="code-title">Azure CLI</div>
+                    <pre>neighbor@585e2adb8f69:~$ <span class="user-input">az storage blob download --account-name neighborhoodhoa --container-name '$web' --name 'iac/terraform.tfvars' --file /dev/stdout --auth-mode login | less</span>
+# Terraform Variables for HOA Website Deployment
+# Application: Neighborhood HOA Service Request Portal  
+# Environment: Production
+# Last Updated: 2025-09-20
+<span class="redbox"># DO NOT COMMIT TO PUBLIC REPOS</span>
+
+# === Application Configuration ===
+app_name = "hoa-service-portal"
+app_version = "2.1.4"
+environment = "production"
+
+# === Database Configuration ===
+database_server = "sql-neighborhoodhoa.database.windows.net"
+database_name = "hoa_requests"
+database_username = "hoa_app_user"
+# Using Key Vault reference for security
+database_password_vault_ref = "@Microsoft.KeyVault(SecretUri=https://kv-neighborhoodhoa-prod.vault.azure.net/secrets/db-password/)"
+
+# === Storage Configuration for File Uploads ===
+storage_account = "neighborhoodhoa"
+uploads_container = "resident-uploads"
+documents_container = "hoa-documents"
+
+# TEMPORARY: Direct storage access for migration script
+# WARNING: Remove after data migration to new storage account
+<span class="redbox"># This SAS token provides full access - HIGHLY SENSITIVE!</span>
+<span class="redbox">migration_sas_token = "sv=2023-11-03&ss=b&srt=co&sp=rlacwdx&se=2100-01-01T00:00:00Z&spr=https&sig=1djO1Q%2Bv0wIh7mYi3n%2F7r1d%2F9u9H%2F5%2BQxw8o2i9QMQc%3D"</span>
+
+# === Email Service Configuration ===
+# Using Key Vault for sensitive email credentials
+sendgrid_api_key_vault_ref = "@Microsoft.KeyVault(SecretUri=https://kv-neighborhoodhoa-prod.vault.azure.net/secrets/sendgrid-key/)"
+from_email = "noreply@theneighborhood.com" 
+admin_email = "admin@theneighborhood.com"
+
+# === Application Settings ===
+session_timeout_minutes = 60
+max_file_upload_mb = 10
+allowed_file_types = ["pdf", "jpg", "jpeg", "png", "doc", "docx"]
+
+# === Feature Flags ===
+enable_online_payments = true
+enable_maintenance_requests = true
+enable_document_portal = false
+enable_resident_directory = true
+
+# === API Keys (Key Vault References) ===
+maps_api_key_vault_ref = "@Microsoft.KeyVault(SecretUri=https://kv-neighborhoodhoa-prod.vault.azure.net/secrets/maps-api-key/)"
+weather_api_key_vault_ref = "@Microsoft.KeyVault(SecretUri=https://kv-neighborhoodhoa-prod.vault.azure.net/secrets/weather-api-key/)"
+
+# === Notification Settings (Key Vault References) ===
+sms_service_vault_ref = "@Microsoft.KeyVault(SecretUri=https://kv-neighborhoodhoa-prod.vault.azure.net/secrets/sms-credentials/)"
+notification_webhook_vault_ref = "@Microsoft.KeyVault(SecretUri=https://kv-neighborhoodhoa-prod.vault.azure.net/secrets/slack-webhook/)"
+
+# === Deployment Configuration ===
+deploy_static_files_to_cdn = true
+cdn_profile = "hoa-cdn-prod"
+cache_duration_hours = 24
+
+# Backup schedule
+backup_frequency = "daily"
+backup_retention_days = 30
+{
+  "downloaded": true,
+  "file": "/dev/stdout"
+}</pre>
+                </div>
+            </section>
+
+            <!-- Appendix Section -->
+            <section class="technical-appendix">
+ 
+                <!-- Challenge Reference Material -->
+                <div class="deep-dive-topic">
+                    <h3>Challenge Reference Material</h3>
+                    <h4>Challenge Descriptions</h4>
+                    <h5>Classic Mode Description</h5>
+                    <p> Help Goose Barry near the pond identify which identity has been granted excessive Owner
+                        permissions at the subscription level, violating the principle of least privilege.</p>
+                    <h5>CTF Mode Description</h5>
+                    <p> The Neighborhood HOA hosts a static website on Azure Storage. An admin accidentally uploaded an
+                        infrastructure config file that contains a long-lived SAS token. Use Azure CLI to find the leak
+                        and report exactly where it lives.</p>
+                    <h4>Official Hints</h4>
+                    <ul>
+                        <li>This terminal has built-in hints!</li>
+                    </ul>
+                </div>
+            </section>
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT END                         -->
+            <!-- ============================================= -->
+
+            <div class="nav-buttons">
+                <a href="08-blob-storage.html" class="nav-btn">← Blob Storage Challenge</a>
+                <footer>
+                    <p>&copy; 2025 James Mar – SANS Holiday Hack Challenge Write-up</p>
+                    <a href="#" class="back-to-top">↑ Back to Top</a>
+                </footer>
+                <a href="10-open-door.html" class="nav-btn">The Open Door →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+
+</html>

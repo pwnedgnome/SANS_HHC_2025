@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDORable Bistro | SANS Holiday Hack 2025</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../../index.html"><img src="../../images/hhc-logo.png" alt="Holiday Hack 2025"
+                    class="sidebar-logo"></a>
+        </div>
+        <div class="nav-section">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Overview</a></li>
+                <li><a href="../../map.html">World Map</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Act 1</h3>
+            <ul class="nav-list">
+                <li><a href="../act1/01-orientation.html">1. Holiday Hack Orientation</a></li>
+                <li><a href="../act1/02-defang.html">2. It's All About Defang</a></li>
+                <li><a href="../act1/03-neighborhood.html">3. Neighborhood Watch Bypass</a></li>
+                <li><a href="../act1/04-gift-tracking.html">4. Gift-Tracking Port Mystery</a></li>
+                <li><a href="../act1/05-visual-network.html">5. Visual Networking Thinger</a></li>
+                <li><a href="../act1/06-visual-firewall.html">6. Visual Firewall Thinger</a></li>
+                <li><a href="../act1/07-nmap.html">7. Intro to Nmap</a></li>
+                <li><a href="../act1/08-blob-storage.html">8. Blob Storage Challenge</a></li>
+                <li><a href="../act1/09-spare-key.html">9. Spare Key</a></li>
+                <li><a href="../act1/10-open-door.html">10. The Open Door</a></li>
+                <li><a href="../act1/11-owner.html">11. Owner</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 2</h3>
+            <ul class="nav-list">
+                <li><a href="01-retro.html">1. Retro Recovery</a></li>
+                <li><a href="02-mail.html">2. Mail Detective</a></li>
+                <li><a href="03-idorable.html" class="active">3. IDORable Bistro</a></li>
+                <li><a href="04-dosis.html">4. Dosis Network Down</a></li>
+                <li><a href="05-gnome-identity.html">5. Rogue Gnome Identity Provider</a></li>
+                <li><a href="06-quantgnome.html">6. Quantgnome Leap</a></li>
+                <li><a href="07-reverse.html">7. Going in Reverse</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 3</h3>
+            <ul class="nav-list">
+                <li><a href="../act3/01-gnome-tea.html">1. Gnome Tea</a></li>
+                <li><a href="../act3/02-hack-gnome.html">2. Hack-a-Gnome</a></li>
+                <li><a href="../act3/03-snowcat.html">3. Snowcat RCE & Priv Esc</a></li>
+                <li><a href="../act3/04-schrodinger.html">4. Schrödinger's Scope</a></li>
+                <li><a href="../act3/05-snowglobe.html">5. Find & Shutdown Snowglobe</a></li>
+                <li><a href="../act3/06-wire.html">6. On the Wire</a></li>
+                <li><a href="../act3/07-freeski.html">7. FreeSki</a></li>
+                <li><a href="../act3/08-snowblind.html">8. Snowblind Ambush</a></li>
+            </ul>
+        </div>
+
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT START                       -->
+            <!-- ============================================= -->
+
+            <header>
+                <h1>IDORable Bistro</h1>
+                <p class="challenge-meta">Act 2, Challenge 3 | 📍 Sasabune | Difficulty: ❄️❄️</p>
+                <figure>
+                    <img src="images/a2c3_receipt_loc.png" style="display: block; margin: 0 auto;"
+                        alt="Location of Receipt outside Sasabune">
+                    <figcaption>Looks like something was dropped outside. Turns out, it was the entire customer
+                        database.</figcaption>
+                </figure>
+                <p>Discover how a discarded receipt can expose a restaurant's entire order history through an Insecure
+                    Direct Object Reference vulnerability. This challenge demonstrates why sequential database
+                    identifiers in public APIs are a recipe for disaster and how easily they can be manipulated to leak
+                    sensitive customer data.</p>
+            </header>
+
+            <!-- Scenario Overview -->
+            <section>
+                <h2>Challenge Overview</h2>
+                <p>The investigation begins with the <a
+                        href="https://www.holidayhackchallenge.com/2025/assets/receipt.png" target="_blank" rel="noopener noreferrer">image of physical
+                        receipt</a> found outside (see image above) of the
+                    Sasabune restaurant (the name of some
+                    real-world Japanese restaurants). It contained
+                    a QR code for payment. Following this code leads to a digital view of a past order and serves as our
+                    entry point for analyzing the application's data retrieval methods.</p>
+                <img src="images/a2c3_receipt.png" alt="receipt from Sasabune with QR code">
+            </section>
+
+            <!-- Solution Steps -->
+            <section>
+                <h2>Solution Steps</h2>
+                <p>We start by scanning the QR code on the receipt. <a href="https://images.google.com/" target="_blank" rel="noopener noreferrer">Google Image
+                        search</a> allows us to scan the QR code
+                    online without needing a mobile device. You can even use the link to the image so you don't
+                     have to download/upload the file. The QR code decodes to:
+                    <a
+                        href="https://its-idorable.holidayhackchallenge.com/receipt/i9j0k1l2" target="_blank" rel="noopener noreferrer">https://its-idorable.holidayhackchallenge.com/receipt/i9j0k1l2</a>,
+                    which takes us to an online order receipt page.
+                </p><img src="images/a2c3_online_receipt.png" alt="online receipt view after scanning QR code">
+                <p>The HTML source reveals a script that fetches receipt details based on a
+                    receipt ID via an API call to
+                    <code>/api/receipt?id=</code>.
+                </p>
+                <div class="code-block">
+                    <div class="code-title">JavaScript Fetch Script</div>
+                    <pre><code class="language-javascript">// Initial receipt ID
+let receiptId = '103';
+
+// Function to fetch and display receipt details
+function fetchReceiptDetails(id) {
+    // Add a small delay for dramatic effect
+    setTimeout(function() {
+        fetch(`/api/receipt?id=${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Receipt not found');
+                }
+                return response.json();
+            })
+</code></pre>
+                </div>
+                <p>By changing the ID parameter in the URL, we can access other
+                    receipts. This is a classic example of an Insecure Direct Object Reference (IDOR) vulnerability,
+                    where sequential IDs allow unauthorized access to data.</p>
+                <p>This command uses a loop to send requests for receipt IDs 1 through 200, saving the output to a
+                    file named <code>curl.out</code>. After collecting the data, we can analyze it to find the gnome's
+                    identity.</p>
+
+                <code>seq 1 200 | while read index; do curl -s https://its-idorable.holidayhackchallenge.com/api/receipt?id="$index" >> curl.out; done &</code>
+
+                <p>After
+                    checking various IDs, we find that ID 139 corresponds to a customer who requested "frozen sushi,"
+                    the gnome in disguise mentioned in the briefing.
+                </p>
+
+                <div class="code-block">
+                    <div class="code-title">ID 139 Receipt JSON</div>
+                    <pre style="white-space: pre-wrap; word-wrap: break-word;"><code class="language-json">{
+  "customer": "Bartholomew Quibblefrost",
+  "id": 139,
+  "items": [
+    {
+      "name": "Frozen Roll (waitress improvised: sorbet, a hint of dry ice)",
+      "price": 19.0
+    }
+  ],
+  "note": "Insisted on increasingly bizarre rolls and demanded one be served frozen. The waitress invented a 'Frozen Roll' on the spot with sorbet and a puff of theatrical smoke. He nodded solemnly and asked if we could make these in bulk.",
+  "paid": true,
+  "table": 14,
+  "total": 19.0
+}</code></pre>
+                </div>
+
+                <div class="flag">🚩 <strong>Flag:</strong> Bartholomew Quibblefrost</div>
+
+            </section>
+
+            <!--  -->
+            <section>
+                <details>
+                    <summary>Easter Egg: Fun NPC References in the Receipt Database</summary>
+                    <p>While exploring the receipt database, you might notice some amusing references hidden within the
+                        customer names, items, and notes. These are nods to real-world individuals and pop culture,
+                        adding a layer of humor to the challenge. Here are a few highlights:</p>
+
+                    <h2>The Real-World Creators (Cameos)</h2>
+                    <p>Many of these customers are real people, specifically the SANS instructors and Counter Hack team
+                    members who build this game every year. The "items" and "notes" reference their real-life personas
+                    or specialties.</p>
+
+                    <ul>
+                        <li>ID 107: Ed Skoudis (Founder of Holiday Hack Challenge)
+                            <ul>
+                                <li>Items: "Penetration Test Platter," "Fedora-Brim Bento."</li>
+                                <li>Note: Mentions his "classic fedora" (he always wears one).</li>
+                            </ul>
+                        </li>
+                        <li>ID 108: Joshua Wright (SANS Author/Instructor)
+                            <ul>
+                                <li>Items: "Wireless Wonton Soup," "De-auth Dragon Roll."</li>
+                                <li>Note: Mentions a Flipper Zero and "rick-rolling." Josh is famous for his wireless
+                                    security research (KillerBee, etc.).</li>
+                            </ul>
+                        </li>
+                        <li>ID 116: Evan Booth (The "MacGyver" of InfoSec)
+                            <ul>
+                                <li>Items: "Deconstructed Dragon Roll."</li>
+                                <li>Note: "Built a fully functional radio transmitter out of a pair of chopsticks." Evan
+                                    is famous for building weapons and tools out of airport terminal gift shop items
+                                    (Terminal Cornucopia).</li>
+                            </ul>
+                        </li>
+                        <li>ID 119: Tom Hessman (Counter Hack Technical Director)
+                            <ul>
+                                <li>Items: "QA Quail Eggs," "Bug Bounty Bento."</li>
+                                <li>Note: "Left a bug report." He leads the technical development of the challenges, so
+                                    he deals with QA and bugs constantly.</li>
+                            </ul>
+                        </li>
+                        <li>ID 117: Chris Elgee (Counter Hack Core Member)
+                            <ul>
+                                <li>Items: "NetWars Nigiri."</li>
+                                <li>Note: References NetWars (the SANS CTF platform he helps run) .</li>
+                            </ul>
+                        </li>
+                        <li>ID 125: David Chen
+                            <ul>
+                                <li>Items: "Rubber Duck Dumplings."</li>
+                                <li>Note: Explaining the wasabi to his duck. This is a reference to "Rubber Duck
+                                    Debugging," where<br /> programmers explain code to a toy duck to find errors.</li>
+                            </ul>
+                        </li>
+                        <li>ID 112: Mark Devito<br />
+                            <ul>
+                                <li>Items: "COBOL-Cured Salmon."</li>
+                                <li>Note: Complaining the menu wasn't in Fortran. A joke about legacy mainframe
+                                    programming.</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h2>Pop and SANS HHC Culture</h2>
+                    <ul>
+                        <li>ID 149: Thomas Anderson (Neo from The Matrix)
+                            <ul>
+                                <li>Items: "The Matrix Maki," "The One Onigiri."</li>
+                                <li>Note: Asking if he is in a simulation.</li>
+                            </ul>
+                        </li>
+                        <li>ID 101: Duke Dosis</li>
+                        <ul>
+                            <li>Note: Claims his pet rock is a "certified sushi-grade emotional support animal."</li>
+                            <li>Duke Dosis is a recurring NPC in the Holiday Hack lore (often associated with the
+                                "Dosis" family/corporation).</li>
+                        </ul>
+                    </ul>
+
+
+                    
+                </details>
+            </section>
+
+
+            <h2>Side Note: The Illusion of Security</h2>
+            <p>Beyond finding the gnome, I analyzed the URL obfuscation scheme to understand why the developers thought
+                the system was secure. The URL slug <code>i9j0k1l2</code> (Receipt 103) follows a predictable
+                interleaved pattern:</p>
+            <ul>
+                <li><strong>Receipt 101:</strong> <code>a1b2c3d4</code> (Indices 1, 2, 3, 4)</li>
+                <li><strong>Receipt 102:</strong> <code>e5f6g7h8</code> (Indices 5, 6, 7, 8)</li>
+                <li><strong>Receipt 103:</strong> <code>i9j0k1l2</code> (Indices 9, 10, 11, 12)</li>
+            </ul>
+            <p>Based on this pattern, the URL for Receipt 104 should be <code>m3n4o5p6</code>. However, navigating to
+                <code>/receipt/m3n4o5p6</code> results in a 404 error, while querying the API directly for
+                <code>id=104</code> returns valid data.</p>
+
+            <p><strong>Significance:</strong> This discrepancy proves that the web frontend relies on a restricted
+                routing table (Security through Obscurity) where only specific "public" receipts are given valid URLs.
+                However, the backend API lacks any authorization controls, allowing direct access to the entire database
+                via simple integer enumeration regardless of whether a public URL exists.</p>
+
+
+            <!-- Appendix Section -->
+            <section class="technical-appendix">
+
+                <!-- Challenge Reference Material -->
+                <div class="deep-dive-topic">
+                    <h3>Challenge Reference Material</h3>
+                    <h4>Challenge Descriptions</h4>
+                    <h5>Classic Mode Description</h5>
+                    <p> Josh has a tasty IDOR treat for you—stop by Sasabune for a bite of vulnerability. What is the
+                        name of the gnome?</p>
+                    <h5>CTF Mode Description</h5>
+                    <p> I need your help with something urgent. A gnome came through Sasabune today, poorly disguising
+                        itself as human - apparently asking for frozen sushi, which is almost as terrible as that fusion
+                        disaster I had to endure that one time. Based on my previous work finding IDOR bugs in
+                        restaurant payment systems, I suspect we can exploit a similar vulnerability here. I was [at a
+                        talk recently]( <a
+                            href="https://www.youtube.com/watch?v=hzrhtHrhwno" target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v=hzrhtHrhwno</a>)
+                        and learned some interesting things
+                        about some of these payment systems. Let's use that receipt to dig deeper and unmask this
+                        gnome's true identity.</p>
+                    <h4>Official Hints</h4>
+                    <ul>
+                        <li>I have been seeing a lot of receipts lying around with some kind of QR code on them. I am
+                            pretty sure they are for Duke Dosis's Holiday Bistro. Interesting...see you if you can find
+                            one and see what they are all about...</li>
+                        <li>Sometimes...developers put in a lot of effort to anonymyze information by using randomly
+                            generated identifiers...but...there are also times where the "real" ID is used in a separate
+                            Network request...</li>
+                        <li>I had tried to scan one of the QR codes and it took me to somebody's meal receipt! I am
+                            afraid somebody could look up anyone's meal if they have the correct ID...in the correct
+                            place.</li>
+                    </ul>
+                </div>
+            </section>
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT END                         -->
+            <!-- ============================================= -->
+
+            <div class="nav-buttons">
+                <a href="02-mail.html" class="nav-btn">← Mail Detective</a>
+                <footer>
+                    <p>&copy; 2025 James Mar – SANS Holiday Hack Challenge Write-up</p>
+                    <a href="#" class="back-to-top">↑ Back to Top</a>
+                </footer>
+                <a href="04-dosis.html" class="nav-btn">Dosis Network Down →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+
+</html>
