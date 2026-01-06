@@ -153,6 +153,7 @@ h1 {
     font-size: 2.5em;
     color: #58a6ff;
     font-weight: 600;
+    text-align: center;
 }
 
 h2 {
@@ -323,14 +324,14 @@ img {
     max-width: 100%;
     height: auto;
     border-radius: 6px;
-    border: 1px solid #30363d;
+    /* border: 1px solid #30363d; */
     margin: 16px 0;
     display: block;
 }
 
 /* ===== Image Captions ===== */
 .caption {
-    text-align: center;
+    /* text-align: center; */
     color: #8b949e;
     font-size: 0.875em;
     font-style: italic;
@@ -409,16 +410,16 @@ section {
 
 header {
     /* text-align: center; */
-    padding: 40px 20px;
-    margin-bottom: 40px;
-    border-bottom: 2px solid #30363d;
+    padding: 10px 20px;
+    /* margin-bottom: 40px; */
+    /* border-bottom: 2px solid #30363d; */
 }
 
 footer {
     text-align: center;
-    padding: 40px 20px;
-    margin-top: 60px;
-    border-top: 1px solid #30363d;
+    /* padding: 40px 20px; */
+    /* margin-top: 60px; */
+    /* border-top: 1px solid #30363d; */
     color: #8b949e;
     font-size: 0.9em;
 }
@@ -742,4 +743,96 @@ pre.code-wrap code {
 
 .yellowbox {
     border: 1px solid yellow;
+}
+
+/* ===== Add to style.css - Reusable Classes ===== */
+
+/* Muted text helper */
+.muted {
+    color: #8b949e;
+    font-size: 0.9em;
+}
+
+/* Bit value colors for technical tables */
+.bit-zero, .long { color: #f85149; }
+.bit-one, .short { color: #3fb950; }
+
+/* Step-by-step conversion/walkthrough */
+.conversion-steps {
+    margin: 16px 0;
+}
+
+.step {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: #0d1117;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    align-items: flex-start;
+}
+
+.step .step-number {
+    min-width: 28px;
+    margin-right: 0;
+}
+
+.step-content {
+    flex: 1;
+}
+
+/* Technical Appendix Section */
+.technical-appendix {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 2px solid #30363d;
+}
+
+.technical-appendix-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.technical-appendix-header h2 {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 8px;
+}
+
+.technical-appendix-header p {
+    color: #8b949e;
+}
+
+.deep-dive-topic {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px;
+    margin: 24px 0;
+}
+
+.deep-dive-topic h3 {
+    margin-top: 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #30363d;
+}
+
+.deep-dive-topic h4 {
+    color: #58a6ff;
+}
+
+.meta {
+  font-size: 0.85rem;
+  color: #8b949e;
+  font-style: italic;
+  margin-top: 0.75rem;
+}
+
+.inevitable {
+  margin-top: 1rem;
+  padding-left: 1rem;
+  border-left: 3px solid #7ee787;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  color: #e6edf3;
 }

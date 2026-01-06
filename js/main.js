@@ -9,3 +9,17 @@ document.addEventListener('DOMContentLoaded', function() {
         hljs.highlightAll();
     }
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Find the sidebar and the active link
+    const sidebar = document.getElementById('sidebar');
+    const activeLink = sidebar.querySelector('.active');
+
+    // 2. If an active link exists, scroll it into view
+    if (activeLink) {
+        activeLink.scrollIntoView({
+            block: 'center', // Centers the item in the sidebar
+            inline: 'nearest' 
+        });
+    }
+});

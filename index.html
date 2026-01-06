@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SANS Holiday Hack Challenge 2025 - Writeups</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
@@ -15,14 +17,14 @@
         </div>
 
         <div class="nav-section">
-            <h3>📖 Intro</h3>
             <ul class="nav-list">
                 <li><a href="index.html" class="active">Overview</a></li>
+                <li><a href="map.html">World Map</a></li>
             </ul>
         </div>
 
         <div class="nav-section">
-            <h3>🎄 Act 1</h3>
+            <h3>Act 1</h3>
             <ul class="nav-list">
                 <li><a href="challenges/act1/01-orientation.html">1. Holiday Hack Orientation</a></li>
                 <li><a href="challenges/act1/02-defang.html">2. It's All About Defang</a></li>
@@ -39,7 +41,7 @@
         </div>
 
         <div class="nav-section">
-            <h3>🎅 Act 2</h3>
+            <h3>Act 2</h3>
             <ul class="nav-list">
                 <li><a href="challenges/act2/01-retro.html">1. Retro Recovery</a></li>
                 <li><a href="challenges/act2/02-mail.html">2. Mail Detective</a></li>
@@ -52,7 +54,7 @@
         </div>
 
         <div class="nav-section">
-            <h3>⛄ Act 3</h3>
+            <h3>Act 3</h3>
             <ul class="nav-list">
                 <li><a href="challenges/act3/01-gnome-tea.html">1. Gnome Tea</a></li>
                 <li><a href="challenges/act3/02-hack-gnome.html">2. Hack-a-Gnome</a></li>
@@ -69,49 +71,77 @@
     <div class="main-content">
         <div class="container">
             <header>
-                <h1>SANS Holiday Hack Challenge 2025</h1>
-                <p class="subtitle">Complete Writeup &amp; Solutions</p>
+                <h1>2025 SANS Holiday Hack Challenge Write-up</h1>
             </header>
 
             <section>
-                <h2>About This Writeup</h2>
-                <p>This is my comprehensive writeup for the SANS Holiday Hack Challenge 2025. Each challenge includes detailed explanations, code samples, and lessons learned.</p>
-                
-                <div class="info-box">
-                    <strong>📊 Progress:</strong> X / 26 challenges completed
+                <p>Welcome to my writeup of the 2025 SANS Holiday Hack Challenge.
+
+                    To keep the content organized and accessible, I've structured beginner-friendly notes and
+                    supplementary information in collapsible sections. I put the challenge descriptions and
+                    official hints at the bottom for reference. Refer to the challenge
+                    map below to locate each challenge's position in the game world.
+                </p>
+                <a href="map.html"><img src="images/2025_hhc_map.png"
+                        alt="Map showing all challenge locations across acts 1, 2, and 3"></a>
+
+            </section>
+            <section>
+                <h2>A Huge Thanks</h2>
+                <p>Each year, I look forward to participating in the SANS Holiday Hack Challenge and sharing my insights
+                    with the community. A big thank you to the organizers, creators, sponsors, and fellow participants who make
+                    this event both challenging and enjoyable. It is the best gift of the season!</p>
+            </section>
+            <section>
+                <h2>Navigation Guide: Map Rotation Controls</h2>
+                <p>The 2025 Holiday Hack Challenge features a new dynamic map rotation system that allows you to view the
+                    game world from multiple angles. This is needed for locating challenges and secret areas obscured
+                    by buildings and structures.
+
+                    Use the <code>Q</code> key to rotate counter-clockwise and the <code>E</code> key to rotate
+                    clockwise. Always reference the north arrow indicator to maintain your sense of direction while
+                    exploring.</p>
+                <img src="images/overview_directions.png" alt="Map rotation controls and directional indicator">
+            </section>
+            <!-- Appendix Section -->
+            <section class="technical-appendix">
+                <div class="technical-appendix-header">
+                    <h2>Technical Deep Dives & Reference</h2>
+                    <p>Detailed protocol specifications and methodology notes for the curious.</p>
+                </div>
+                <!-- SANS Holiday Hack Challenge 2025: A Decade of In-Game Worlds -->
+                <div class="deep-dive-topic">
+                    <h3 id="a">
+                        <sup></sup>SANS Holiday Hack Challenge 2025: A Decade of In-Game Worlds
+                    </h3>
+                    <p>According to Ed Skoudis, while the SANS Holiday Hack Challenge has been running for 22 years,
+                        2025 marks the 10th anniversary of the "in-game world" format where players use avatars to
+                        explore. To celebrate this milestone, the 2025 challenge, titled "Revenge of the Gnomes," serves
+                        as a direct sequel to the 2015 "Gnome in Your Home" storyline.
+
+                        In the original 2015 plot, millions of innocent-looking gnomes were actually malicious IoT
+                        devices using cameras to spy on families for burglars. For the 2025 sequel, those same
+                        gnomes, having gathered dust in attics and basements for a decade, have mysteriously come to
+                        life.
+                        Players must now figure out the nature of their new nefarious plot and identify who is
+                        controlling them as they run amok across town.</p>
+                    <p>References to the 10-year anniversary from the game:</p>
+                    <ul>
+                        <li>Its All About Defang <img src="images/anniv_01.png" alt=""></li>
+                        <li>Gift-Tracking Port Mystery<img src="images/anniv_02.png" alt=""></li>
+                        <li>Find & Shutdown Snowglobe<img src="images/anniv_03.png" alt=""></li>
+                        <li>IDORable Bistro (The Sasabune restaurant) also was in the 2015 SANS HHC <img src="images/anniv_04.png" alt=""></li>
+                    </ul>
                 </div>
             </section>
-
-            <section>
-                <h2>Challenge Summary</h2>
-                
-                <h3>🎄 Act 1 - Getting Started</h3>
-                <p>11 challenges covering orientation, OSINT, networking basics, and initial access techniques.</p>
-                
-                <h3>🎅 Act 2 - Digging Deeper</h3>
-                <p>7 challenges focusing on forensics, web exploitation, and authentication bypass.</p>
-                
-                <h3>⛄ Act 3 - Advanced Attacks</h3>
-                <p>8 challenges involving RCE, privilege escalation, reverse engineering, and hardware hacking.</p>
-            </section>
-
-            <section>
-                <h2>Tools Used</h2>
-                <ul>
-                    <li>Burp Suite</li>
-                    <li>Python</li>
-                    <li>Nmap</li>
-                    <li>Ghidra / IDA</li>
-                    <li>Wireshark</li>
-                </ul>
-            </section>
-
             <footer>
-                <p>Created for SANS Holiday Hack Challenge 2025</p>
+                <p>&copy; 2025 James Mar – SANS Holiday Hack Challenge Write-up</p>
+                <a href="#" class="back-to-top">↑ Back to Top</a>
             </footer>
         </div>
     </div>
 
     <script src="js/main.js"></script>
 </body>
+
 </html>
