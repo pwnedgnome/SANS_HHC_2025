@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On the Wire | SANS Holiday Hack 2025</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+    <style>
+        /* Essential Variables & Fonts */
+        :root {
+            --bg-card: #111827;
+            --border-subtle: #1e293b;
+            --accent-cyan: #06b6d4;
+            --accent-amber: #f59e0b;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-muted: #64748b;
+        }
+
+        /* Container Styling */
+        .signal-diagram {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Title Styling */
+        .diagram-title {
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .diagram-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Diagram Area */
+        .timing-diagram {
+            position: relative;
+            height: 200px;
+            background: #0c1219;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .timing-diagram svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Text Labels inside SVG */
+        .timing-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            fill: var(--text-muted);
+        }
+
+        .timing-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            fill: var(--accent-amber);
+        }
+
+        .bit-annotation {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Animation */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../../index.html"><img src="../../images/hhc-logo.png" alt="Holiday Hack 2025"
+                    class="sidebar-logo"></a>
+        </div>
+        <div class="nav-section">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Overview</a></li>
+                <li><a href="../../map.html">World Map</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Act 1</h3>
+            <ul class="nav-list">
+                <li><a href="../act1/01-orientation.html">1. Holiday Hack Orientation</a></li>
+                <li><a href="../act1/02-defang.html">2. It's All About Defang</a></li>
+                <li><a href="../act1/03-neighborhood.html">3. Neighborhood Watch Bypass</a></li>
+                <li><a href="../act1/04-gift-tracking.html">4. Gift-Tracking Port Mystery</a></li>
+                <li><a href="../act1/05-visual-network.html">5. Visual Networking Thinger</a></li>
+                <li><a href="../act1/06-visual-firewall.html">6. Visual Firewall Thinger</a></li>
+                <li><a href="../act1/07-nmap.html">7. Intro to Nmap</a></li>
+                <li><a href="../act1/08-blob-storage.html">8. Blob Storage Challenge</a></li>
+                <li><a href="../act1/09-spare-key.html">9. Spare Key</a></li>
+                <li><a href="../act1/10-open-door.html">10. The Open Door</a></li>
+                <li><a href="../act1/11-owner.html">11. Owner</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 2</h3>
+            <ul class="nav-list">
+                <li><a href="../act2/01-retro.html">1. Retro Recovery</a></li>
+                <li><a href="../act2/02-mail.html">2. Mail Detective</a></li>
+                <li><a href="../act2/03-idorable.html">3. IDORable Bistro</a></li>
+                <li><a href="../act2/04-dosis.html">4. Dosis Network Down</a></li>
+                <li><a href="../act2/05-gnome-identity.html">5. Rogue Gnome Identity Provider</a></li>
+                <li><a href="../act2/06-quantgnome.html">6. Quantgnome Leap</a></li>
+                <li><a href="../act2/07-reverse.html">7. Going in Reverse</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 3</h3>
+            <ul class="nav-list">
+                <li><a href="01-gnome-tea.html">1. Gnome Tea</a></li>
+                <li><a href="02-hack-gnome.html">2. Hack-a-Gnome</a></li>
+                <li><a href="03-snowcat.html">3. Snowcat RCE & Priv Esc</a></li>
+                <li><a href="04-schrodinger.html">4. Schrödinger's Scope</a></li>
+                <li><a href="05-snowglobe.html">5. Find & Shutdown Snowglobe</a></li>
+                <li><a href="06-wire.html" class="active">6. On the Wire</a></li>
+                <li><a href="07-freeski.html">7. FreeSki</a></li>
+                <li><a href="08-snowblind.html">8. Snowblind Ambush</a></li>
+            </ul>
+        </div>
+
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT START                       -->
+            <!-- ============================================= -->
+
+            <header>
+                <h1>On the Wire</h1>
+                <p class="challenge-meta">Act 3, Challenge 6 | 📍 Evan next to city hall | Difficulty: ❄️❄️❄️❄️</p>
+                <figure>
+                    <img src="images/3_6_onthewire_hero01.png" style="display: block; margin: 0 auto;"
+                        alt="On the wire robot with straight line mouth (looks sad but looks to be holding back from showing it.)">
+                    <figcaption>Cheer up little guy, we'll decode those signals right away.</figcaption>
+                </figure>
+                <p>
+                    Last year's hardware hacking challenge introduced us to UART. This year, we get three new protocols
+                    to learn: <strong>1-Wire</strong>, <strong>SPI</strong>, and <strong>I²C</strong>. Once we
+                    identified the
+                    wire-level encoding rules for each embedded protocol, we decoded captured signals into the chained
+                    keys
+                    and then the final value.
+                </p>
+
+                <!-- Background Info: Embedded Protocol Fundamentals -->
+                <details>
+                    <summary>
+                        Background Info: Embedded Protocols and Wire-Level Analysis
+                    </summary>
+
+                    <p>
+                        UART, SPI, and I²C are often referred to as the “Big Three” embedded protocols,
+                        as they are the most common mechanisms microcontrollers use to communicate
+                        with peripherals and companion chips on a circuit board.
+                    </p>
+
+                    <p>
+                        Unlike networking protocols (e.g., Ethernet, TCP/IP) or peripheral buses
+                        (e.g., USB, PCIe), embedded protocols operate at the wire level, where bits
+                        are physically represented through voltage changes, timing, and clocking
+                        relationships.
+                    </p>
+
+                    <table>
+                        <tr>
+                            <th>Protocol Class</th>
+                            <th>Examples</th>
+                            <th>Typical Use</th>
+                        </tr>
+                        <tr>
+                            <td>Embedded</td>
+                            <td>UART, SPI, I²C, 1-Wire</td>
+                            <td>Chip-to-chip communication on a PCB</td>
+                        </tr>
+                        <tr>
+                            <td>Networking</td>
+                            <td>Ethernet, TCP/IP, WiFi</td>
+                            <td>Device-to-device communication</td>
+                        </tr>
+                        <tr>
+                            <td>Peripheral</td>
+                            <td>USB, HDMI, PCIe</td>
+                            <td>External high-bandwidth interfaces</td>
+                        </tr>
+                    </table>
+
+                    <p>
+                        At this level, analysis consists of capturing electrical signaling and applying
+                        protocol-specific decoding rules to reconstruct bits, bytes, and higher-level
+                        meaning from the observed waveforms.
+                    </p>
+
+                    <p>
+                        While UART, SPI, and I²C are broadly applicable, 1-Wire is more specialized and
+                        relies heavily on precise timing, which makes it both distinctive and instructive
+                        for wire-level analysis.
+                    </p>
+
+                </details>
+
+                <style>
+                    /* Kill Chain Styles - GitHub Dark Theme */
+                    .kill-chain {
+                        background: #161b22;
+                        border: 1px solid #30363d;
+                        border-radius: 12px;
+                        padding: 2rem;
+                        margin: 2rem 0;
+                        position: relative;
+                    }
+
+                    .kill-chain-title {
+                        text-align: center;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 0.75rem;
+                        color: #8b949e;
+                        text-transform: uppercase;
+                        letter-spacing: 0.15em;
+                        margin-bottom: 1.5rem;
+                    }
+
+                    .chain-flow {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.5rem;
+                        flex-wrap: wrap;
+                    }
+
+                    .chain-node {
+                        text-align: center;
+                        padding: 1rem 1.25rem;
+                        border-radius: 8px;
+                        min-width: 130px;
+                        background: #0d1117;
+                        border: 1px solid #30363d;
+                    }
+
+                    .chain-node.flag {
+                        border-color: #f85149;
+                        background: rgba(248, 81, 73, 0.1);
+                    }
+
+                    .node-label {
+                        font-family: 'JetBrains Mono', monospace;
+                        font-weight: 600;
+                        font-size: 0.95rem;
+                        color: #e6edf3;
+                        margin-bottom: 0.4rem;
+                    }
+
+                    .chain-node.flag .node-label {
+                        color: #f85149;
+                    }
+
+                    .node-detail {
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 0.85rem;
+                        color: #7ee787;
+                    }
+
+                    .chain-node.flag .node-detail {
+                        color: #f85149;
+                        font-weight: 700;
+                    }
+
+                    .node-wire {
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 0.7rem;
+                        color: #8b949e;
+                        margin-top: 0.3rem;
+                    }
+
+                    .chain-arrow {
+                        font-size: 1.25rem;
+                        color: #484f58;
+                    }
+                </style>
+
+                <!-- Kill Chain HTML -->
+                <div class="kill-chain">
+                    <div class="kill-chain-title">Protocol Decode Chain</div>
+                    <div class="chain-flow">
+                        <div class="chain-node">
+                            <div class="node-label">1-Wire</div>
+                            <div class="node-detail">→ "icy"</div>
+                            <div class="node-wire">dq</div>
+                        </div>
+                        <div class="chain-arrow">→</div>
+                        <div class="chain-node">
+                            <div class="node-label">SPI</div>
+                            <div class="node-detail">→ "bananza"</div>
+                            <div class="node-wire">sck + mosi</div>
+                        </div>
+                        <div class="chain-arrow">→</div>
+                        <div class="chain-node">
+                            <div class="node-label">I²C</div>
+                            <div class="node-detail">@ 0x3C</div>
+                            <div class="node-wire">scl + sda</div>
+                        </div>
+                        <div class="chain-arrow">→</div>
+                        <div class="chain-node flag">
+                            <div class="node-label">Flag</div>
+                            <div class="node-detail">32.84</div>
+                        </div>
+                    </div>
+                </div>
+
+            </header>
+
+            <!-- Challenge Overview -->
+            <section>
+                <h2>Challenge Overview</h2>
+                <p>Our mission is to decode a series of intercepted hardware signals to retrieve a hidden temperature
+                    reading from a specific sensor. We begin with raw data streams representing three different embedded
+                    protocols—1-Wire, SPI, and I²C—which must be analyzed at the wire level. Solving each layer reveals
+                    the encryption keys required to access the next, ultimately leading us to the target device's
+                    output.</p>
+            </section>
+
+
+            <section>
+                <!-- Obtaining the Signal Data -->
+                <section>
+                    <h3 id="obtain-data">Obtaining and Preparing the Signal Data</h3>
+
+                    <p>
+                        The challenge presents simulated oscilloscope traces for the three embedded
+                        protocols: <strong>1-Wire</strong>, <strong>SPI</strong>, and <strong>I²C</strong>, accessible
+                        via
+                        separate tabs on the challenge interface:
+                    </p>
+
+                    <img src="images/a3c6_oscil01.png"
+                        alt="Challenge interface showing the 1-Wire, SPI, and I2C tabs used to access the signals.">
+
+                    <p>
+                        Rather than manually transcribing waveform timing, the underlying signal data
+                        is streamed to the browser over WebSockets. Capturing this traffic exposes the
+                        raw wire-level transitions required for offline protocol decoding.
+                    </p>
+
+                    <!-- Deep Dive: Data Acquisition and Sanitization -->
+                    <details>
+                        <summary>
+                            Deep Dive: Data Acquisition and Sanitization
+                        </summary>
+                        <p>
+                            The raw signal data used in this challenge is delivered to the browser via WebSockets.
+                            The following notes document the exact capture and extraction process used to obtain
+                            the underlying timing data for offline analysis. The data can be obtained
+                            using your browser's developer tools.
+                        </p>
+                        <details>
+                            <summary>Background Info - WebSocket</summary>
+                            <div class="details-content">
+                                <p>A <a href="https://en.wikipedia.org/wiki/WebSocket" target="_blank"
+                                        rel="noopener noreferrer" target="_blank"
+                                        rel="noopener noreferrer">WebSocket</a> is a computer
+                                    communications protocol, providing a bidirectional communication channel over a
+                                    single
+                                    Transmission Control Protocol (TCP) connection. The WebSocket protocol enables
+                                    full-duplex
+                                    interaction between a web browser and a web server with low overhead, facilitating
+                                    real-time
+                                    data transfer to and from the server. This is achieved by providing a standardized
+                                    way
+                                    for
+                                    the server to send content to the client without being first requested by the
+                                    client,
+                                    and
+                                    allowing messages to be exchanged while keeping the connection open.</p>
+                            </div>
+                        </details>
+
+                        <details>
+                            <summary>Background Info - Developer Tools</summary>
+                            <div class="details-content">
+                                <p>Browser <a
+                                        href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Tools_and_setup/What_are_browser_developer_tools"
+                                        target="_blank" rel="noopener noreferrer">developer
+                                        tools</a> are a suite of tools built into modern web browsers. They help in
+                                    debugging
+                                    and analyzing web pages and applications. Shortcuts: <code>F12</code>;
+                                    <code>Ctrl + Shift + I</code>; <code>Cmd + Option + I</code>;
+                                    <code>right click-Inspect</code>.
+                                </p>
+                            </div>
+                        </details>
+                        <p>From the challenge page, open developer tools and reload the page to get data loaded. Then
+                            click
+                            on each of the protocol tabs and wait for a few seconds to capture the entire session. In
+                            the
+                            <code>Network</code> tab, right click on the WebSocket and select <code>Copy</code>,
+                            <code>Copy all listed as HAR</code>. This saves all the WebSocket data for all three tabs to
+                            the
+                            clipboard for pasting into your favorite text editor to save as a file.
+                        </p>
+                        <img src="images/a3c6_save_har.png" alt="Developer Tools showing saving of WebSocket">
+                        <p>A <a href="https://toolbox.googleapps.com/apps/har_analyzer/" target="_blank"
+                                rel="noopener noreferrer"> HAR (HTTP Archive)</a> is a
+                            file
+                            format used by several HTTP session tools to export the captured data. The data is JSON
+                            formatted and can be parsed using Python.</p>
+                        <details>
+                            <summary>HAR file snippet and Python script to parse it</summary>
+                            <p>Here's the HAR file with the key data extracted looks like:</p>
+                            <div class="code-block">
+                                <div class="code-title">onthewire.har</div>
+                                <pre><code class="language-json">{
+    "log": {
+        "version": "1.2",
+        "entries": [
+        {
+            "_resourceType": "websocket",
+            "_webSocketMessages": [
+            {
+                "type": "receive",
+                "time": 1766686947.1468308,
+                "data": "{\"type\":\"welcome\",\"wire\":\"dq\",\"message\":\"Connected to dq wire...\"}"
+            },
+            {
+                "type": "receive",
+                "time": 1766686948.271657,
+                "data": "{\"line\":\"dq\",\"t\":0,\"v\":1,\"marker\":\"idle\"}"
+            },
+            {
+                "type": "receive",
+                "time": 1766686948.27245,
+                "data": "{\"line\":\"dq\",\"t\":1,\"v\":0,\"marker\":\"reset\"}"
+            },
+            {
+                "type": "receive",
+                "time": 1766686948.2726688,
+                "data": "{\"line\":\"dq\",\"t\":481,\"v\":1}"
+            }
+            ... thousands of more messages ...</code></pre>
+                            </div>
+                            <p>Here's the Python script to parse HAR file into each of the respective protocols:</p>
+                            <div class="code-block">
+                                <div class="code-title">Python - parse_har.py</div>
+                                <pre><code class="language-python">import json
+import sys
+
+# Usage: python3 parse_har.py &lt;file.har&gt; [line_name]
+if len(sys.argv) &lt; 2:
+    print("Usage: python3 parse_har.py &lt;file.har&gt; [line_name]")
+    sys.exit(1)
+
+file_path = sys.argv[1]
+target_line = sys.argv[2] if len(sys.argv) &gt; 2 else "dq"
+
+try:
+    with open(file_path, 'r') as f:
+        har_data = json.load(f)
+
+    # 1. Collect all WebSocket messages
+    entries = har_data.get('log', {}).get('entries', [])
+    ws_messages = []
+    for entry in entries:
+        if entry.get('_resourceType') == 'websocket':
+            ws_messages.extend(entry.get('_webSocketMessages', []))
+
+    if not ws_messages:
+        print("Error: No WebSocket data found.")
+        sys.exit(1)
+
+    # 2. Store unique data points
+    # Using a dictionary keyed by 't' automatically removes duplicates
+    # if the signal loops around.
+    unique_data = {}
+
+    for msg in ws_messages:
+        try:
+            payload = json.loads(msg.get('data'))
+            
+            # Filter by line name
+            if payload.get('line') != target_line:
+                continue
+
+            if 't' in payload and 'v' in payload:
+                t = int(payload['t'])
+                v = int(payload['v'])
+                marker = payload.get('marker', '')
+                
+                # Store it. If 't' repeats, we just overwrite (deduplicate)
+                unique_data[t] = (v, marker)
+                
+        except (json.JSONDecodeError, TypeError, ValueError):
+            continue
+
+    # 3. Sort and Print
+    # This reconstructs the correct order (0 -&gt; End) even if 
+    # the capture started in the middle.
+    sorted_timestamps = sorted(unique_data.keys())
+
+    if not sorted_timestamps:
+        print(f"No data found for line: {target_line}")
+        sys.exit(1)
+
+    for t in sorted_timestamps:
+        v, marker = unique_data[t]
+        print(f"{t},{v},{marker}")
+
+except FileNotFoundError:
+    print(f"Error: File '{file_path}' not found.")
+</code></pre>
+                            </div>
+                        </details>
+                        <p>Here's what the beginning and end of the 1-wire (dq) data looks like. It shows the time and
+                            value
+                            of each signal change:</p>
+                        <div class="code-block">
+                            <div class="code-title">Bash</div>
+                            <pre>% <span class="user-input">python3 parse_har.py onthewire.har dq > onthewire.dq.har.parsed</span>
+
+% <span class="user-input">head -5 onthewire.dq.har.parsed</span>
+0,1,idle
+1,0,reset
+481,1,
+551,0,presence
+701,1,
+
+% <span class="user-input">tail -3 onthewire.dq.har.parsed</span>
+32791,0,
+32851,1,
+32871,1,stop</pre>
+                        </div>
+
+                        <details>
+                            <summary>Alternate Method - Collect WebSocket Data from Burp Suite</summary>
+                            <p>While using Burp Suite as your proxy, you can capture WebSocket messages after sending a
+                                WebSocket to the Repeater. Select one message from the history, then select all by using
+                                control+A or Command+A. Then copy and then paste into your favorite text editor. The
+                                data
+                                here will be in a slightly different format than the HAR file.</p>
+                            <img src="images/a3c6_burp.png" alt="Burp Suite WebSocket Capture">
+
+                        </details>
+
+                    </details>
+
+                </section>
+
+                <!-- Decoding the 1-Wire Signal -->
+                <section>
+                    <h3 id="1wire">Decoding the 1-Wire Signal</h3>
+                    <p>
+                        The 1-Wire protocol encodes data through precise timing on a single bidirectional
+                        data line (<code>dq</code>). The bus idles HIGH, while data is transmitted by pulling
+                        the line LOW for a defined interval. Short low pulses represent logical <code>1</code>,
+                        and longer low pulses represent logical <code>0</code>.
+                    </p>
+
+                    <!-- Technical details on 1-Wire with timing and signal characteristics -->
+                    <div class="signal-diagram">
+                        <div class="diagram-title">1-Wire Bit Timing Diagram</div>
+                        <div class="timing-diagram">
+                            <svg viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet">
+                                <!-- Grid lines -->
+                                <defs>
+                                    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                                        <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(6,182,212,0.1)"
+                                            stroke-width="0.5"></path>
+                                    </pattern>
+                                </defs>
+                                <rect width="100%" height="100%" fill="url(#grid)"></rect>
+
+                                <!-- Axis labels -->
+                                <text x="10" y="45" class="timing-label">HIGH</text>
+                                <text x="10" y="145" class="timing-label">LOW</text>
+
+                                <!-- Binary 1 - Short pulse -->
+                                <g transform="translate(80,0)">
+                                    <path d="M0,50 L0,50 L30,50 L30,130 L45,130 L45,50 L120,50" fill="none"
+                                        stroke="#06b6d4" stroke-width="3"></path>
+                                    <text x="60" y="25" class="bit-annotation" fill="#10b981">BIT = 1</text>
+                                    <text x="32" y="100" class="timing-value">~15μs</text>
+                                    <line x1="30" y1="135" x2="45" y2="135" stroke="#f59e0b" stroke-width="2"></line>
+                                    <line x1="30" y1="130" x2="30" y2="140" stroke="#f59e0b" stroke-width="2"></line>
+                                    <line x1="45" y1="130" x2="45" y2="140" stroke="#f59e0b" stroke-width="2"></line>
+                                </g>
+
+                                <!-- Binary 0 - Long pulse -->
+                                <g transform="translate(280,0)">
+                                    <path d="M0,50 L30,50 L30,130 L110,130 L110,50 L180,50" fill="none" stroke="#06b6d4"
+                                        stroke-width="3"></path>
+                                    <text x="90" y="25" class="bit-annotation" fill="#ef4444">BIT = 0</text>
+                                    <text x="55" y="100" class="timing-value">~60μs</text>
+                                    <line x1="30" y1="135" x2="110" y2="135" stroke="#f59e0b" stroke-width="2"></line>
+                                    <line x1="30" y1="130" x2="30" y2="140" stroke="#f59e0b" stroke-width="2"></line>
+                                    <line x1="110" y1="130" x2="110" y2="140" stroke="#f59e0b" stroke-width="2"></line>
+                                </g>
+
+                                <!-- Legend -->
+                                <g transform="translate(500,160)">
+                                    <text x="0" y="0" class="timing-label">Threshold: 30μs</text>
+                                    <text x="0" y="20" class="timing-label">&lt;30μs = 1</text>
+                                    <text x="0" y="40" class="timing-label">&gt;30μs = 0</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="meta">
+                        Representative 1-Wire bit timing illustrating short and long low pulses used to
+                        distinguish logical values.
+                    </p>
+                    <p>
+                        Applying these timing rules to the extracted <code>dq</code> transitions yields a
+                        decoded ASCII message.
+                    </p>
+
+
+                    <!-- 1-Wire Decoding Methodology -->
+                    <details>
+                        <summary>
+                            1-Wire Bit Decoding Methodology
+                        </summary>
+
+                        <p class="meta">
+                            This section documents the exact decoding logic used to <a href="#1wire">
+                                convert 1-Wire timing
+                                transitions into bits and bytes
+                            </a>.
+                        </p>
+
+                        <p>
+                            1-Wire is a communication protocol developed by Dallas Semiconductor (now Maxim Integrated).
+                            It
+                            uses a single wire for both data and power, allowing multiple devices to be connected in a
+                            network. Without a dedicated clock, bit values are determined by measuring the duration of
+                            pulses. The bus idles HIGH, and drops LOW to send data. For this, the timing is critical: a
+                            short low
+                            pulse (typically 1–15 microseconds) represents a '1', while a longer low pulse (typically
+                            60–120
+                            microseconds) represents a '0'.
+                            Each low pulse duration was measured and classified relative to a timing threshold
+                            to distinguish logical <code>0</code> and <code>1</code>. The resulting bitstream was
+                            grouped into bytes and interpreted as ASCII.
+                        </p>
+                        <h4>Decoding the Signal: Step-by-Step</h4>
+                        <p>
+                        <h5>Phase 1: Addressing</h5> The first 8 bits decoded to <code>0xCC</code> (Skip ROM).
+                        This is standard protocol overhead, so we will skip the breakdown and focus on the payload data.
+                        </p>
+
+                        <h5>Phase 2: Decoding the First Character</h5>
+                        <p>
+                            Here is the exact breakdown of the next 8 bits. Notice how the duration determines the bit
+                            value, and how we fill the byte from "Right to Left" (LSB First). After checking, I found
+                            that
+                            all the durations were either 6µs (short pulse) or 60µs (long pulse), making it easy to
+                            classify
+                            them.
+                        </p>
+
+                        <style>
+                            .decode-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                font-family: monospace;
+                                font-size: 14px;
+                                margin-bottom: 20px;
+                            }
+
+                            .decode-table th {
+                                background-color: #000000;
+                                border-bottom: 2px solid #ddd;
+                                padding: 10px;
+                                text-align: left;
+                            }
+
+                            .decode-table td {
+                                border-bottom: 1px solid #eee;
+                                padding: 8px;
+                            }
+
+                            .short-pulse {
+                                color: green;
+                                font-weight: bold;
+                            }
+
+                            /* Highlights logic 1 */
+                            .long-pulse {
+                                color: #d9534f;
+                                font-weight: bold;
+                            }
+
+                            /* Highlights logic 0 */
+                        </style>
+
+                        <table class="decode-table">
+                            <thead>
+                                <tr>
+                                    <th>Start (µs)</th>
+                                    <th>End (µs)</th>
+                                    <th>Duration</th>
+                                    <th>Logic Check</th>
+                                    <th>Bit</th>
+                                    <th>Byte Progress (LSB &rarr;)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1501</td>
+                                    <td>1561</td>
+                                    <td>60 µs</td>
+                                    <td>Long (&gt; 30µs)</td>
+                                    <td><span class="long-pulse">0</span></td>
+                                    <td><code>0.......</code></td>
+                                </tr>
+                                <tr>
+                                    <td>1571</td>
+                                    <td>1577</td>
+                                    <td>6 µs</td>
+                                    <td>Short (&lt; 30µs)</td>
+                                    <td><span class="short-pulse">1</span></td>
+                                    <td><code>01......</code></td>
+                                </tr>
+                                <tr>
+                                    <td>1641</td>
+                                    <td>1701</td>
+                                    <td>60 µs</td>
+                                    <td>Long (&gt; 30µs)</td>
+                                    <td><span class="long-pulse">0</span></td>
+                                    <td><code>010.....</code></td>
+                                </tr>
+                                <tr>
+                                    <td>1711</td>
+                                    <td>1771</td>
+                                    <td>60 µs</td>
+                                    <td>Long (&gt; 30µs)</td>
+                                    <td><span class="long-pulse">0</span></td>
+                                    <td><code>0100....</code></td>
+                                </tr>
+                                <tr>
+                                    <td>1781</td>
+                                    <td>1787</td>
+                                    <td>6 µs</td>
+                                    <td>Short (&lt; 30µs)</td>
+                                    <td><span class="short-pulse">1</span></td>
+                                    <td><code>01001...</code></td>
+                                </tr>
+                                <tr>
+                                    <td>1851</td>
+                                    <td>1857</td>
+                                    <td>6 µs</td>
+                                    <td>Short (&lt; 30µs)</td>
+                                    <td><span class="short-pulse">1</span></td>
+                                    <td><code>010011..</code></td>
+                                </tr>
+                                <tr>
+                                    <td>1921</td>
+                                    <td>1927</td>
+                                    <td>6 µs</td>
+                                    <td>Short (&lt; 30µs)</td>
+                                    <td><span class="short-pulse">1</span></td>
+                                    <td><code>0100111.</code></td>
+                                </tr>
+                                <tr>
+                                    <td>1991</td>
+                                    <td>2051</td>
+                                    <td>60 µs</td>
+                                    <td>Long (&gt; 30µs)</td>
+                                    <td><span class="long-pulse">0</span></td>
+                                    <td><code>01001110</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div><strong>Final Conversion:</strong><br>
+                            <ul>
+                                <li>The raw LSB bits are <code>01001110</code>.</li>
+                                <li>Since we read backward (LSB-first), we flip it: <code>01110010</code>.</li>
+                                <li>Converted to Hex: <strong>0x72</strong>.</li>
+                                <li>Converted to ASCII: <strong>'r'</strong>.</li>
+                            </ul>
+                        </div>
+                        <p>We can use this logic to build a Python script to automate the decoding process.</p>
+                        <details>
+                            <summary>Python - decode_1wire.py</summary>
+                            <div class="details-content">
+                                <div class="code-block">
+                                    <div class="code-title">decode_1wire.py</div>
+                                    <pre><code class="language-python">import sys
+
+start_time = 0
+in_data = False
+bit_string = ""
+
+# 1-Wire bit thresholds (in microseconds)
+# A '1' bit is a short low pulse (1-15µs)
+# A '0' bit is a long low pulse (60-120µs)
+# We'll use ~30µs as a clear threshold.
+BIT_THRESHOLD = 30
+
+for line in sys.stdin:
+    try:
+        # Start decoding after the "presence" marker
+        if 'presence' in line:
+            in_data = True
+            continue
+
+        if not in_data:
+            continue
+
+        # Split 'timestamp,level'
+        parts = line.strip().split(',')
+        timestamp = int(parts[0])
+        level = int(parts[1])
+
+        if level == 0:
+            # Falling edge: store the start time
+            start_time = timestamp
+        elif level == 1 and start_time &gt; 0:
+            # Rising edge: calculate duration
+            duration = timestamp - start_time
+
+            # Determine bit based on pulse duration
+            bit = "1" if duration &lt; BIT_THRESHOLD else "0"
+            bit_string += bit
+
+            # Reset for the next bit
+            start_time = 0
+
+    except (IndexError, ValueError):
+        # Ignore malformed lines or markers like "stop"
+        continue
+
+# --- Bitstream processing ---
+
+decoded_message = ""
+print(f"Total bits found: {len(bit_string)}\n")
+
+# Process the bitstring in 8-bit chunks
+for i in range(0, len(bit_string), 8):
+    byte_lsb = bit_string[i:i+8]
+
+    # Stop if we have an incomplete byte at the end
+    if len(byte_lsb) != 8:
+        print(f"Ignoring trailing incomplete byte: {byte_lsb}")
+        break
+
+    # Reverse the byte (LSB-first to MSB-first)
+    byte_msb = byte_lsb[::-1]
+
+    try:
+        # Convert binary string to an integer
+        decimal_value = int(byte_msb, 2)
+        # Convert integer to an ASCII character
+        decoded_message += chr(decimal_value)
+    except ValueError:
+        decoded_message += "?" # Placeholder for bad byte
+    except Exception as e:
+        print(f"Error processing byte {byte_msb}: {e}")
+
+print(decoded_message)</code></pre>
+                                </div>
+                            </div>
+                        </details>
+
+                        <div class="code-block">
+                            <div class="code-title">Bash</div>
+                            <pre>% <span class="user-input">python3 parse_har.py big.txt dq | python3 decode_1wire.py</span>
+Total bits found: 456
+
+<span class="redbox">Ìread and decrypt the SPI bus data using the XOR key: icy
+</span>
+</pre>
+                        </div>
+                        <!-- XOR -->
+                        <details>
+                            <summary>Background Info - XOR</summary>
+                            <div class="details-content">
+                                <p>XOR (exclusive OR) is a bitwise operation that outputs true only when inputs differ
+                                    (one
+                                    is
+                                    true, the other false). In cryptography, XOR is often used for simple encryption and
+                                    decryption. For example, if you have a plaintext message and a key, you can XOR them
+                                    to
+                                    produce ciphertext. To decrypt, you XOR the ciphertext with the same key to retrieve
+                                    the
+                                    original message. This is due to a key property of XOR that it's its own inverse
+                                    operation —
+                                    applying the same key twice returns the original value:</p>
+                                <p>
+                                    plaintext ⊕ key = ciphertext<br>
+                                    ciphertext ⊕ key = plaintext
+                                </p>
+                                <p>Here is its <a href="https://en.wikipedia.org/wiki/Truth_table" target="_blank"
+                                        rel="noopener noreferrer">truth table</a>:</p>
+
+                                <table style="border-collapse: collapse; width: 50%; margin-top: 10px;">
+                                    <thead>
+                                        <tr>
+                                            <th
+                                                style="border: 1px solid #ddd; padding: 8px; background-color: #000000;">
+                                                Input A
+                                            </th>
+                                            <th
+                                                style="border: 1px solid #ddd; padding: 8px; background-color: #000000;">
+                                                Input B
+                                            </th>
+                                            <th
+                                                style="border: 1px solid #ddd; padding: 8px; background-color: #000000;">
+                                                A
+                                                XOR B
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">1</td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">1</td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">1</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">1</td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">1</td>
+                                            <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </details>
+                    </details>
+
+                    <p class="inevitable">
+                        With the 1-Wire logic applied to the captured signal, the decoded message instructs analysis of
+                        the SPI bus using the XOR key
+                        <code>icy</code>.
+                    </p>
+
+                </section>
+
+                <!-- Decoding the SPI -->
+                <section>
+                    <h3 id="spi">Decoding the SPI Signal</h3>
+
+                    <p>SPI is a synchronous protocol where data on <code>MOSI</code> is sampled relative to the clock
+                        <code>SCK</code>.
+                        Once the sampling edge is identified, the data stream can be reconstructed by
+                        reading the MOSI state at each sample point.
+                    </p>
+
+                    <p>
+                        The plot below shows the initial SPI clock (SCK) and data (MOSI) values over time. The vertical
+                        dotted
+                        lines indicate the sample points as marked from the SCK parsed data. They begin at 5000
+                        microseconds and repeat every 10000 microseconds, aligning with the clock’s rising edge. At
+                        each sample point, we read the
+                        corresponding MOSI value to reconstruct the transmitted bits.
+                    </p>
+                    <img src="images/a3c6_spi_plot.png" alt="SPI Signal Plot">
+
+
+                    <p>This sampling yields a bitstream representing encrypted bytes. Applying the XOR key
+                        <code>icy</code>, provided by the 1-Wire stage, reveals the next plaintext instruction.
+                    </p>
+
+                    <!-- SPI Protocol Specification -->
+                    <details>
+                        <summary>SPI Bit Decoding Methodology</summary>
+                        <p>SPI (Serial Peripheral Interface) is a synchronous, full-duplex communication protocol using
+                            four
+                            signal lines. Unlike 1-Wire's timing-based encoding, SPI uses a dedicated serial clock
+                            <code>SCK</code>. Data is sampled at each clock pulse, making extraction straightforward
+                            once
+                            you identify the sample points. <code>MOSI</code> (Master Out Slave In) is the dedicated
+                            data
+                            line where the master sends bits to the slave. The MOSI values are taken where the clock
+                            times
+                            are marked with "sample".
+                        </p>
+                        <p>Here's what the parsed <code>SCK</code> and <code>MOSI</code> data looks like. The
+                            <code>SCK</code> data shows the clock signal, and the <code>MOSI</code> data shows the data
+                            being transmitted.
+                        </p>
+                        <div class="code-block">
+                            <div class="code-title">Bash</div>
+                            <pre>% <span class="user-input">python3 parse_har.py onthewire.har sck | head -5</span>
+0,0,idle-low
+5000,1,sample
+10000,0,
+15000,1,sample
+20000,0,
+
+% <span class="user-input">python3 parse_har.py onthewire.har mosi | head -5</span>
+0,0,data-bit
+10000,0,data-bit
+20000,0,data-bit
+30000,1,data-bit
+40000,1,data-bit</pre>
+                        </div>
+                        <p>Here is the Python code used to decode the SPI data and perform the XOR decoding:</p>
+                        <details>
+                            <summary>Python Script for decoding SPI</summary>
+                            <div class="details-content">
+                                <div class="code-block">
+                                    <div class="code-title">decode_spi.py</div>
+                                    <pre><code class="language-python">import sys
+
+# --- Configuration ---
+BYTE_SIZE = 8
+XOR_KEY = "icy"
+KEY_BYTES = [ord(c) for c in XOR_KEY]
+
+def load_data(filename):
+    """
+    Reads a file generated by parse_har.py.
+    Format: timestamp,value,marker
+    """
+    data_points = []
+    try:
+        with open(filename, 'r') as f:
+            for line in f:
+                parts = line.strip().split(',')
+                # Ensure we have at least timestamp and value
+                if len(parts) &gt;= 2:
+                    t = int(parts[0])
+                    v = int(parts[1])
+                    # Handle marker if it exists (index 2), otherwise empty string
+                    marker = parts[2] if len(parts) &gt; 2 else ""
+                    
+                    data_points.append({'t': t, 'v': v, 'marker': marker})
+    except FileNotFoundError:
+        print(f"Error: File '{filename}' not found.")
+        sys.exit(1)
+    except ValueError:
+        print(f"Error: Could not parse line in '{filename}'. Check format.")
+        sys.exit(1)
+        
+    return data_points
+
+def main():
+    # Usage check
+    if len(sys.argv) &lt; 3:
+        print(f"Usage: python3 {sys.argv[0]} <sck_file> <mosi_file>")
+        print("Example: python3 decode_spi.py sck.csv mosi.csv")
+        sys.exit(1)
+
+    sck_file = sys.argv[1]
+    mosi_file = sys.argv[2]
+
+    sck_data = load_data(sck_file)
+
+    mosi_data = load_data(mosi_file)
+
+    # 1. Identify Sample Points
+    # The SCK file has explicit "marker": "sample" entries
+    sample_times = [d['t'] for d in sck_data if 'sample' in d['marker']]
+
+    if not sample_times:
+        print("Error: No 'sample' markers found in SCK file.")
+        sys.exit(1)
+    
+    # 2. Build MOSI State Map
+    # We create a dictionary of {timestamp: value} for fast lookups
+    # We also sort the keys to help us find the 'state at time X'
+    mosi_map = {d['t']: d['v'] for d in mosi_data}
+    mosi_timestamps = sorted(mosi_map.keys())
+
+    # 3. Decode Bits
+    bit_string = ""
+    
+    # Iterate through every sample point (SCK rising edge)
+    for sample_t in sample_times:
+        current_bit = 0 # Default to 0
+        
+        # Find the state of MOSI at this exact time.
+        # We look backwards from the sample time to find the most recent MOSI update.
+        for t in reversed(mosi_timestamps):
+            if t &lt;= sample_t:
+                current_bit = mosi_map[t]
+                break
+        
+        bit_string += str(current_bit)
+
+    # 4. Convert to Bytes
+    ciphertext_bytes = []
+    for i in range(0, len(bit_string), BYTE_SIZE):
+        byte_bits = bit_string[i:i+BYTE_SIZE]
+        
+        # Skip incomplete bytes at the end
+        if len(byte_bits) == BYTE_SIZE:
+            val = int(byte_bits, 2)
+            ciphertext_bytes.append(val)
+
+    # 5. XOR Decrypt
+    decrypted_message = ""
+    key_length = len(KEY_BYTES)
+
+    for i, cipher_byte in enumerate(ciphertext_bytes):
+        key_byte = KEY_BYTES[i % key_length]
+        decrypted_char = chr(cipher_byte ^ key_byte)
+        decrypted_message += decrypted_char
+
+    print(decrypted_message)
+
+if __name__ == "__main__":
+    main()
+</code></pre>
+                                </div>
+                            </div>
+                        </details>
+                        <p>Running the parser and decoder:</p>
+                        <div class="code-block">
+                            <div class="code-title">Bash</div>
+                            <pre>% <span class="user-input">python3 parse_har.py onthewire.har sck > sck.csv</span>
+% <span class="user-input">python3 parse_har.py onthewire.har mosi > mosi.csv</span>
+% <span class="user-input">python3 decode_spi.py sck.csv mosi.csv</span>
+<span class="redbox">read and decrypt the I2C bus data using the XOR key: bananza. the temperature sensor address is 0x3C</span>
+</pre>
+                            <p>The flag address is at <code>0x3C</code>, and the next XOR key is <code>bananza</code>
+                                (using
+                                an 'a' instead of the standard 'o' in 'bonanza').</p>
+                        </div>
+
+                    </details>
+
+                    <p class="inevitable">
+                        With the SPI sampling points identified and the XOR key applied, the decoded message
+                        instructs analysis of the I²C bus using the key <code>bananza</code> and
+                        device address <code>0x3C</code>.
+                    </p>
+                </section>
+
+                <!-- Decoding the I2C -->
+                <section>
+                    <h3 id="i2c">Decoding the I²C Signal</h3>
+                    <p>I2C (Inter-Integrated Circuit) is a multi-master,
+                        multi-slave bus using just two lines: SDA
+                        (data) and SCL (clock). Unlike SPI's dedicated chip-select lines, I2C uses 7-bit addresses to
+                        identify devices. Each transaction begins with a START condition and includes address,
+                        read/write bit, acknowledgments, and data bytes.</p>
+
+                    <p>The
+                        <code>SCL</code> signal identifies the 'sample' timestamps (the rising edges of the clock) which
+                        tells
+                        the receiving device when to read the data bus. The <code>SDA</code> records the binary state
+                        of the data line (0 or 1) and highlights special protocol events, such as the 'start' condition
+                        at 2000µs where the data line is pulled low to initiate the transaction.
+                    </p>
+
+
+                    <p>The plot below shows the SDA and SCL signals over time. The dotted lines show the sample
+                        points where the data is read just when it rises from low to high. The bits in blue are the
+                        data bits read at each sample point.</p>
+                    <img src="images/a3c6_i2c_plot.png" alt="Plot of I2C SDA and SCL Signals">
+
+
+                    <!-- I2C Protocol Specification -->
+                    <details>
+                        <summary>Deep Dive: I²C Bit Decoding Methodology</summary>
+                        <p class="meta">This section documents the exact decoding logic used to convert
+                            I²C timing transitions into bits and bytes.</p>
+
+                        <p>Here's what the parsed <code>SDA</code> and <code>SCL</code> data looks like. </p>
+                        <div class="code-block">
+                            <div class="code-title">Bash</div>
+                            <pre><span class="user-input">% python3 parse_har.py onthewire.har scl | head -7</span>
+0,1,bus-idle
+4000,0,clock-low
+9000,1,address-sample
+14000,0,address-hold
+19000,1,address-sample
+24000,0,address-hold
+29000,1,address-sample
+
+<span class="user-input">% python3 parse_har.py onthewire.har sda | head -7</span>
+0,1,bus-idle
+2000,0,start
+4000,1,address-bit
+14000,0,address-bit
+24000,0,address-bit
+34000,1,address-bit
+44000,0,address-bit</pre>
+                        </div>
+                        <p>Using the I2C protocol, use a Python script to parse the different parts of the I2C bus data.
+                            Then we use the XOR key: bananza to decode the data at the address 0x3C.</p>
+                        <details>
+                            <summary>Python Script for decoding I2C</summary>
+                            <div class="details-content">
+                                <div class="code-block">
+                                    <div class="code-title">solve_i2c.py</div>
+                                    <pre><code class="language-python">import sys
+
+# ------------------------------------------------------------------
+# PARSER MODIFICATION FOR parse_har.py OUTPUT
+# ------------------------------------------------------------------
+def parse_i2c_transactions(sda_file, scl_file):
+    """
+    Parses I2C data from CSV files generated by parse_har.py.
+    Format expected: timestamp,value,label
+    """
+    
+    # Helper to load the CSV format
+    def load_events(filename, source_name):
+        events = []
+        try:
+            with open(filename, 'r') as f:
+                for line in f:
+                    parts = line.strip().split(',')
+                    if len(parts) &gt;= 3:
+                        events.append({
+                            't': int(parts[0]),
+                            'v': int(parts[1]),
+                            'label': parts[2],
+                            'src': source_name
+                        })
+        except FileNotFoundError:
+            print(f"Error: File {filename} not found.")
+            sys.exit(1)
+        return events
+
+    sda_events = load_events(sda_file, 'sda')
+    scl_events = load_events(scl_file, 'scl')
+
+    # Merge and sort all events by timestamp to replay the timeline
+    all_events = sorted(sda_events + scl_events, key=lambda x: x['t'])
+
+    transactions = []
+    
+    # State Machine Variables
+    current_trans_bytes = [] # List of (type, value) tuples
+    current_byte_val = 0
+    bit_count = 0
+    is_address_phase = True  # The first byte after a start is always address
+    current_sda_val = 1      # Bus idles High
+    
+    # Iterate through the timeline
+    for e in all_events:
+        
+        # --- SDA EVENT: Update State / Detect Start ---
+        if e['src'] == 'sda':
+            current_sda_val = e['v']
+            
+            # Detect START condition (or Repeated Start)
+            # parse_har.py usually explicitly labels this "start"
+            if 'start' in e['label']:
+                # If we were in the middle of a transaction, save it
+                if current_trans_bytes:
+                    transactions.append({
+                        'index': len(transactions),
+                        'bytes': current_trans_bytes
+                    })
+                
+                # Reset for new transaction
+                current_trans_bytes = []
+                current_byte_val = 0
+                bit_count = 0
+                is_address_phase = True
+
+        # --- SCL EVENT: Sample Data ---
+        elif e['src'] == 'scl':
+            # We only care when the clock is HIGH (Sample time)
+            if 'sample' in e['label']:
+                bit_count += 1
+                
+                # Bits 1-8 are data
+                if bit_count &lt;= 8:
+                    current_byte_val = (current_byte_val &lt;&lt; 1) | current_sda_val
+                
+                # Bit 9 is ACK/NACK
+                elif bit_count == 9:
+                    # Byte is complete, store it
+                    byte_type = 'address' if is_address_phase else 'data'
+                    current_trans_bytes.append((byte_type, current_byte_val))
+                    
+                    # Reset bit counters
+                    current_byte_val = 0
+                    bit_count = 0
+                    is_address_phase = False # Everything after first byte is data
+
+    # Save the final transaction if exists
+    if current_trans_bytes:
+        transactions.append({
+            'index': len(transactions),
+            'bytes': current_trans_bytes
+        })
+
+    print(f"Parsed {len(transactions)} transactions.")
+    return transactions
+
+def xor_decrypt(data_bytes, key):
+    """XOR decrypt data with repeating key"""
+    key_bytes = key.encode('ascii')
+    decrypted = []
+    
+    for i, byte in enumerate(data_bytes):
+        key_byte = key_bytes[i % len(key_bytes)]
+        decrypted.append(byte ^ key_byte)
+    
+    return bytes(decrypted)
+
+# ------------------------------------------------------------------
+# MAIN EXECUTION
+# ------------------------------------------------------------------
+
+# Ensure filenames match your actual output files from parse_har.py
+SDA_FILE = 'sda.csv' 
+SCL_FILE = 'scl.csv'
+
+transactions = parse_i2c_transactions(SDA_FILE, SCL_FILE)
+
+print("\n" + "="*70)
+print("ANALYZING ALL TRANSACTIONS")
+print("="*70)
+
+target_address = 0x3C # Likely target for OLED screens or specific sensors
+xor_key = "bananza"
+
+for trans in transactions:
+    bytes_data = trans['bytes']
+    trans_idx = trans['index']
+    
+    if not bytes_data:
+        continue
+    
+    # First byte is the address
+    # In I2C, address is top 7 bits, bottom bit is R/W
+    address_byte = bytes_data[0][1]
+    address = address_byte &gt;&gt; 1 
+    rw_bit = address_byte & 0x01
+    
+    # Extract data bytes (skip address)
+    data_bytes = [b for t, b in bytes_data if t == 'data']
+    
+    # Only print if there is data or it matches our target
+    if address == target_address or data_bytes:
+        print(f"\nTransaction {trans_idx}:")
+        print(f"  Address: 0x{address:02X} ({'READ' if rw_bit else 'WRITE'})")
+        
+        if data_bytes:
+            print(f"  Data bytes: {' '.join(f'{b:02X}' for b in data_bytes)}")
+            
+            # Check if this is the target sensor
+            if address == target_address:
+                print(f"  *** TARGET DETECTED ***")
+                decrypted = xor_decrypt(data_bytes, xor_key)
+                print(f"  Decrypted: {decrypted.decode('ascii', errors='replace')}")
+
+print("\n" + "="*70)
+print("CONCATENATING TARGET SENSOR DATA")
+print("="*70)
+
+# Collect all data strictly from the target address
+all_target_data = []
+for trans in transactions:
+    if not trans['bytes']: continue
+    
+    addr = trans['bytes'][0][1] &gt;&gt; 1
+    if addr == target_address:
+        # Get only the data payload
+        payload = [b for t, b in trans['bytes'] if t == 'data']
+        all_target_data.extend(payload)
+
+if all_target_data:
+    print(f"Found {len(all_target_data)} total bytes from device 0x{target_address:02X}")
+    full_decrypted = xor_decrypt(all_target_data, xor_key)
+    print("\nFULL MESSAGE:")
+    print(full_decrypted.decode('ascii', errors='replace'))
+else:
+    print(f"No data found for address 0x{target_address:02X}")</code></pre>
+                                </div>
+                            </div>
+                        </details>
+                        <p>We do our usual parsing of the HAR file to extract the SDA and SCL lines into CSV files.
+                            Then,
+                            our solver processes these
+                            files to reconstruct the I2C transactions, decrypting the data from the target sensor at
+                            address
+                            <code>0x3C</code> using the XOR key: <code>bananza</code>. The final decrypted message
+                            reveals
+                            the flag for this challenge.
+                        </p>
+
+                        <div class="code-block">
+                            <div class="code-title">Bash</div>
+                            <pre>% <span class="user-input">python3 parse_har.py onthewire.har sda > sda.csv</span>
+% <span class="user-input">python3 parse_har.py onthewire.har scl > scl.csv</span>
+% <span class="user-input">python3 solve_i2c.py</span>
+Parsed 4 transactions.
+
+======================================================================
+ANALYZING ALL TRANSACTIONS
+======================================================================
+
+Transaction 0:
+  Address: 0x48 (WRITE)
+  Data bytes: 56 54 4B
+
+Transaction 1:
+  Address: 0x3C (WRITE)
+  Data bytes: 51 53 40 59 5A
+  *** TARGET DETECTED ***
+  Decrypted: 32.84
+
+Transaction 2:
+  Address: 0x51 (WRITE)
+  Data bytes: 53 51 5F 52 4E 12 31 03
+
+Transaction 3:
+  Address: 0x29 (WRITE)
+  Data bytes: 56 54 5E 41 02 0F 19
+
+======================================================================
+CONCATENATING TARGET SENSOR DATA
+======================================================================
+Found 5 total bytes from device 0x3C
+
+FULL MESSAGE:
+<span class="redbox">32.84</span></pre>
+                        </div>
+                    </details>
+
+
+                    <p>We use this logic to reconstruct the I2C communication. The recovered bitstream forms a sequence
+                        of encrypted bytes. Applying the XOR key
+                        <code>bananza</code> from the SPI stage reveals the plaintext sensor reading.
+                    </p>
+
+                    <div class="flag">🚩 <strong>Flag:</strong> 32.84</div>
+
+                    <!-- Side Note: Other Sensors Decrypted -->
+                    <details>
+                        <summary>Side Note: Other Sensors Decrypted</summary>
+                        <div class="details-content">
+                            <p>I found that the other sensors' data could be decrypted similarly using the same
+                                <code>bananza</code> XOR key:
+                            </p>
+                            <table
+                                style="font-family: 'Consolas', monospace; border-collapse: collapse; width: 100%; background: #1e1e1e; color: #d4d4d4; border-radius: 8px; overflow: hidden;">
+                                <thead>
+                                    <tr style="background: #333; color: #fff; text-align: left;">
+                                        <th style="padding: 12px; border-bottom: 2px solid #555;">Address</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #555;">Encrypted Hex</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #555;">Decrypted Value</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #555;">Possible Device</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #333;">
+                                        <td style="padding: 10px; color: #4caf50;">0x48</td>
+                                        <td style="padding: 10px; font-family: monospace; color: #ce9178;">56 54 4B</td>
+                                        <td style="padding: 10px; font-weight: bold;">45%</td>
+                                        <td style="padding: 10px; color: #9cdcfe;">Humidity Sensor / ADC<br><span
+                                                style="font-size: 0.85em; color: #6a9955;">(e.g., PCF8591, SHT3x)</span>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #333;">
+                                        <td style="padding: 10px; color: #4caf50;">0x3C</td>
+                                        <td style="padding: 10px; font-family: monospace; color: #ce9178;">51 53 40 59
+                                            5A</td>
+                                        <td style="padding: 10px; font-weight: bold;">32.84</td>
+                                        <td style="padding: 10px; color: #9cdcfe;">OLED Display Controller<br><span
+                                                style="font-size: 0.85em; color: #6a9955;">(Standard Address for
+                                                SSD1306)</span></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #333;">
+                                        <td style="padding: 10px; color: #4caf50;">0x51</td>
+                                        <td style="padding: 10px; font-family: monospace; color: #ce9178;">53 51 5F 52
+                                            4E 12 31 03</td>
+                                        <td style="padding: 10px; font-weight: bold;">1013 hPa</td>
+                                        <td style="padding: 10px; color: #9cdcfe;">Pressure Sensor (Barometer)<br><span
+                                                style="font-size: 0.85em; color: #6a9955;">(e.g., LPS25H, BMP280)</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 10px; color: #4caf50;">0x29</td>
+                                        <td style="padding: 10px; font-family: monospace; color: #ce9178;">56 54 5E 41
+                                            02 0F 19</td>
+                                        <td style="padding: 10px; font-weight: bold;">450 lux</td>
+                                        <td style="padding: 10px; color: #9cdcfe;">Ambient Light Sensor<br><span
+                                                style="font-size: 0.85em; color: #6a9955;">(e.g., TSL2561,
+                                                VL6180X)</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <p>Here are some educated interpretations of the sensor readings:</p>
+                            <ul>
+                                <li>Pressure (1013 hPa): Exactly 1 standard atmosphere. This suggests the location is at
+                                    sea level, or possibly a default simulation value.</li>
+                                <li>Humidity (45%): A standard, comfortable range for indoor climate control.</li>
+                                <li>Light (450 lux): Consistent with a moderately lit environment, such as a standard
+                                    office or lab (typically 300-500 lux).</li>
+                            </ul>
+
+                            The Outlier: The standout reading is the temperature at 32.84°C (approx. 91°F). This is
+                            significantly hotter than a human-occupied office. Given the context, this strongly suggests
+                            the sensors are deployed in a server room hot aisle or inside a localized equipment
+                            enclosure, monitoring hardware rather than human comfort.</p>
+                        </div>
+                    </details>
+                </section>
+            </section>
+
+            <section class="technical-appendix">
+
+                <!-- Security Implications -->
+                <details>
+                    <summary>Side Note: Security Implications of Embedded Bus Protocols</summary>
+                    <p>Embedded bus protocols are frequently targeted during hardware security assessments. Common
+                        attack vectors include:</p>
+                    <ul>
+                        <li>Dumping firmware</li>
+                        <li>Extracting encryption keys stored in EEPROM</li>
+                        <li>Bypassing authentication by injecting commands on debug buses</li>
+                        <li>Cloning devices by reading unique IDs</li>
+                    </ul>
+                    <p>Threat actors can use these techniques to learn about vulnerabilities in IoT devices which could
+                        lead to botnet infections or other security breaches.</p>
+                </details>
+
+                <!-- Challenge Reference Material -->
+                <div class="deep-dive-topic">
+                    <h3>Challenge Reference Material</h3>
+                    <h4>Challenge Descriptions</h4>
+                    <h5>Classic Mode Description</h5>
+                    <p> Help Evan next to city hall hack this gnome and retrieve the temperature value reported by
+                        the
+                        I²C device at address 0x3C.The temperature data is XOR-encrypted, so you’ll need to work
+                        through
+                        each communication stage to uncover the necessary keys. Start with the unencrypted data
+                        being
+                        transmitted over the 1-wire protocol.
+                    <h5>CTF Mode Description</h5>
+                    <p> So here's the deal - there are some seriously bizarre signals floating around this area. Not
+                        your typical radio chatter or WiFi noise, but something... different. I've been trying to
+                        make
+                        sense of the patterns, but it's like trying to build a robot hand out of a coffee maker -
+                        you
+                        need the right approach. Think you can help me decode whatever weirdness is being
+                        transmitted
+                        out there?</p>
+                    <h4>Official Hints</h4>
+                    <p>The provided hints were a lot to digest. Here are the main points:</p>
+                    <ul>
+                        <li>Identify protocol from wire names (e.g., dq → 1-Wire; mosi/sck → SPI; sda/scl → I²C).
+                        </li>
+                        <li>Connect to a WebSocket endpoint and observe the data format.</li>
+                        <li>The server continuously broadcasts signal data in a loop - you can connect at any time.
+                        </li>
+                    </ul>
+                    <details>
+                        <summary>Full Hints</summary>
+                        <div class="details-content">
+                            <h3>Hint 1:</h3>
+                            <p><strong>Key concept - Clock vs. Data signals:</strong></p>
+                            <ul>
+                                <li>Some protocols have separate clock and data lines (like SPI and I2C)</li>
+                                <li>For clocked protocols, you need to sample the data line at specific moments
+                                    defined
+                                    by
+                                    the clock</li>
+                                <li>The clock signal tells you when to read the data signal</li>
+                            </ul>
+                            <p><strong>For 1-Wire (no separate clock):</strong></p>
+                            <ul>
+                                <li>Information is encoded in pulse widths (how long the signal stays low or high)
+                                </li>
+                                <li>Different pulse widths represent different bit values</li>
+                                <li>Look for patterns in the timing between transitions</li>
+                            </ul>
+                            <p><strong>For SPI and I2C:</strong></p>
+                            <ul>
+                                <li>Identify which line is the clock (SCL for I2C, SCK for SPI)</li>
+                                <li>Data is typically valid/stable when the clock is in a specific state (high or
+                                    low)
+                                </li>
+                                <li>You need to detect clock edges (transitions) and sample data at those moments
+                                </li>
+                            </ul>
+                            <p><strong>Technical approach</strong>:</p>
+                            <ul>
+                                <li>Sort frames by timestamp</li>
+                                <li>Detect rising edges (0&rarr;1) and falling edges (1&rarr;0) on the clock line
+                                </li>
+                                <li>Sample the data line's value at each clock edge</li>
+                            </ul>
+
+                            <h3>Hint 2:</h3>
+
+                            <p>What you're dealing with:</p>
+
+                            <ul>
+                                <li>You have access to WebSocket endpoints that stream digital signal data</li>
+                                <li>Each endpoint represents a physical wire in a hardware communication system</li>
+                                <li>The data comes as JSON frames with three properties: line (wire name), t
+                                    (timestamp),
+                                    and v (value: 0 or 1)
+                                </li>
+                                <li>The server continuously broadcasts signal data in a loop - you can connect at
+                                    any
+                                    time
+                                </li>
+                                <li>This is a multi-stage challenge where solving one stage reveals information
+                                    needed
+                                    for
+                                    the next</li>
+                            </ul>
+
+                            <p>Where to start:</p>
+                            <ul>
+                                <li>Connect to a WebSocket endpoint and observe the data format</li>
+                                <li>The server automatically sends data every few seconds - just wait and collect
+                                </li>
+                                <li>Look for documentation on the protocol types mentioned (1-Wire, SPI, I2C)</li>
+                                <li>Consider that hardware protocols encode information in the timing and sequence
+                                    of
+                                    signal
+                                    transitions, not
+                                    just the values themselves</li>
+                                <li>Consider capturing the WebSocket frames to a file so you can work offline</li>
+                            </ul>
+
+                            <h3>Hint 3:</h3>
+
+                            <p>Stage-by-stage approach</p>
+                            <ol>
+                                <li>Connect to the captured wire files or endpoints for the relevant wires.</li>
+                                <li>Collect all frames for the transmission (buffer until inactivity or loop
+                                    boundary).
+                                </li>
+                                <li>Identify protocol from wire names (e.g., dq → 1-Wire; mosi/sck → SPI; sda/scl →
+                                    I²C).
+                                </li>
+                                <li>Decode the raw signal:</li>
+                                <ul>
+                                    <li>Pulse-width protocols: locate falling→rising transitions and measure
+                                        low-pulse
+                                        width.</li>
+                                    <li>Clocked protocols: detect clock edges and sample the data line at the
+                                        specified
+                                        sampling phase.</li>
+                                </ul>
+                                <li>Assemble bits into bytes taking the correct bit order (LSB vs MSB).
+                                <li>Convert bytes to text (printable ASCII or hex as appropriate).</li>
+                                <li>Extract information from the decoded output — it contains the XOR key or other
+                                    hints
+                                    for
+                                    the next stage.
+                                </li>
+                            </ol>
+                            <ol>
+                                <li>Stage 1 decoding to recover raw bytes (they will appear random).</li>
+                                <li>Apply XOR decryption using the key obtained from the previous stage.</li>
+                                <li>Inspect decrypted output for next-stage keys or target device information.</li>
+                            </ol>
+                            <ul>
+                                <li>Multiple 7-bit device addresses share the same SDA/SCL lines.</li>
+                                <li>START condition: SDA falls while SCL is high. STOP: SDA rises while SCL is high.
+                                </li>
+                                <li>First byte of a transaction = (7-bit address &lt;&lt; 1) | R/W. Extract address
+                                    with
+                                    address = first_byte
+                                    &gt;&gt; 1.</li>
+                                <li>Identify and decode every device’s transactions; decrypt only the target
+                                    device’s
+                                    payload.</li>
+                                <li>Print bytes in hex and as ASCII (if printable) — hex patterns reveal structure.
+                                </li>
+                                <li>Check printable ASCII range (0x20–0x7E) to spot valid text.</li>
+                                <li>Verify endianness: swapping LSB/MSB will quickly break readable text.</li>
+                                <li>For XOR keys, test short candidate keys and look for common English words.</li>
+                                <li>If you connect mid-broadcast, wait for the next loop or detect a reset/loop
+                                    marker
+                                    before decoding.</li>
+                                <li>Buffering heuristic: treat the stream complete after a short inactivity window
+                                    (e.g.,
+                                    500 ms) or after a
+                                    full broadcast loop.</li>
+                                <li>Sort frames by timestamp per wire and collapse consecutive identical levels
+                                    before
+                                    decoding to align with
+                                    the physical waveform.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+
+
+            </section>
+
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT END                         -->
+            <!-- ============================================= -->
+
+            <div class="nav-buttons">
+                <a href="05-snowglobe.html" class="nav-btn">← Find & Shutdown Snowglobe</a>
+                <footer>
+                    <p>&copy; 2025 James Mar – SANS Holiday Hack Challenge Write-up</p>
+                    <a href="#" class="back-to-top">↑ Back to Top</a>
+                </footer>
+                <a href="07-freeski.html" class="nav-btn">FreeSki →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+
+</html>

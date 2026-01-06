@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find & Shutdown Snowglobe | SANS Holiday Hack 2025</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../../index.html"><img src="../../images/hhc-logo.png" alt="Holiday Hack 2025"
+                    class="sidebar-logo"></a>
+        </div>
+        <div class="nav-section">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Overview</a></li>
+                <li><a href="../../map.html">World Map</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Act 1</h3>
+            <ul class="nav-list">
+                <li><a href="../act1/01-orientation.html">1. Holiday Hack Orientation</a></li>
+                <li><a href="../act1/02-defang.html">2. It's All About Defang</a></li>
+                <li><a href="../act1/03-neighborhood.html">3. Neighborhood Watch Bypass</a></li>
+                <li><a href="../act1/04-gift-tracking.html">4. Gift-Tracking Port Mystery</a></li>
+                <li><a href="../act1/05-visual-network.html">5. Visual Networking Thinger</a></li>
+                <li><a href="../act1/06-visual-firewall.html">6. Visual Firewall Thinger</a></li>
+                <li><a href="../act1/07-nmap.html">7. Intro to Nmap</a></li>
+                <li><a href="../act1/08-blob-storage.html">8. Blob Storage Challenge</a></li>
+                <li><a href="../act1/09-spare-key.html">9. Spare Key</a></li>
+                <li><a href="../act1/10-open-door.html">10. The Open Door</a></li>
+                <li><a href="../act1/11-owner.html">11. Owner</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 2</h3>
+            <ul class="nav-list">
+                <li><a href="../act2/01-retro.html">1. Retro Recovery</a></li>
+                <li><a href="../act2/02-mail.html">2. Mail Detective</a></li>
+                <li><a href="../act2/03-idorable.html">3. IDORable Bistro</a></li>
+                <li><a href="../act2/04-dosis.html">4. Dosis Network Down</a></li>
+                <li><a href="../act2/05-gnome-identity.html">5. Rogue Gnome Identity Provider</a></li>
+                <li><a href="../act2/06-quantgnome.html">6. Quantgnome Leap</a></li>
+                <li><a href="../act2/07-reverse.html">7. Going in Reverse</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 3</h3>
+            <ul class="nav-list">
+                <li><a href="01-gnome-tea.html">1. Gnome Tea</a></li>
+                <li><a href="02-hack-gnome.html">2. Hack-a-Gnome</a></li>
+                <li><a href="03-snowcat.html">3. Snowcat RCE & Priv Esc</a></li>
+                <li><a href="04-schrodinger.html">4. Schrödinger's Scope</a></li>
+                <li><a href="05-snowglobe.html" class="active">5. Find & Shutdown Snowglobe</a></li>
+                <li><a href="06-wire.html">6. On the Wire</a></li>
+                <li><a href="07-freeski.html">7. FreeSki</a></li>
+                <li><a href="08-snowblind.html">8. Snowblind Ambush</a></li>
+            </ul>
+        </div>
+
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT START                       -->
+            <!-- ============================================= -->
+
+            <header>
+                <h1>Find & Shutdown Snowglobe</h1>
+                <p class="challenge-meta">Act 3, Challenge 5 | 📍Data Center (Deprecated) Corridors | Difficulty: ❄️❄️❄️
+                </p>
+                <figure>
+                    <img src="images/a3c5_contra.gif" style="display: block; margin: 0 auto;"
+                        alt="1989 NES Contra Startup Animated GIF">
+                    <figcaption>Who knew this game would come in handy 35 years later.</figcaption>
+                </figure>
+                <p>At first glance, this maze invites brute force. In reality, it’s a recognition puzzle that can be
+                    solved without exploring more than a single room. The solution lies outside the Data Center walls,
+                    hidden in plain sight.</p>
+            </header>
+
+
+            <!-- Challenge Overview -->
+            <section>
+                <h2>Challenge Overview</h2>
+                <p>To stop Frosty's plans, we must navigate a confusing maze inside the Data Center to locate and shut
+                    down the Snowglobe Machine.</p>
+            </section>
+
+
+            <!-- Getting to the challenge -->
+            <section>
+                <h2>Getting to the Challenge</h2>
+                <p class="caption"> If you need help getting to the Data Center (Deprecated) door, see <a
+                        href="../act1/03-neighborhood.html">Act 1's Neighborhood Watch Bypass</a></p>
+                <p>
+                    When I stepped into the Data Center (Deprecated), I found a dark and dusty room living up to its
+                    name. A single door to the right led to the Data Center Corridors. There, some parts of the path
+                    were marked by completely pitch-black floors, matching the hint we received. I followed the path
+                    finding another challenge, the Hack-a-Gnome factory, was off to the side. However, I continued east
+                    following the hint about the "far East wing." Following the dark paths eastward, I soon arrived at
+                    the next puzzle location: a small room with doors arranged all around me:</p>
+
+                <img src="images/Act3_5_02.png" alt="Act3_5_02.png">
+
+                <p>There were labels above doors with an arrow in the center door and "A" and "B" on either side. This
+                    was repeated for each wall of the room. Any of these doors will take you to the actual beginning of
+                    the challenge/maze that looks like the room above.</p>
+            </section>
+
+            <!-- Solution Steps -->
+            <section>
+                <h2>Solution Steps</h2>
+                <p>After some trial-and-error, you discover that only one door keeps you in the puzzle, leading to a
+                    room identical to the start. All the other doors dump you back outside. The trick, as the hints
+                    suggested, is from a code located outside the building, displayed below:
+                <p>
+
+                    <img src="images/Act3_5_03.png" alt="Act3_5_03.png">
+
+                <p>These black and grey bricks contain a secret message. They represent binary data, the language of
+                    computers using only 0s and 1s. Here’s how we translate the bricks:</p>
+                <ul>
+                    <li>Black Bricks ◼️ = 0</li>
+                    <li>Grey Bricks ◻️ = 1</li>
+                </ul>
+                <p>The pattern of bricks gives us an 8-bit string (a byte) for each section. When you convert that
+                    binary data into letters using the ASCII standard (<a href="https://en.wikipedia.org/wiki/ASCII"
+                        target="_blank" rel="noopener noreferrer">Wikipedia on ASCII</a>), you get the word "Konami"
+                    spelled backwards. I did this using CyberChef with the following (<a
+                        href="https://gchq.github.io/CyberChef/#recipe=From_Binary('Space',8)Reverse('Character')&input=MDExMDEwMDEKMDExMDExMDEKMDExMDAwMDEKMDExMDExMTAKMDExMDExMTEKMDEwMDEwMTEK"
+                        target="_blank" rel="noopener noreferrer">recipe</a>):
+                </p>
+                <img src="images/Act3_5_04cyberchef.png" alt="Act3_5_04cyberchef.png">
+                <p>The word "Konami" is a reference to a Japanese video game developer. They included a common cheat
+                    code in some of their games starting back in the 1980s that is now known as the Konami code (<a
+                        href="https://en.wikipedia.org/wiki/Konami_Code" target="_blank"
+                        rel="noopener noreferrer">Wikipedia</a>, ↑↑↓↓←→←→BA). This
+                    gave you 30 starting lives in the NES game Contra whose image is shown at the top. Since the binary
+                    message was spelled backwards, I used the reverse Konami Code as the solution to the maze,
+                    AB→←→←↓↓↑↑. Following these directions (with North pointing up), I made it to Frosty’s Snowglow Lab!
+                    Note, for the letters A and B, any door labeled A or B will work, and for the directions,
+                    choose any of the 3 doors corresponding to that direction.</p>
+                <details>
+                    <summary>Side Note: 10th Anniversary Shout-Out</summary>
+                    <div class="details-content">
+                        <p>Fun fact: The Konami Code was also used in the 2015 SANS HHC, 10 years ago! This year's
+                            challenge
+                            pays homage to that classic moment in HHC history as we celebrate the 10th anniversary of
+                            the
+                            "in-game world" format.
+                        </p>
+                        <img src="images/a3c5_10year_anniversary.png"
+                            alt="Write-up from 10 years ago referencing the Konami Code">
+                        <p class="caption"><a
+                                href="https://www.sans.org/blog/using-the-ssh-konami-code-ssh-control-sequences"
+                                target="_blank"
+                                rel="noopener noreferrer">https://www.sans.org/blog/using-the-ssh-konami-code-ssh-control-sequences</a>
+                        </p>
+                    </div>
+                </details>
+                </p>
+                <img src="images/Act3_5_05fin.png" alt="Act3_5_05fin.png">
+                <p>Upon completing this challenge, I was rewarded with a Snow Crystal. Its description hints at
+                    a certain movie (Disney’s Frozen, perhaps?): </p>
+                <img src="images/Act3_5_snowcrystal.png" alt="Act3_5_snowcrystal.png">
+            </section>
+
+
+            <!-- 🔀 Alternate Solution - Bruteforce with WebSocket Hacking -->
+            <section>
+                <h2>
+                    🔀 Alternate Solution - Bruteforce with WebSocket Hacking
+                </h2>
+                <p>While the Konami Code is the intended solution, another way to solve this maze is to
+                    bruteforce
+                    your way in. With 10 rooms and 12 doors in each, you'd need to manually try at most 120
+                    attempts
+                    to find the correct exit. That's a lot of virtual walking! </p>
+                <p>Instead of manually trying every door, we can save a lot of time by "hacking" the game
+                    and
+                    automating the process. This involves understanding how the game communicates "under the
+                    hood"
+                    using a specialized tool called a proxy.</p>
+
+                <!-- Background Info - Proxies -->
+                <details>
+                    <summary>Background Info - Proxies</summary>
+                    <div class="details-content">
+                        <p>In simple terms, a proxy server (<a href="https://en.wikipedia.org/wiki/Proxy_server"
+                                target="_blank" rel="noopener noreferrer">Wikipedia</a>) acts as a
+                            middleman. I used a type of proxy that sits directly on the system (my computer) to
+                            intercept and study the game's traffic. Here are two popular choices for this kind
+                            of proxy:</p>
+                        <ul>
+                            <li>Burp Suite: <a href="https://portswigger.net/burp" target="_blank"
+                                    rel="noopener noreferrer">https://portswigger.net/burp</a>
+                            </li>
+                            <li>ZAP (OWASP Zed Attack Proxy): <a href="https://www.zaproxy.org/" target="_blank"
+                                    rel="noopener noreferrer">https://www.zaproxy.org/</a></li>
+                        </ul>
+
+                    </div>
+                </details>
+
+                <p>By studying the traffic using a proxy, I quickly learned that all navigation on the map was
+                    done
+                    via WebSockets.</p>
+
+                <!-- Background Info - WebSockets -->
+                <details>
+                    <summary>Background Info - WebSockets</summary>
+                    <div class="details-content">
+                        <p>A WebSocket is a communication protocol that allows your browser and the game server
+                            to
+                            talk to each other simultaneously over a single connection (<a
+                                href="https://en.wikipedia.org/wiki/WebSocket" target="_blank"
+                                rel="noopener noreferrer">Wikipedia on WebSockets</a>). You
+                            can
+                            view these WebSocket messages right in your browser's <a
+                                href="https://en.wikipedia.org/wiki/Web_development_tools" target="_blank"
+                                rel="noopener noreferrer">development tools</a>
+                            (under the Network tab), or in a dedicated proxy application like Burp Suite.</p>
+                        <img src="images/Act3_5_alt01_proxy.png" alt="Act3_5_alt01_proxy.png">
+                    </div>
+                </details>
+
+                <!-- Analyzing WebSocket Messages -->
+                <section>
+                    <h3>Analyzing the WebSocket Messages</h3>
+                    <p>When studying the traffic using the proxy, I found two main types of messages being sent to
+                        the
+                        server that controlled movement: <code>MOVE_USER</code> and <code>REX</code> (perhaps
+                        meaning
+                        <u>R</u>oom <u>EX</u>it).
+                    </p>
+
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Message Type</th>
+                                <th>Purpose</th>
+                                <th>JSON Example</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>MOVE_USER</td>
+                                <td>Updates the server on the player's ID, XY coordinates, and current area.</td>
+                                <td>{"type":"MOVE_USER","loc":{"33627":[60,34]},"areaId":"city"}</td>
+                            </tr>
+                            <tr>
+                                <td>REX</td>
+                                <td>Tells the server to exit the current area using a door at specified coordinates.
+                                </td>
+                                <td>{"type":"REX","cell":[1,4]}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p>The crucial finding was this: I didn't need to be physically standing at a door to exit it! I
+                        could manually issue the REX command with any door's coordinates, and the server would let
+                        me
+                        enter that door instantly from anywhere in the current area. I used Burp Suite's Repeater to
+                        execute this command repeatedly:</p>
+
+                    <ol>
+                        <li>After having my movement actions logged by the proxy, in BurpSuite go to the Proxy tab ->
+                            WebSockets history subtab.</li>
+                        <li>Right-click a REX message and select "Send to Repeater".</li>
+                        <li>In the Repeater, I could change the XY coordinates on the REX message and send it
+                            instantly,
+                            testing all door possibilities without any walking!</li>
+                    </ol>
+
+                    <img src="images/act3_5_alt02_REX_jump.gif" alt="act3_5_alt02_REX_jump.gif">
+                </section>
+
+                <!-- Super-Optimized Solution: Hacking the Map -->
+                <section>
+                    <h3>Super-Optimized Solution: Hacking the Map</h3>
+                    <p>While skipping the walking was a great time-saver, we can be even smarter. Why manually hunt
+                        for
+                        door coordinates when the game already knows where everything is? The full map data for each
+                        area is contained within a WebSocket message type called <code>AAANNNDD_scene</code>.</p>
+
+                    <p>This map data was brilliantly documented by 0xdf in his <a
+                            href="https://0xdf.gitlab.io/holidayhack2022/hacking" target="_blank"
+                            rel="noopener noreferrer">2022 grand prize winning
+                            write-up</a>
+                        (which includes a video!). In the map data:</p>
+                    <ul>
+                        <li>Spaces indicate unwalkable areas.</li>
+                        <li>1's indicate walkable areas.</li>
+                    </ul>
+                    <p>By pulling this map data, we can instantly identify the coordinates of all walkable areas and
+                        find the exact door locations, saving even more time. Here is the AAANNNDD_scene message for
+                        the
+                        Data Center Corridors, captured from Burp Suite:</p>
+                    <img src="images/Act3_5_map01.png" alt="Act3_5_map01.png">
+                    <p><u>Quick Tip for Formatting</u>: If you get raw data like this from BurpSuite, you can use <a
+                            href="https://gchq.github.io/CyberChef/#recipe=Find_/_Replace(%7B'option':'Simple%20string','string':'%5C%5Cn'%7D,'%5C%5Cr',true,false,true,false)Find_/_Replace(%7B'option':'Simple%20string','string':'%22'%7D,'',true,false,true,false)"
+                            target="_blank" rel="noopener noreferrer">this
+                            CyberChef recipe</a> to strip out all the messy newline characters (\n) and quotes to
+                        view
+                        the map as intended.</p>
+                    <img src="images/Act3_5_map02.png" alt="Act3_5_map02.png">
+
+                    <h2>Map Visualizations</h2>
+                    <p>By looking at the full map data, we can confirm the layout of the world. The map shows the
+                        initial rooms we traversed and then details the 10 rooms of the maze. The top section shows
+                        the
+                        paths connecting the Data Center (Deprecated) room, the Hack-a-Gnome challenge entrance, and
+                        the
+                        initial far-east room:</p>
+
+                    <img src="images/Act3_5_map03.png" alt="Act3_5_map03.png">
+
+                    <p>Below that, you can see the layout of the 10 maze rooms we are trying to solve with the
+                        bottom
+                        room looking like the final room:</p>
+
+                    <img src="images/Act3_5_map04.png" alt="Act3_5_map04.png">
+                    <p>This can be verified in the game if you zoom out in your browser:</p>
+
+                    <img src="images/Act3_5_map05.png" alt="Act3_5_map05.png">
+                </section>
+
+                <!-- Coordinate Adjustments -->
+                <section>
+                    <h3>Coordinates and Offset</h3>
+                    <p>Before using the coordinates from the map, we need to account for two crucial differences
+                        between
+                        the static map image and the game's live WebSocket data:</p>
+
+                    <ul>
+                        <li><u>Coordinate Offset</u>: I found a consistent offset of (-5, -16) between the
+                            coordinates
+                            on the map image and the coordinates used in the game's WebSocket messages. For example:
+                            A
+                            map point of (21, 88) corresponds to a game coordinate of (16, 72).</li>
+                        <li><u>Y-Axis Inversion</u>: In the game's coordinate system, the Y-axis increases downward.
+                            This is common in computer graphics but is the opposite of what you see in a standard
+                            algebra graph.</li>
+                    </ul>
+
+                    <p>Using the reversed Konami code order and applying the required offset, here are the final
+                        coordinates for the intended path. If you are using the REX exploit, you only need to jump
+                        to
+                        the very last coordinate (15,73) to finish the challenge!</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Step</th>
+                                <th>Door Direction</th>
+                                <th>Map Coordinate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>A</td>
+                                <td>(3, 20)</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>B</td>
+                                <td>(27, 20)</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>→</td>
+                                <td>(20, 25)</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>←</td>
+                                <td>(-5, 40)</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>→</td>
+                                <td>(35, 40)</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>←</td>
+                                <td>(10, 40)</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>↓</td>
+                                <td>(30, 59)</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>↓</td>
+                                <td>(0, 59)</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>↑</td>
+                                <td>(15, 49)</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>↑</td>
+                                <td>(15, 73)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+
+            <!-- Appendix Section -->
+            <section class="technical-appendix">
+
+                <!-- 🎓 Key Learnings -->
+                <div class="deep-dive-topic">
+                    <h3 id="a">
+                        Key Learnings
+                    </h3>
+                    <ul>
+                        <li><strong>Binary Encoding:</strong> Converting visual data (bricks) to <strong>binary
+                                (0s/1s)</strong> and <strong>ASCII</strong> text.</li>
+                        <li><strong>WebSockets:</strong> Recognizing them as the protocol for <strong>real-time game
+                                commands</strong>.</li>
+                        <li><strong>Traffic Analysis:</strong> Using a <strong>proxy (Burp Suite)</strong> to intercept
+                            and study network messages.</li>
+                        <li><strong>Trust Vulnerabilities:</strong> Finding server flaws where client <strong>location
+                                checks are skipped</strong> (the <code>REX</code> exploit).</li>
+                        <li><strong>Automation:</strong> Using tools like Repeater for <strong>automated
+                                bruteforce</strong> attacks.</li>
+                    </ul>
+
+                </div>
+
+                <!-- Challenge Reference Material -->
+                <div class="deep-dive-topic">
+                    <h3>Challenge Reference Material</h3>
+                    <h4>Challenge Descriptions</h4>
+                    <h5>Classic Mode Description</h5>
+                    <p>You've heard murmurings around the city about a wise, elderly gnome having a change of heart. He
+                        must have information about where Frosty's Snowglobe Machine is. You should find and talk to the
+                        gnome so you can get some help with how to make your way through the Data Center's labrynthian
+                        halls. Once you find the Snowglobe Machine, figure out how to shut it down and melt Frosty's
+                        cold, nefarious plans.</p>
+
+                    <h5>CTF Mode Description</h5>
+                    <p>When playing through HHC 2025 in the traditional world mode, you'd have to find your way through
+                        a maze in the Data Center, similar to HHC 2015. But, since that is mostly for fun and story, and
+                        since you're playing CTF mode, you don't have to! Just click on the item below to progress
+                        through this step, which involves finding Frosty's Snowglobe Machine and shutting it down.</p>
+                    <h4>Official Hints</h4>
+                    <p>Talk to Elder Gnome right outside the train station for hints:</p>
+                    <img src="images/Act3_5_01.png" alt="Act3_5_01.png">
+                    <ul>
+                        <li>The Elder Gnome said the route to the old secret lab inside the Data Center starts on the
+                            far East wing inside the building, and that the hallways leading to it are probably pitch
+                            dark. He also said the employees that used to work there left some kind of code outside the
+                            building as a reminder of the route. Perhaps you can search in the vicinity of the Data
+                            Center for this code.</li>
+                        <li>The Elder also recalled a story of another "computer person" like yourself who managed to
+                            find an intern that got lost inside the Data Center about 10 years ago. But that was before
+                            the reconstruction, so the current route likely isn't exactly the same. Maybe you can search
+                            for the Data Center's past in the historical archives that is the Internet for more
+                            information that may be helpful.</li>
+                    </ul>
+                </div>
+            </section>
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT END                         -->
+            <!-- ============================================= -->
+
+            <div class="nav-buttons">
+                <a href="04-schrodinger.html" class="nav-btn">← Schrödinger's Scope</a>
+                <footer>
+                    <p>&copy; 2025 James Mar – SANS Holiday Hack Challenge Write-up</p>
+                    <a href="#" class="back-to-top">↑ Back to Top</a>
+                </footer>
+                <a href="06-wire.html" class="nav-btn">On the Wire →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+
+</html>

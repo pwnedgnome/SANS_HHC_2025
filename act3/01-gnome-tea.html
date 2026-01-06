@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gnome Tea | SANS Holiday Hack 2025</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../../index.html"><img src="../../images/hhc-logo.png" alt="Holiday Hack 2025"
+                    class="sidebar-logo"></a>
+        </div>
+        <div class="nav-section">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Overview</a></li>
+                <li><a href="../../map.html">World Map</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Act 1</h3>
+            <ul class="nav-list">
+                <li><a href="../act1/01-orientation.html">1. Holiday Hack Orientation</a></li>
+                <li><a href="../act1/02-defang.html">2. It's All About Defang</a></li>
+                <li><a href="../act1/03-neighborhood.html">3. Neighborhood Watch Bypass</a></li>
+                <li><a href="../act1/04-gift-tracking.html">4. Gift-Tracking Port Mystery</a></li>
+                <li><a href="../act1/05-visual-network.html">5. Visual Networking Thinger</a></li>
+                <li><a href="../act1/06-visual-firewall.html">6. Visual Firewall Thinger</a></li>
+                <li><a href="../act1/07-nmap.html">7. Intro to Nmap</a></li>
+                <li><a href="../act1/08-blob-storage.html">8. Blob Storage Challenge</a></li>
+                <li><a href="../act1/09-spare-key.html">9. Spare Key</a></li>
+                <li><a href="../act1/10-open-door.html">10. The Open Door</a></li>
+                <li><a href="../act1/11-owner.html">11. Owner</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 2</h3>
+            <ul class="nav-list">
+                <li><a href="../act2/01-retro.html">1. Retro Recovery</a></li>
+                <li><a href="../act2/02-mail.html">2. Mail Detective</a></li>
+                <li><a href="../act2/03-idorable.html">3. IDORable Bistro</a></li>
+                <li><a href="../act2/04-dosis.html">4. Dosis Network Down</a></li>
+                <li><a href="../act2/05-gnome-identity.html">5. Rogue Gnome Identity Provider</a></li>
+                <li><a href="../act2/06-quantgnome.html">6. Quantgnome Leap</a></li>
+                <li><a href="../act2/07-reverse.html">7. Going in Reverse</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 3</h3>
+            <ul class="nav-list">
+                <li><a href="01-gnome-tea.html" class="active">1. Gnome Tea</a></li>
+                <li><a href="02-hack-gnome.html">2. Hack-a-Gnome</a></li>
+                <li><a href="03-snowcat.html">3. Snowcat RCE & Priv Esc</a></li>
+                <li><a href="04-schrodinger.html">4. Schrödinger's Scope</a></li>
+                <li><a href="05-snowglobe.html">5. Find & Shutdown Snowglobe</a></li>
+                <li><a href="06-wire.html">6. On the Wire</a></li>
+                <li><a href="07-freeski.html">7. FreeSki</a></li>
+                <li><a href="08-snowblind.html">8. Snowblind Ambush</a></li>
+            </ul>
+        </div>
+
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT START                       -->
+            <!-- ============================================= -->
+
+            <header>
+                <h1>Gnome Tea</h1>
+                <p class="challenge-meta">Act 3, Challenge 1 | 📍 Modern Scandinavian Condo | Difficulty: ❄️❄️❄️</p>
+                <figure>
+                    <img src="images/a3c1_hero.png" style="display: block; margin: 0 auto;" alt="">
+                    <figcaption>Tea app, July 2025: 13000 verification photos leaked</figcaption>
+                    <figcaption>GnomeTea, December 2025: Hold my firebase bucket</figcaption>
+                </figure>
+                <p>Secrets are brewing in the GnomeTea social network. What starts with a simple login page inspection
+                    turns into a hunt through exposed Firebase configs and leaked GPS metadata. </p>
+            </header>
+
+            <!-- Scenario Overview -->
+            <section>
+                <h2>Challenge Overview</h2>
+                <p>Our goal is to get the secret passphrase, and all we have is one URL: <a
+                        href="https://gnometea.web.app/login" target="_blank" rel="noopener noreferrer">https://gnometea.web.app/login</a>.</p>
+                <img src="images/a3c1_homepage.png" alt="GnomeTea login page">
+                <p>
+
+                    The link is a simple login page, but there are a couple threads to pull on in the source:</p>
+                <img src="images/a3c1_source.png" alt="source code snippet">
+
+                <ul>
+                    <li>A developer TODO comment in the source code:
+                        <code>&lt;!-- TODO: lock down dms, tea, gnomes collections --&gt;</code>
+                    </li>
+                    <li>A 670KB JavaScript file containing the minified GnomeTea React application,
+                        including
+                        Firebase configuration and other details for the single-page application (SPA).
+                        <pre><code class="language-javascript">const OP = {
+    apiKey: "AIzaSyDvBE5-77eZO8T18EiJ_MwGAYo5j2bqhbk",
+    authDomain: "holidayhack2025.firebaseapp.com",
+    projectId: "holidayhack2025",
+    storageBucket: "holidayhack2025.firebasestorage.app",
+    messagingSenderId: "341227752777",
+    appId: "1:341227752777:web:7b9017d3d2d83ccf481e98"
+};</code></pre>
+                    </li>
+                </ul>
+                <!-- Side note: "Gnome Tea" & The "Tea App" Breach -->
+                <details>
+                    <summary>Side Note: "Gnome Tea" & The "Tea App" Breach</summary>
+                    <div>
+                        <p><strong>The Tea:</strong> The term "tea" is slang for gossip or juicy information, which is
+                            central to the app's theme.</p>
+                        <p><strong>The App:</strong> "Gnome Tea" appears to be a direct parody of the viral "Tea App," a
+                            gossip platform that dominated app stores in early 2025. The logo of Gnome Tea closely
+                            resembles the Tea App's.</p>
+                        <img src="images/a3c1_tea_app.png" alt="Tea App vs Gnome Tea UI Comparison">
+                        <p><strong>The July 2025 Breach:</strong> This challenge mirrors the infamous <strong>Tea App
+                                Breach of July 2025</strong>. In that incident, attackers exploited similar Firebase
+                            misconfigurations.</p>
+                        <p><strong>The Critical Parallel (Metadata):</strong> The "smoking gun" in the real Tea App
+                            breach was <strong>unstripped EXIF data</strong> in user verification photos, which
+                            inadvertently doxxed thousands of anonymous users. This is exactly how we compromise Barnaby
+                            here: his "verification" driver's license photo contained the GPS coordinates that revealed
+                            his hometown.</p>
+                        <p>The SANS Internet Storm Center released a <a
+                                href="https://www.youtube.com/watch?v=owKQMToTny4" target="_blank" rel="noopener noreferrer">video</a> with a breakdown of the Tea
+                            App incident shortly after it occurred.</p>
+                    </div>
+                </details>
+            </section>
+
+            <!-- Firebase reconnaissance -->
+            <section>
+                <h2>Firebase Reconnaissance</h2>
+                <p>The Firebase configuration is typical and not a security risk by itself.
+                    They're identifiers that tell the Firebase SDK which project to connect
+                    to. Google's security model assumes these will be in client-side code.
+                    The actual security comes from:</p>
+                <ol>
+                    <li>Firebase Security Rules – Server-side rules that control who can read/write data</li>
+                    <li>Authentication – Requiring users to log in before accessing resources</li>
+                    <li>Domain restrictions – You can restrict which domains can use the API key</li>
+                </ol>
+                <p>
+                    With the <code>holidayhack2025</code> project ID extracted, we can directly query Google's Firestore
+                    REST API with the collection names found in the source code.</p>
+                <ul>
+                    <li><a
+                            href="https://firestore.googleapis.com/v1/projects/holidayhack2025/databases/(default)/documents/gnomes" target="_blank" rel="noopener noreferrer">https://firestore.googleapis.com/v1/projects/holidayhack2025/databases/(default)/documents/gnomes</a>
+                    </li>
+                    <li><a
+                            href="https://firestore.googleapis.com/v1/projects/holidayhack2025/databases/(default)/documents/tea" target="_blank" rel="noopener noreferrer">https://firestore.googleapis.com/v1/projects/holidayhack2025/databases/(default)/documents/tea</a>
+                    </li>
+                    <li><a
+                            href="https://firestore.googleapis.com/v1/projects/holidayhack2025/databases/(default)/documents/dms" target="_blank" rel="noopener noreferrer">https://firestore.googleapis.com/v1/projects/holidayhack2025/databases/(default)/documents/dms</a>
+                    </li>
+                </ul>
+                <!-- Background: Discovering Firestore REST API Endpoints -->
+                <details>
+                    <summary>Background: Discovering Firestore REST API Endpoints</summary>
+                    <p>The Firestore REST API follows a standardized, publicly documented pattern. No special tools or
+                        insider knowledge required. Google's official documentation:
+                        <a
+                            href="https://firebase.google.com/docs/firestore/use-rest-api" target="_blank" rel="noopener noreferrer">https://firebase.google.com/docs/firestore/use-rest-api</a>
+                    </p>
+                    <p>The URL pattern:</p>
+                    <code>https://firestore.googleapis.com/v1/projects/<span class="redbox">{PROJECT_ID}</span>/databases/(default)/documents/<span class="redbox">{COLLECTION}</span></code>
+
+                    <p><strong>How attackers discover these endpoints:</strong></p>
+                    <ol>
+                        <li><strong>Official Documentation:</strong> Google publishes complete <a
+                                href="https://firebase.google.com/docs/firestore/use-rest-api" target="_blank" rel="noopener noreferrer">Firestore REST API
+                                docs</a> that explicitly show the URL pattern including <span
+                                class="inline-code">(default)</span> for the database name. Once you have a project ID,
+                            you know exactly what URLs to try.</li>
+                        <li><strong>Network Tab Inspection:</strong> Using the legitimate app while watching DevTools →
+                            Network reveals the actual requests the Firebase SDK makes. The SDK is just a wrapper around
+                            these REST endpoints.</li>
+                        <li><strong>Penetration Testing Knowledge:</strong> Like knowing to check for exposed <span
+                                class="inline-code">.git/</span> directories or <span
+                                class="inline-code">robots.txt</span> files, Firebase REST API patterns are part of the
+                            standard reconnaissance toolkit.</li>
+                    </ol>
+
+                    <p><strong>Common Firestore REST Operations:</strong></p>
+                    <table>
+                        <tr>
+                            <th>Operation</th>
+                            <th>HTTP Method</th>
+                            <th>Endpoint</th>
+                        </tr>
+                        <tr>
+                            <td>List documents</td>
+                            <td>GET</td>
+                            <td><span class="inline-code">/documents/{collection}</span></td>
+                        </tr>
+                        <tr>
+                            <td>Get single document</td>
+                            <td>GET</td>
+                            <td><span class="inline-code">/documents/{collection}/{docId}</span></td>
+                        </tr>
+                        <tr>
+                            <td>Query with filter</td>
+                            <td>POST</td>
+                            <td><span class="inline-code">:runQuery</span></td>
+                        </tr>
+                    </table>
+
+                    <p><strong>Key Takeaway:</strong> The Firebase config being "exposed" in client-side JavaScript is
+                        expected and by design—those values are identifiers, not secrets. The actual security should
+                        come from properly configured Firestore Security Rules, which is where GnomeTea failed.</p>ß
+                </details>
+
+                <!-- Gnomes -->
+                <section>
+                    <h3>Gnomes Collection</h3>
+                    <p>The gnomes collection contains records for 18 gnomes. Key details include name, email, and
+                        driver's
+                        license image URL. All the URLs worked except the one for Barnaby Briefcase for which
+                        we get a 403 Access Denied.</p>
+                    <!-- Barnaby JSON -->
+                    <details>
+                        <summary>Example JSON for Barnaby Briefcase</summary>
+                        <div class="code-block">
+                            <div class="code-title">JSON</div>
+                            <pre><code class="language-json">{
+  "name":
+  "projects/holidayhack2025/databases/(default)/documents/gnomes/l7VS01K9GKV5ir5S8suDcwOFEpp2",
+  "fields": {
+    "email": {
+      "stringValue": "barnabybriefcase@gnomemail.dosis"
+      },
+    "homeLocation": {
+      "stringValue": "Gnomewood Grove, Dosis Neighborhood"
+      },
+    "uid": {
+      "stringValue": "l7VS01K9GKV5ir5S8suDcwOFEpp2"
+      },
+    "avatarUrl": {
+      "stringValue": "https://storage.googleapis.com/holidayhack2025.firebasestorage.app/gnome-avatars/l7VS01K9GKV5ir5S8suDcwOFEpp2_profile.png"
+      },
+    "interests": {
+      "arrayValue": {
+        "values": [
+          { "stringValue": "gardening" },
+          { "stringValue": "mushrooms" },
+          { "stringValue": "gossip" }
+        ]
+        }
+      },
+    "createdAt": {
+      "timestampValue": "2025-09-30T18:21:29.604Z"
+      },
+    "bio": {
+      "stringValue": "Corporate ladder-climber with a leather briefcase full of seed contracts,
+      quarterly reports, and a suspiciously large collection of business cards. He schedules synergy
+      meetings and talks about \"disrupting the garden space.\""
+      },
+    "name": {
+      "stringValue": "Barnaby Briefcase"
+      },
+    "driversLicenseUrl": {
+      "stringValue": "https://storage.googleapis.com/holidayhack2025.firebasestorage.app/gnome-documents/l7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg"
+      }
+    },
+    "createTime": "2025-09-30T18:21:29.617348Z",
+    "updateTime": "2025-09-30T19:09:06.541085Z"
+    },</code></pre>
+                    </details>
+                </section>
+                <!-- Tea -->
+                <section>
+                    <h3>Tea Collection</h3>
+                    <p>Lots of gossip posts here, but nothing relevant.</p>
+                </section>
+                <!-- DMs -->
+                <section>
+                    <h3>DMs (Direct Messages) Collection</h3>
+                    <p>Most of the information here is noise except for one message from Barnaby: </p>
+                    <blockquote>"Sorry, I can't give
+                        you my password but I can give you a hint. My <span class="redbox">password is actually the
+                            name of my hometown</span> that
+                        I grew up in. <span class="redbox">I actually just visited there back when I signed up with my
+                            id to GnomeTea (I took
+                            my picture of my id there)</span>"
+                    </blockquote>
+                </section>
+            </section>
+
+            <!-- Getting Barnaby's password -->
+            <section>
+                <h2>Getting Barnaby's Password</h2>
+                <h3>Getting Barnaby's License Image</h3>
+                <p>With the DM hint confirming that his password is his hometown, and the knowledge that he took his
+                    license photo at that location, we need to extract the metadata from that license
+                    photo. However, the link from the gnome
+                    collection
+                    returns a 403 access denied. There's an alternative way to access files stored in Firebase Storage
+                    using the
+                    Firebase Storage REST API. This uses a different URL structure and permission system.</p>
+
+                <p>This DOES NOT work - 403 Access Denied (from gnome-documents URL): </p>
+                <ul>
+                    <li><a
+                            href="https://storage.googleapis.com/holidayhack2025.firebasestorage.app/gnome-documents/l7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg" target="_blank" rel="noopener noreferrer">https://storage.googleapis.com/holidayhack2025.firebasestorage.app/gnome-documents/l7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg</a>
+                    </li>
+                </ul>
+
+                <p>This DOES work (crafted Firebase Storage REST API format):</p>
+                <ul>
+                    <li><a
+                            href="https://firebasestorage.googleapis.com/v0/b/holidayhack2025.firebasestorage.app/o/gnome-documents%2Fl7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg?alt=media" target="_blank" rel="noopener noreferrer">https://firebasestorage.googleapis.com/v0/b/holidayhack2025.firebasestorage.app/o/gnome-documents%2Fl7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg?alt=media</a>
+                    </li>
+                </ul>
+                <!-- Background Information: Firebase Storage Dual Access Paths -->
+                <details>
+                    <summary>Background Information: Firebase Storage Dual Access Paths</summary>
+                    <p>Firebase Storage has <strong>two different access patterns</strong> with separate permission
+                        systems:</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request Method</th>
+                                <th>Access Control Gate</th>
+                                <th>Outcome</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>Direct Cloud Storage</strong><br>
+                                    <code><a href="https://storage.googleapis.com/holidayhack2025.firebasestorage.app/gnome-documents/l7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg" target="_blank" rel="noopener noreferrer">storage.googleapis.com/holidayhack2025...</a></code>
+                                </td>
+                                <td>
+                                    <strong>Cloud IAM</strong><br>
+                                    <span style="font-size: 0.85em; color: #666;">(Checks for Google Account/Service
+                                        Account)</span>
+                                </td>
+                                <td style="color: #dc3545; font-weight: bold;">
+                                    403 Access Denied
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Firebase Storage API</strong><br>
+                                    <code><a href="https://firebasestorage.googleapis.com/v0/b/holidayhack2025.firebasestorage.app/o/gnome-documents%2Fl7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg?alt=media" target="_blank" rel="noopener noreferrer">firebasestorage.googleapis.com/v0/b/holi...</a></code>
+                                </td>
+                                <td>
+                                    <strong>Firebase Security Rules</strong><br>
+                                    <span style="font-size: 0.85em; color: #666;">(Checks firestore.rules
+                                        logic)</span>
+                                </td>
+                                <td style="color: #198754; font-weight: bold;">
+                                    200 OK
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>This is a common misconfiguration: developers secure the Cloud Storage bucket but leave
+                        permissive Firebase Security Rules. The <code>?alt=media</code>
+                        parameter is crucial—it tells the API to return the actual file content rather than
+                        metadata. Here's what is returned without that parameter:</p>
+                    <pre><code class="language-json">{
+  "name": "gnome-documents/l7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg",
+  "bucket": "holidayhack2025.firebasestorage.app",
+  "generation": "1759320860397294",
+  "metageneration": "1",
+  "contentType": "image/jpeg",
+  "timeCreated": "2025-10-01T12:14:20.403Z",
+  "updated": "2025-10-01T12:14:20.403Z",
+  "storageClass": "REGIONAL",
+  "size": "291223",
+  "md5Hash": "XvaCfPRM5KW4FqoInuC5kg==",
+  "contentEncoding": "identity",
+  "contentDisposition": "inline; filename*=utf-8''l7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg",
+  "crc32c": "GAnT9A==",
+  "etag": "CO6duPf8gpADEAE=",
+  "downloadTokens": "9292c2a3-ef8d-49f3-9b5b-02a076e63fee"
+}</code></pre>
+                </details>
+                <h3>Geolocation from Barnaby's License Image Metadata</h3>
+                <p>Using exiftool, we can get the GPS coordinates embedded in the image metadata:</p>
+                <div class="code-block">
+                    <div class="code-title">Bash</div>
+                    <pre>$ <span class="user-input">exiftool l7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg</span>
+ExifTool Version Number         : 12.40
+File Name                       : l7VS01K9GKV5ir5S8suDcwOFEpp2_drivers_license.jpeg
+...
+GPS Latitude                    : <span class="redbox">33 deg 27' 53.85" S</span>
+GPS Longitude                   : <span class="redbox">115 deg 54' 37.62" E</span>
+</code></pre>
+                </div>
+                <details>
+                    <summary>Alternate Methods to Get EXIF Data </summary>
+                    <p>If you don't have access to exiftool, you can use online EXIF viewers or other native OS features
+                    </p>
+                    <ul>
+                        <li><strong>Online EXIF Viewers:</strong> Websites like <a
+                                href="https://exifinfo.org/" target="_blank" rel="noopener noreferrer">ExifInfo.org</a> or
+                            <a href="https://www.verexif.com/en/" target="_blank" rel="noopener noreferrer">VerExif.com</a> allow you to upload images or just the
+                            image's URL
+                            and view their EXIF data directly in your browser.
+                        </li>
+                        <li><strong>Windows:</strong> Right-click the image file, select "Properties," go to the
+                            "Details" tab, and
+                            scroll down to the GPS section to view coordinates.
+                            <img src="images/a3c1_windows_exif.png" alt="Windows EXIF Info">
+                        </li>
+                        <li><strong>macOS:</strong>In a Finder window, right click on the file and select Get Info.
+                            Under "More Info," you
+                            may find GPS data if available.
+                            <img src="images/a3c1_mac_exif.png" alt="MacOS EXIF Info">
+                        </li>
+                </details>
+                <details>
+                    <summary>Background: EXIF Data and Privacy</summary>
+                    <p>EXIF (Exchangeable Image File Format) metadata is embedded in images by cameras and phones.
+                        Common fields include:</p>
+                    <ul>
+                        <li><strong>GPS Coordinates:</strong> Latitude/longitude where photo was taken</li>
+                        <li><strong>Timestamps:</strong> Date and time of capture</li>
+                        <li><strong>Device Info:</strong> Camera model, lens settings</li>
+                        <li><strong>Thumbnails:</strong> Sometimes preserved even after cropping</li>
+                    </ul>
+                    <p>This is a significant privacy concern—uploading unstripped photos can reveal your home
+                        address, workplace, or other sensitive locations. Most social media platforms strip EXIF
+                        data on upload, but not all services do.</p>
+                </details>
+
+                <p>Entering these coordinates into <a
+                        href="https://www.google.com/maps/place/Gnomesville/@-33.4649763,115.9091647,499m/data=!3m2!1e3!4b1!4m6!3m5!1s0x2a31c3ade51cf0cb:0x130b58e2d1a910ae!8m2!3d-33.4649785!4d115.9104522!16s%2Fg%2F11b6j0mhds?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoKLDEwMDc5MjA3M0gBUAM%3D" target="_blank" rel="noopener noreferrer">Google
+                        Maps</a> reveals Barnaby's hometown (and password), a real-world location in Western Australia
+                    known as:
+                    <strong>Gnomesville</strong>.
+                </p>
+                <img src="images/a3c1_gnomesville.png" alt="Gnomesville Map">
+                <p>They even have a <a href="https://www.gnomesville.com.au/" target="_blank" rel="noopener noreferrer">website</a> and YouTube video about it.
+                </p>
+
+                <!-- embed youtube video -->
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/k4LSyYQ4OJ4"
+                    title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+                <p class="caption">There's gnome place like home!</p>
+            </section>
+
+            <!-- Priv Esc -->
+            <section>
+                <h2>Privilege Escalation</h2>
+                <p>After logging in as Barnaby with his email from the gnomes collection
+                    <code>barnabybriefcase@gnomemail.dosis</code> and password <code>gnomesville</code>,
+                    you can explore privilege escalation opportunities.
+                </p>
+                <img src="images/a3c1_dashboard.png" alt="Dashboard screenshot">
+
+                <p> Going to /admin, we get this error that oddly provides the admin UID and variable we need to set:
+                </p>
+                <img src="images/a3c1_admin_denied.png" alt="admin access denied">
+                <p>The admin UID variable and value can also be found in the JavaScript code on line 3357.</p>
+                <img src="images/a3c1_adminuid.png" alt="Admin UID in JavaScript code">
+                    <p>But it's even nicer for us to have it in the webpage.</p>
+                <p>Open the browser's Dev Tools and enter the following command in the console:
+                    <code>window.ADMIN_UID = "3loaihgxP0VwCTKmkHHFLe6FZ4m2";</code> Reloading /admin now
+                    reveals the secret passphrase:
+                </p>
+                <img src="images/a3c1_admin_secret.png" alt="Admin secret passphrase">
+            </section>
+            <div class="flag">🚩 <strong>Flag:</strong> GigGigglesGiggler</div>
+
+            <!-- Appendix Section -->
+            <section class="technical-appendix">
+
+                <!-- Challenge Reference Material -->
+                <div class="deep-dive-topic">
+                    <h3>Challenge Reference Material</h3>
+                    <h4>Challenge Descriptions</h4>
+                    <h5>Classic Mode Description</h5>
+                    <p> Enter the apartment building near 24-7 and help Thomas infiltrate the GnomeTea social network
+                        and discover the secret agent passphrase.</p>
+                    <h5>CTF Mode Description</h5>
+                    <p> Say, you wouldn't happen to have time to help me out with something? The gnomes have been oddly
+                        suspicious and whispering to each other. In fact, I could've sworn I heard them use some sort of
+                        secret phrase. When I laughed right next to one, it said "passphrase denied". I asked what
+                        that was all about but it just giggled and ran away. I know they've been using
+                        <a href="https://gnometea.web.app/login" target="_blank" rel="noopener noreferrer">GnomeTea</a> to "spill the tea" on one another, but I
+                        can't sign
+                        up 'cause I'm obviously not a gnome. I could sure use your expertise to infiltrate this app and
+                        figure out what their secret passphrase is. I've tried a few things already, but as usual the
+                        whole... Uh, what's the word I'm looking for here? Oh right, "endeavor", ended up with the
+                        rest of my unfinished projects. "
+                    </p>
+                    <h4>Official Hints</h4>
+                    <ul>
+                        <li>Exif jpeg image data can often contain data like the latitude and longitude of where the
+                            picture was taken.</li>
+                        <li>I heard rumors that the new GnomeTea app is where all the Gnomes spill the tea on each
+                            other. It uses Firebase which means there is a client side config the app uses to connect to
+                            all the firebase services.</li>
+                        <li>Hopefully they did not rely on hard-coded client-side controls to validate admin access once
+                            a user validly logs in. If so, it might be pretty easy to change some variable in the
+                            developer console to bypass these controls.</li>
+                        <li>Hopefully they setup their firestore and bucket security rules properly to prevent anyone
+                            from reading them easily with curl. There might be sensitive details leaked in messages.
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT END                         -->
+            <!-- ============================================= -->
+
+            <div class="nav-buttons">
+                <a href="../act2/07-reverse.html" class="nav-btn">← Going in Reverse</a>
+                <footer>
+                    <p>&copy; 2025 James Mar – SANS Holiday Hack Challenge Write-up</p>
+                    <a href="#" class="back-to-top">↑ Back to Top</a>
+                </footer>
+                <a href="02-hack-gnome.html" class="nav-btn">Hack-a-Gnome →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+
+</html>

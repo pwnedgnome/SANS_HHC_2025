@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeSki | SANS Holiday Hack 2025</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="../../index.html"><img src="../../images/hhc-logo.png" alt="Holiday Hack 2025"
+                    class="sidebar-logo"></a>
+        </div>
+        <div class="nav-section">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Overview</a></li>
+                <li><a href="../../map.html">World Map</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Act 1</h3>
+            <ul class="nav-list">
+                <li><a href="../act1/01-orientation.html">1. Holiday Hack Orientation</a></li>
+                <li><a href="../act1/02-defang.html">2. It's All About Defang</a></li>
+                <li><a href="../act1/03-neighborhood.html">3. Neighborhood Watch Bypass</a></li>
+                <li><a href="../act1/04-gift-tracking.html">4. Gift-Tracking Port Mystery</a></li>
+                <li><a href="../act1/05-visual-network.html">5. Visual Networking Thinger</a></li>
+                <li><a href="../act1/06-visual-firewall.html">6. Visual Firewall Thinger</a></li>
+                <li><a href="../act1/07-nmap.html">7. Intro to Nmap</a></li>
+                <li><a href="../act1/08-blob-storage.html">8. Blob Storage Challenge</a></li>
+                <li><a href="../act1/09-spare-key.html">9. Spare Key</a></li>
+                <li><a href="../act1/10-open-door.html">10. The Open Door</a></li>
+                <li><a href="../act1/11-owner.html">11. Owner</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 2</h3>
+            <ul class="nav-list">
+                <li><a href="../act2/01-retro.html">1. Retro Recovery</a></li>
+                <li><a href="../act2/02-mail.html">2. Mail Detective</a></li>
+                <li><a href="../act2/03-idorable.html">3. IDORable Bistro</a></li>
+                <li><a href="../act2/04-dosis.html">4. Dosis Network Down</a></li>
+                <li><a href="../act2/05-gnome-identity.html">5. Rogue Gnome Identity Provider</a></li>
+                <li><a href="../act2/06-quantgnome.html">6. Quantgnome Leap</a></li>
+                <li><a href="../act2/07-reverse.html">7. Going in Reverse</a></li>
+            </ul>
+        </div>
+
+        <div class="nav-section">
+            <h3>Act 3</h3>
+            <ul class="nav-list">
+                <li><a href="01-gnome-tea.html">1. Gnome Tea</a></li>
+                <li><a href="02-hack-gnome.html">2. Hack-a-Gnome</a></li>
+                <li><a href="03-snowcat.html">3. Snowcat RCE & Priv Esc</a></li>
+                <li><a href="04-schrodinger.html">4. Schrödinger's Scope</a></li>
+                <li><a href="05-snowglobe.html">5. Find & Shutdown Snowglobe</a></li>
+                <li><a href="06-wire.html">6. On the Wire</a></li>
+                <li><a href="07-freeski.html" class="active">7. FreeSki</a></li>
+                <li><a href="08-snowblind.html">8. Snowblind Ambush</a></li>
+            </ul>
+        </div>
+
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT START                       -->
+            <!-- ============================================= -->
+
+            <header>
+                <h1>FreeSki</h1>
+                <p class="challenge-meta">Act 3, Challenge 7: | 📍 Retro Emporium | Difficulty: ❄️❄️❄️❄️❄️</p>
+                <figure>
+                    <img src="images/3_7_freeski_hero01.png" style="display: block; margin: 0 auto;"
+                        alt="FreeSki game showing skier collecting treasures">
+                    <figcaption>The game I fixed but didn't need to.</figcaption>
+                </figure>
+                <p>FreeSki.exe crashed at the very start. Next, decompilers choked on it. What's left were thousands of
+                    lines of raw
+                    bytecode. To find the hidden flag, I'd need to reverse engineer a deterministic RNG vulnerability,
+                    decrypt XOR'd
+                    flags, and never actually ski down a single mountain.</p>
+            </header>
+
+
+            <!-- Challenge Overview -->
+            <section>
+                <h2>Challenge Overview</h2>
+                <p>Help Goose Olivia in a simple skiing game: ski down the mountain and collect all five treasure chests to reveal the hidden flag.</p>
+            </section>
+
+            <!-- First Run -->
+            <section>
+                <h2>First Run</h2>
+                <p>Upon downloading and running <a href="https://www.holidayhackchallenge.com/2025/assets/FreeSki.exe"
+                        target="_blank" rel="noopener noreferrer">FreeSki.exe</a>, it crashed with a missing asset error
+                    and
+                    said that it was
+                    built with: <strong>Python 3.13.7</strong> and <strong>Pygame 2.6.1</strong>. <a
+                        href="https://www.pygame.org/docs/" target="_blank" rel="noopener noreferrer">Pygame</a> is a
+                    popular
+                    Python library for game development, providing modules to handle graphics rendering, sound, input
+                    devices, and game logic.</p>
+                <div class="code-block">
+                    <div class="code-title">Windows Command Prompt</div>
+                    <pre>C:\Users\jim\Downloads><span class="user-input">FreeSki.exe</span>
+<span class="redbox">pygame 2.6.1</span> (SDL 2.28.4, <span class="redbox">Python 3.13.7</span>)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Traceback (most recent call last):
+  File "FreeSki.py", line 30, in &lt;module&gt;
+FileNotFoundError: <span class="redbox">No file 'img/skier.png'</span> found in working directory 'C:\Users\jim\Downloads'.
+[PYI-6980:ERROR] Failed to execute script 'FreeSki' due to unhandled exception!</pre>
+                </div>
+            </section>
+
+            <!-- Extracting Python Bytecode -->
+            <section>
+                <h2>Extracting Python Bytecode</h2>
+                <p>From this error, we can consider the first hint about PyInstaller Extractor to extract the Python
+                    bytecode.
+                    Using <code>pyinstxtractor</code>, I unpacked the executable and extracted a bunch of files. Among
+                    them,
+                    we see a familiar filename in: <code>FreeSki.pyc</code> which is the game's main
+                    bytecode file.
+                </p>
+
+                <!-- Background Info - How Programs Are Compiled & Executed -->
+                <details>
+                    <summary>
+                        Background Info - How Different Programs Are Compiled & Executed
+                    </summary>
+                    <p>For this challenge, it's useful to know how different programs are written and run. </p>
+                    <h4>Traditional Compiled Languages (C, C++, Rust)</h4>
+                    <ol>
+                        <li><strong>Source code</strong> is written in a human-readable programming language.</li>
+                        <li>A <strong>compiler/linker</strong> translates the source code directly into machine code,
+                            producing
+                            an executable (.exe) file.</li>
+                        <li>At runtime, the operating system executes the machine code directly.</li>
+                    </ol>
+
+                    <h4>Python: An Interpreted Language</h4>
+                    <ol>
+                        <li><strong>Source code</strong> (.py files) is written similarly to compiled languages.</li>
+                        <li>At runtime, the <strong>Python interpreter</strong> converts source code into bytecode
+                            (.pyc) and
+                            executes it in a Python virtual machine (PVM)—no native machine code is produced.</li>
+                    </ol>
+
+                    <h4>Packaging Python as a Windows Executable</h4>
+                    <p>Since Python doesn't compile to native machine code, tools like <strong>PyInstaller</strong>
+                        bundle
+                        everything needed to run the program:</p>
+                    <ul>
+                        <li>Your program's <strong>bytecode</strong> (.pyc files).</li>
+                        <li>Required <strong>third-party libraries</strong> (dependencies).</li>
+                        <li>An embedded <strong>Python interpreter</strong> (PVM).</li>
+                    </ul>
+                    <p>This bundling approach creates larger executables (typically &gt;10MB) compared to true compiled
+                        programs, but eliminates the need for users to have Python installed on their system.</p>
+                </details>
+
+                <!-- Background Info: PyInstaller Extraction -->
+                <details>
+                    <summary>Background Info: PyInstaller Extraction</summary>
+                    <div class="details-content">
+                        <p>PyInstaller-generated executables like FreeSki.exe are self-extracting archives containing:
+                        </p>
+                        <ul>
+                            <li><strong>Compiled Python bytecode:</strong> The application's logic stored in .pyc files.
+                            </li>
+                            <li><strong>Assets:</strong> Game resources such as images, sounds, and configuration files.
+                            </li>
+                            <li><strong>Python libraries:</strong> Dependencies like Pygame and the embedded Python
+                                interpreter.
+                            </li>
+                        </ul>
+                        <p>Tools like <a href="https://github.com/extremecoders-re/pyinstxtractor" target="_blank" rel="noopener noreferrer">PyInstaller
+                                Extractor </a> similarly extract the compressed components but into
+                            separate files for analysis. While extraction itself is version-agnostic, using
+                            <strong>Python
+                                3.13</strong> is important later when analyzing or decompiling the recovered bytecode to
+                            avoid version mismatches.
+                        </p>
+                    </div>
+                </details>
+                <div class="code-block">
+                    <div class="code-title">Bash</div>
+                    <pre>$ <span class="user-input">wget https://raw.githubusercontent.com/extremecoders-re/pyinstxtractor/refs/heads/master/pyinstxtractor.py</span>
+$ <span class="user-input">wget https://www.holidayhackchallenge.com/2025/assets/FreeSki.exe</span>
+$ <span class="user-input">python3.13 pyinstxtractor.py FreeSki.exe</span> 
+[+] Processing FreeSki.exe
+
+&lt; <i>snipped output</i> &gt;
+
+[+] Possible entry point: <span class="redbox">FreeSki.pyc</span>
+
+&lt; <i>snipped output</i> &gt;
+
+[+] Successfully extracted pyinstaller archive: FreeSki.exe
+<span class="redbox">You can now use a python decompiler on the pyc files within the extracted directory</span>
+</pre>
+                </div>
+
+                <!-- Deep Dive: View Full pyinstxtractor output -->
+                <details>
+                    <summary>Deep Dive: View Full pyinstxtractor output</summary>
+                    <div class="details-content">
+                        <div class="code-block">
+                            <div class="code-title">Bash</div>
+                            <pre>$ <span class="user-input">wget https://raw.githubusercontent.com/extremecoders-re/pyinstxtractor/refs/heads/master/pyinstxtractor.py</span>
+$ <span class="user-input">wget https://www.holidayhackchallenge.com/2025/assets/FreeSki.exe</span>
+$ <span class="user-input">python3.13 pyinstxtractor.py FreeSki.exe</span> 
+[+] Processing FreeSki.exe
+[+] Pyinstaller version: 2.1+
+[+] Python version: 3.13
+[+] Length of package: 16806404 bytes
+[+] Found 98 files in CArchive
+[+] Beginning extraction...please standby
+[+] Possible entry point: pyiboot01_bootstrap.pyc
+[+] Possible entry point: pyi_rth_inspect.pyc
+[+] Possible entry point: pyi_rth_pkgres.pyc
+[+] Possible entry point: pyi_rth_setuptools.pyc
+[+] Possible entry point: pyi_rth_multiprocessing.pyc
+[+] Possible entry point: pyi_rth_pkgutil.pyc
+[+] Possible entry point: <span class="redbox">FreeSki.pyc</span>
+[+] Found 471 files in PYZ archive
+[!] Error: Failed to decompress PYZ.pyz_extracted/jaraco.pyc, probably encrypted. Extracting as is.
+[!] Error: Failed to decompress PYZ.pyz_extracted/setuptools/_distutils/compilers.pyc, probably encrypted. Extracting as is.
+[!] Error: Failed to decompress PYZ.pyz_extracted/setuptools/_distutils/compilers/C.pyc, probably encrypted. Extracting as is.
+[!] Error: Failed to decompress PYZ.pyz_extracted/setuptools/_vendor.pyc, probably encrypted. Extracting as is.
+[!] Error: Failed to decompress PYZ.pyz_extracted/setuptools/_vendor/jaraco.pyc, probably encrypted. Extracting as is.
+[+] Successfully extracted pyinstaller archive: FreeSki.exe
+<span class="redbox">You can now use a python decompiler on the pyc files within the extracted directory</span>
+</pre>
+                        </div>
+                </details>
+
+
+
+            </section>
+            <!-- Decompilation: Where Things Failed Again -->
+            <section>
+                <h2>Decompilation: Where Things Failed Again</h2>
+
+                <p>Just as the second hint mentioned, the end of the pyinstxtractor output directed us to decompilation
+                    (Decompyle++, also known as pycdc). It started strong,
+                    extracting global variables and initialization code but then hit a wall and could not handle the
+                    <code>MAKE_FUNCTION</code> opcode:
+                </p>
+
+                <!-- Installing Decompyle++ -->
+                <details>
+                    <summary>
+                        Installing Decompyle++
+                    </summary>
+                    <h4>Windows Installation</h4>
+                    <p>For Windows users, I recommend following the steps outlined by renowned security researcher and
+                        SANS
+                        Internet Storm Center contributor Didier Stevens: <a href="https://isc.sans.edu/diary/31544"
+                            target="_blank" rel="noopener noreferrer">ISC SANS Diary #31544</a>.</p>
+
+                    <h4>Linux Installation</h4>
+                    <p><strong>Important:</strong> Do not use the snap package. It installs an outdated version that
+                        doesn't
+                        recognize Python 3.13's magic number. Instead, build from source:</p>
+
+                    <div class="code-block">
+                        <div class="code-title">Bash</div>
+                        <pre>$ <span class="user-input">git clone https://github.com/zrax/pycdc.git</span>
+$ <span class="user-input">cd pycdc</span>
+$ <span class="user-input">sudo apt install git cmake build-essential</span>
+$ <span class="user-input">cmake .</span>
+$ <span class="user-input">make</span></pre>
+                    </div>
+                </details>
+
+                <!-- Background: Python Decompilation Challenges -->
+                <details>
+                    <summary>
+                        Background: Python Decompilation Challenges
+                    </summary>
+                    <p>Python decompilation is notoriously inconsistent. While Python bytecode is designed to be
+                        platform-independent and relatively stable, decompilers must reconstruct high-level constructs
+                        (functions, control flow, etc.) from low-level instructions. This becomes particularly
+                        challenging with:
+                    </p>
+                    <ul>
+                        <li><strong>New Python versions:</strong> Each release introduces new opcodes and optimizations
+                        </li>
+                        <li><strong>Obfuscated code:</strong> Intentionally complex bytecode patterns</li>
+                        <li><strong>Optimization:</strong> Compiler optimizations that remove or merge code structures
+                        </li>
+                    </ul>
+                    <p>Python 3.13 introduced significant changes to bytecode generation, making it incompatible with
+                        many older
+                        decompilers. This is why the hint specifically recommends Decompyle++.</p>
+                </details>
+
+                <div class="code-block">
+                    <div class="code-title">Bash</div>
+                    <pre>$ <span class="user-input">./pycdc ../FreeSki.pyc</span>
+# Source Generated with Decompyle++
+# File: FreeSki.pyc (Python 3.13)
+<span class="redbox">Unsupported opcode: MAKE_FUNCTION (122)</span>
+import pygame
+import enum
+import random
+import binascii
+None()
+pygame.font.init()
+screen_width = 800
+screen_height = 600
+
+&lt; snipped 30+ more global variables and settings &gt;
+
+skierimage = pygame.transform.scale_by(pygame.image.load('img/skier.png'), scale_factor)
+skier_leftimage = pygame.transform.scale_by(pygame.image.load('img/skier_left.png'), scale_factor)
+
+&lt; snipped image and font loading &gt;
+
+text_surface1 = 'Use arrow keys to ski and find the 5 treasures!'(False, pygame.Color, None('blue'))
+text_surface2 = "          <span class="yellowbox">find all the lost bears. don't drill into a rock. Win game.</span>"(False, pygame.Color, None('yellow'))
+flag_message_text_surface1 = '<span class="yellowbox">You win! Drill Baby is reunited with</span>'(False, pygame.Color, None('yellow'))
+flag_message_text_surface2 = '<span class="yellowbox">all its bears. Welcome to Flare-On 12.</span>'(False, pygame.Color, None('yellow'))
+<span class="redbox"># WARNING: Decompyle incomplete</span>
+</pre>
+                </div>
+
+                <!-- Deep Dive: Full pycdc Output -->
+                <details>
+                    <summary>Deep Dive: Full pycdc Output</summary>
+                    <div class="code-block">
+                        <div class="code-title">Bash</div>
+                        <pre>$ <span class="user-input">./pycdc ../FreeSki.pyc</span>
+# Source Generated with Decompyle++
+# File: FreeSki.pyc (Python 3.13)
+<span class="redbox">Unsupported opcode: MAKE_FUNCTION (122)</span>
+import pygame
+import enum
+import random
+import binascii
+None()
+pygame.font.init()
+screen_width = 800
+screen_height = 600
+framerate_fps = 60
+object_horizonal_hitbox = 1.5
+object_vertical_hitbox = 0.5
+max_speed = 0.4
+accelerate_increment = 0.02
+decelerate_increment = 0.05
+scale_factor = 0.1
+pixels_per_meter = 30
+skier_vertical_pixel_location = 100
+mountain_width = 1000
+obstacle_draw_distance = 23
+skier_start = 5
+grace_period = 10
+screen = pygame.display.set_mode((screen_width, screen_height))
+clock = pygame.time.Clock()
+dt = 0
+pygame.key.set_repeat(500, 100)
+pygame.display.set_caption('FreeSki v0.0')
+skierimage = pygame.transform.scale_by(pygame.image.load('img/skier.png'), scale_factor)
+skier_leftimage = pygame.transform.scale_by(pygame.image.load('img/skier_left.png'), scale_factor)
+skier_rightimage = pygame.transform.scale_by(pygame.image.load('img/skier_right.png'), scale_factor)
+skier_crashimage = pygame.transform.scale_by(pygame.image.load('img/skier_crash.png'), scale_factor)
+skier_pizzaimage = pygame.transform.scale_by(pygame.image.load('img/skier_pizza.png'), scale_factor)
+treeimage = pygame.transform.scale_by(pygame.image.load('img/tree.png'), scale_factor)
+yetiimage = pygame.transform.scale_by(pygame.image.load('img/yeti.png'), scale_factor)
+treasureimage = pygame.transform.scale_by(pygame.image.load('img/treasure.png'), scale_factor)
+boulderimage = pygame.transform.scale_by(pygame.image.load('img/boulder.png'), scale_factor)
+victoryimage = pygame.transform.scale_by(pygame.image.load('img/victory.png'), 0.7)
+gamefont = pygame.font.Font('fonts/VT323-Regular.ttf', 24)
+text_surface1 = 'Use arrow keys to ski and find the 5 treasures!'(False, pygame.Color, None('blue'))
+text_surface2 = "          <span class="yellowbox">find all the lost bears. don't drill into a rock. Win game.</span>"(False, pygame.Color, None('yellow'))
+flagfont = pygame.font.Font('fonts/VT323-Regular.ttf', 32)
+flag_text_surface = 'replace me'(False, pygame.Color, None('saddle brown'))
+flag_message_text_surface1 = '<span class="yellowbox">You win! Drill Baby is reunited with</span>'(False, pygame.Color, None('yellow'))
+flag_message_text_surface2 = '<span class="yellowbox">all its bears. Welcome to Flare-On 12.</span>'(False, pygame.Color, None('yellow'))
+<span class="redbox"># WARNING: Decompyle incomplete</span>
+</pre>
+                    </div>
+                </details>
+
+                <!-- Easter Egg -->
+                <details>
+                    <summary>Easter Egg : Flare-On 12 Reference</summary>
+                    <div class="details-content">
+                        <p><a href="https://flare-on.com/" target="_blank" rel="noopener noreferrer">Flare-On</a> is an
+                            annual
+                            reverse engineering CTF hosted by Mandiant (now part of Google Cloud). Flare-On 12 was held
+                            in September
+                            2025, just a few months before this challenge.</p>
+
+                        <p>The decompiled strings boxed in yellow reveal clear references to Flare-On 12's first
+                            challenge, which was also a Python
+                            reverse engineering game:</p>
+                        <ul>
+                            <li><code>"find all the lost bears. don't drill into a rock. Win game."</code></li>
+                            <li><code>"You win! Drill Baby is reunited with all its bears. Welcome to Flare-On 12."</code>
+                            </li>
+                        </ul>
+
+                        <p>Even the font (<code>VT323-Regular.ttf</code>) matches the Flare-On challenge. However, in
+                            this SANS
+                            challenge, we're collecting treasures instead of bears. The <a
+                                href="https://security.googlecloudcommunity.com/community-blog-42/flare-on-12-challenge-solutions-6061"
+                                target="_blank" rel="noopener noreferrer">official Flare-On 12 writeup</a> shows these
+                            exact strings
+                            in action:</p>
+
+                        <img src="images/Act3_7_easteregg1.png" alt="Flare-On 12 Challenge Screenshot 1">
+                        <img src="images/Act3_7_easteregg2.png" alt="Flare-On 12 Challenge Screenshot 2">
+
+                        <p>This is a nice homage to the reverse engineering community and a playful nod between CTF
+                            creators!</p>
+                    </div>
+                </details>
+
+                <p>Python 3.13 changed how functions are created at the bytecode level, and even the latest decompiler
+                    couldn't
+                    handle it. All the game logic was inaccessible. So we need to read raw assembly.</p>
+            </section>
+            <!-- Manual Disassembly: Going Low-Level -->
+            <section>
+                <h2>Manual Disassembly: Going Low-Level</h2>
+                <p>With decompilation off the table, I wrote a Python script using the built-in <code>dis</code> and
+                    <code>marshal</code> modules to dump the raw bytecode instructions. The result was thousands of
+                    lines of
+                    stack-based assembly-like code.
+                </p>
+
+                <!-- Background Info: Python's dis and marshal Modules -->
+                <details>
+                    <summary>Background Info: Python's dis and marshal Modules</summary>
+                    <div class="details-content">
+                        <p>Python provides built-in modules for working with bytecode:</p>
+                        <ul>
+                            <li><strong>marshal:</strong> Reads and writes Python bytecode in its binary format. It can
+                                deserialize
+                                .pyc files into code objects that Python can introspect.</li>
+                            <li><strong>dis:</strong> The disassembler module that converts bytecode into human-readable
+                                assembly-like instructions, showing the operation codes (opcodes) and their arguments.
+                            </li>
+                        </ul>
+                        <p>Together, these modules allow us to examine the low-level instructions that make up Python
+                            programs,
+                            which is essential when decompilers fail.</p>
+                    </div>
+                </details>
+
+                <!-- disassembly.py -->
+                <div class="code-block">
+                    <div class="code-title">Python (disassemble.py)</div>
+                    <pre><code class="language-python">import marshal
+import dis
+from types import CodeType
+
+def disassemble_pyc(path):
+    with open(path, 'rb') as f:
+        f.read(16)  # Skip 16-byte .pyc header (magic number, timestamp, etc.)
+        code = marshal.load(f)  # Deserialize bytecode into code object
+        
+        # Recursively disassemble nested code objects (functions, classes, etc.)
+        def dis_all(co, depth=0):
+            print("  " * depth + f"=== {co.co_name} ===")
+            dis.dis(co)  # Disassemble this code object
+            print("\nConstants:")
+            for i, const in enumerate(co.co_consts):
+                if isinstance(const, CodeType):
+                    print(f"  const[{i}]: &lt;code object {const.co_name}>")
+                    dis_all(const, depth + 1)  # Recurse into nested functions
+                else:
+                    print(f"  const[{i}]: {repr(const)}")
+            print("\n" + "="*50 + "\n")
+        
+        dis_all(code)
+
+disassemble_pyc('FreeSki.pyc')
+</code></pre>
+                </div>
+
+                <p><strong>Important:</strong> This script must be run with Python 3.13 to match the bytecode version
+                    used in
+                    FreeSki.exe. Running it with an older Python version will fail due to incompatible opcodes.</p>
+
+                <p>At a high level, this script:</p>
+                <ol>
+                    <li>Opens the .pyc file.</li>
+                    <li>Uses <code>marshal.load()</code> to deserialize the bytecode into a Python code object.</li>
+                    <li>Recursively walks through all code objects (the main module plus any nested functions/classes).
+                    </li>
+                    <li>For each code object, prints its disassembled bytecode instructions and constant pool.</li>
+                </ol>
+
+
+                <p>Reading bytecode isn't like reading C or Python. It's more like reading x86 assembly: lots of stack
+                    manipulation,
+                    numeric opcodes, and no high-level constructs. But buried in that assembly were three critical
+                    discoveries:</p>
+
+                <!-- Disassembled Bytecode Analysis: Discovery #1 - encrypted flags -->
+                <section>
+                    <div class="insight-box">
+                        <h3>Disassembled Bytecode Analysis: Discovery #1 - The Encrypted Flags</h3>
+                        <p>Starting on line 251, I found the definition of 7 mountains with their respective summit
+                            elevations and a unique ciphertext.</p>
+
+                        <div class="code-block">
+                            <div class="code-title">Bytecode - line 251</div>
+                            <pre>251  LOAD_NAME (Mountain)
+     PUSH_NULL
+     LOAD_CONST (<span class="redbox">'Mount Snow'</span>)
+     LOAD_CONST (3586)          # Summit elevation (feet)
+     LOAD_CONST (3400)
+     LOAD_CONST (2400)
+     LOAD_CONST (b'<span class="redbox">\x90\x00\x1d\xbc\x17b\xed6S"\xb0&lt;Y\xd6\xce\x169\xae\xe9|\xe2Gs\xb7\xfdy\xcf5\x98</span>')
+     CALL (5)
+252  LOAD_NAME (Mountain)
+     PUSH_NULL
+     LOAD_CONST (<span class="redbox">'Aspen'</span>)
+     LOAD_CONST (11211)         # Summit elevation (feet)
+     LOAD_CONST (11000)
+     LOAD_CONST (10000)
+     LOAD_CONST (b'<span class="redbox">U\xd7%x\xbfvj!\xfe\x9d\xb9\xc2\xd1k\x02y\x17\x9dK\x98\xf1\x92\x0f!\xf1\\\xa0\x1b\x0f</span>')
+     CALL (5)
+# ... 5 more mountains defined similarly ...
+</pre>
+                        </div>
+                    </div>
+                </section>
+                <!-- Disassembled Bytecode Analysis: Discovery #2 - Deterministic Treasure Locations -->
+                <section>
+
+                    <div class="insight-box">
+                        <h3>Disassembled Bytecode Analysis: Discovery #2 - Deterministic Treasure Locations</h3>
+
+                        <p>The next critical discovery was the <code>GetTreasureLocations</code> function, which
+                            determines where the five
+                            treasures spawn on each mountain. This function begins at line 236 of the disassembly. Here,
+                            the game used <code>random.seed(crc32(mountain_name))</code> to generate treasure locations.
+                            Most games seed their RNG with the current timestamp which of course is never the same, thus
+                            making outcomes unpredictable. But this game seeded with the mountain's <em>name</em>,
+                            something that never changes.</p>
+
+                        <p><strong>This meant every treasure location was completely deterministic (i.e. not
+                                random).</strong> "Mount Snow" and every other mountain would always generate the exact
+                            same five treasure coordinates, every single time.</p>
+
+                        <!-- Get Treasure Locations -->
+                        <div class="code-block">
+                            <div class="code-title">Bytecode (manual.out, line 236)</div>
+                            <pre>Disassembly of &lt;code object <span class="redbox">GetTreasureLocations</span> at 0x642bd2021f80, file "FreeSki.py", line 236&gt;:
+236           RESUME                   0
+
+237           BUILD_MAP                0
+              STORE_FAST               1 (locations)
+
+238           LOAD_GLOBAL              0 <span class="redbox">(random)</span>
+              LOAD_ATTR                2 <span class="redbox">(seed)</span>
+              PUSH_NULL
+              LOAD_GLOBAL              4 <span class="redbox">(binascii)</span>
+              LOAD_ATTR                6 <span class="redbox">(crc32)</span>
+              PUSH_NULL
+              LOAD_FAST                0 (self)
+              LOAD_ATTR                8 <span class="redbox">(name)</span>
+              LOAD_ATTR               11 (encode + NULL|self)
+              LOAD_CONST               1 ('utf-8')
+              
+              &lt; <i>rest of treasure determination</i> &gt;
+</pre>
+                        </div>
+
+                        <!-- Deep Dive: Full Treasure Location Disassembly Analysis -->
+                        <details>
+                            <summary>Deep Dive: Full Treasure Location Disassembly Analysis</summary>
+                            <div class="details-content">
+                                <p>Here is the full disassembly of the <code>GetTreasureLocations</code> function:</p>
+                                <div class="code-block">
+                                    <div class="code-title">Bytecode (manual.out, line 236)</div>
+                                    <pre>Disassembly of &lt;code object GetTreasureLocations at 0x642bd2021f80, file "FreeSki.py", line 236&gt;:
+236           RESUME                   0
+
+237           BUILD_MAP                0
+              STORE_FAST               1 (locations)
+
+238           LOAD_GLOBAL              0 (random)
+              LOAD_ATTR                2 (seed)
+              PUSH_NULL
+              LOAD_GLOBAL              4 (binascii)
+              LOAD_ATTR                6 (crc32)
+              PUSH_NULL
+              LOAD_FAST                0 (self)
+              LOAD_ATTR                8 (name)
+              LOAD_ATTR               11 (encode + NULL|self)
+              LOAD_CONST               1 ('utf-8')
+              CALL                     1
+              CALL                     1
+              CALL                     1
+              POP_TOP
+
+239           LOAD_FAST                0 (self)
+              LOAD_ATTR               12 (height)
+              STORE_FAST               2 (prev_height)
+
+240           LOAD_CONST               2 (0)
+              STORE_FAST               3 (prev_horiz)
+
+241           LOAD_GLOBAL             15 (range + NULL)
+              LOAD_CONST               2 (0)
+              LOAD_CONST               3 (5)
+              CALL                     2
+              GET_ITER
+      L1:     FOR_ITER                93 (to L2)
+              STORE_FAST               4 (i)
+
+243           LOAD_GLOBAL              0 (random)
+              LOAD_ATTR               16 (randint)
+              PUSH_NULL
+              LOAD_CONST               4 (200)
+              LOAD_CONST               5 (800)
+              CALL                     2
+              STORE_FAST               5 (e_delta)
+
+244           LOAD_GLOBAL              0 (random)
+              LOAD_ATTR               16 (randint)
+              PUSH_NULL
+              LOAD_GLOBAL             19 (int + NULL)
+              LOAD_CONST               2 (0)
+              LOAD_FAST                5 (e_delta)
+              LOAD_CONST               6 (4)
+              BINARY_OP               11 (/)
+              BINARY_OP               10 (-)
+              CALL                     1
+              LOAD_GLOBAL             19 (int + NULL)
+              LOAD_FAST                5 (e_delta)
+              LOAD_CONST               6 (4)
+              BINARY_OP               11 (/)
+              CALL                     1
+              CALL                     2
+              STORE_FAST               6 (h_delta)
+
+245           LOAD_FAST_LOAD_FAST     54 (prev_horiz, h_delta)
+              BINARY_OP                0 (+)
+              LOAD_FAST_LOAD_FAST     18 (locations, prev_height)
+              LOAD_FAST                5 (e_delta)
+              BINARY_OP               10 (-)
+              STORE_SUBSCR
+
+246           LOAD_FAST_LOAD_FAST     37 (prev_height, e_delta)
+              BINARY_OP               10 (-)
+              STORE_FAST               2 (prev_height)
+
+247           LOAD_FAST_LOAD_FAST     54 (prev_horiz, h_delta)
+              BINARY_OP                0 (+)
+              STORE_FAST               3 (prev_horiz)
+              JUMP_BACKWARD           95 (to L1)
+
+241   L2:     END_FOR
+              POP_TOP
+
+248           LOAD_FAST                1 (locations)
+              RETURN_VALUE</pre>
+                                </div>
+
+                                <p>Breaking down the bytecode step by step:</p>
+
+                                <ol>
+                                    <li><strong>Line 237:</strong> Creates an empty dictionary
+                                        <code>locations = {}</code>
+                                    </li>
+                                    <li><strong>Line 238:</strong> Seeds the RNG with
+                                        <code>random.seed(binascii.crc32(self.name.encode('utf-8')))</code>
+                                    </li>
+                                    <li><strong>Lines 239-240:</strong> Initializes tracking variables:
+                                        <code>prev_height = self.height</code>,
+                                        <code>prev_horiz = 0</code>
+                                    </li>
+                                    <li><strong>Line 241:</strong> Loops 5 times (one for each treasure)</li>
+                                    <li><strong>Line 243:</strong> Generates vertical drop using a <strong>pseudo random
+                                            number (a random number based on a known seed)</strong>:
+                                        <code>e_delta = random.randint(200, 800)</code>
+                                    </li>
+                                    <li><strong>Line 244:</strong> Generates horizontal drift using another
+                                        <strong>pseudo random number (a random number based on a known seed)</strong>:
+                                        <code>h_delta = random.randint(int(0 - e_delta/4), int(e_delta/4))</code>
+                                    </li>
+                                    <li><strong>Line 245:</strong> Stores treasure location:
+                                        <code>locations[prev_height - e_delta] = prev_horiz + h_delta</code>
+                                    </li>
+                                    <li><strong>Lines 246-247:</strong> Updates position trackers for next iteration
+                                    </li>
+                                </ol>
+
+                        </details>
+                        <h5>Reconstructed Source Code</h5>
+
+                        <p>From the disassembly, I reconstructed the <code>GetTreasureLocations</code> method and the
+                            <code>Mountain</code> class in readable Python. At the end, it prints out the locations of
+                            all the treasures.
+                        </p>
+
+                        <!-- Reconstructed Source Code -->
+                        <details>
+                            <summary>Side Note: Reconstructed GetTreasureLocations method and Mountain Class</summary>
+                            <div class="details-content">
+
+                                <div class="code-block">
+                                    <div class="code-title">Python (treasure_locations.py)</div>
+                                    <pre><code class="language-python">import random
+import binascii
+
+class Mountain:
+    def __init__(self, name, height, treeline, yetiline, encoded_flag):
+        self.name = name
+        self.height = height
+        self.treeline = treeline
+        self.yetiline = yetiline
+        self.encoded_flag = encoded_flag
+
+    def GetTreasureLocations(self):
+        locations = {}
+        random.seed(binascii.crc32(self.name.encode('utf-8')))
+        prev_height, prev_horiz = self.height, 0
+
+        for i in range(5):
+            e_delta = random.randint(200, 800)
+            h_delta = random.randint(int(0 - e_delta / 4), int(e_delta / 4))
+            locations[prev_height - e_delta] = prev_horiz + h_delta
+            prev_height, prev_horiz = prev_height - e_delta, prev_horiz + h_delta
+
+        return locations
+
+# Mountain definitions from Finding #1
+mountains = [
+    Mountain('Mount Snow', 3586, 3400, 2400, b'\x90\x00\x1d\xbc\x17b\xed6S"\xb0&lt;Y\xd6\xce\x169\xae\xe9|\xe2Gs\xb7\xfdy\xcf5\x98'),
+    Mountain('Aspen', 11211, 11000, 10000, b'U\xd7%x\xbfvj!\xfe\x9d\xb9\xc2\xd1k\x02y\x17\x9dK\x98\xf1\x92\x0f!\xf1\\\xa0\x1b\x0f'),
+    Mountain('Whistler', 7156, 6000, 6500, b'\x1cN\x13\x1a\x97\xd4\xb2!\xf9\xf6\xd4#\xee\xebh\xecs.\x08M!hr9?\xde\x0c\x86\x02'),
+    Mountain('Mount Baker', 10781, 9000, 6000, b'\xac\xf9#\xf4T\xf1%h\xbe3FI+h\r\x01V\xee\xc2C\x13\xf3\x97ef\xac\xe3z\x96'),
+    Mountain('Mount Norquay', 6998, 6300, 3000, b'\x0c\x1c\xad!\xc6,\xec0\x0b+"\x9f@.\xc8\x13\xadb\x86\xea{\xfeS\xe0S\x85\x90\x03q'),
+    Mountain('Mount Erciyes', 12848, 10000, 12000, b'n\xad\xb4l^I\xdb\xe1\xd0\x7f\x92\x92\x96\x1bq\xca`PvWg\x85\xb21^\x93F\x1a\xee'),
+    Mountain('Dragonmount', 16282, 15500, 16000, b'Z\xf9\xdf\x7f_\x02\xd8\x89\x12\xd2\x11p\xb6\x96\x19\x05x))v\xc3\xecv\xf4\xe2\\\x9a\xbe\xb5')
+]
+
+if __name__ == "__main__":
+    print(f"{'Mountain Info':<30} {'Coordinates (Horiz, Elev)':<50}")
+    print("-" * 100)
+
+    for m in mountains:
+        label = f"{m.name} ({m.height} ft):"
+        
+        print(f"{label:<30}", end='')
+        
+        locs = m.GetTreasureLocations()
+        
+        for elevation in sorted(locs.keys(), reverse=True):
+            print(f"({locs[elevation]:>5}, {elevation:>5})  ", end='')
+        
+        print()</code></pre>
+                                </div>
+                            </div>
+                        </details>
+
+                        <p>Running the script gives the treasure locations:</p>
+
+                        <div class="code-block">
+                            <div class="code-title">Bash</div>
+                            <pre>$ <span class="user-input">python3 python3.py</span>
+Mountain Info                  Coordinates (Horiz, Elev)                         
+----------------------------------------------------------------------------------------------------
+Mount Snow (3586 ft):         (  113,  2966)  (   85,  2420)  (  188,  1718)  (  142,  1094)  (   85,   466)  
+Aspen (11211 ft):             (  -43, 10865)  ( -122, 10529)  ( -102,  9903)  (  -61,  9183)  (  -15,  8621)  
+Whistler (7156 ft):           ( -141,  6373)  ( -150,  6127)  ( -119,  5897)  ( -145,  5610)  ( -184,  5124)  
+Mount Baker (10781 ft):       (  -31,  9997)  (  -69,  9525)  (   -3,  9112)  (  106,  8523)  (  -45,  7856)  
+Mount Norquay (6998 ft):      (  -67,  6642)  (  -13,  5901)  (   -8,  5692)  (  -57,  5486)  ( -146,  5115)  
+Mount Erciyes (12848 ft):     (   10, 12235)  (  -38, 11950)  (  -22, 11660)  (  -16, 11412)  (  -47, 10701)  
+Dragonmount (16282 ft):       ( -111, 15590)  ( -184, 14939)  ( -193, 14634)  ( -247, 14339)  ( -280, 13706)</pre>
+                        </div>
+                    </div>
+                </section>
+                <!-- Disassembled Bytecode Analysis: Discovery #3 - Coordinate-Based Decryption -->
+                <section>
+
+                    <div class="insight-box">
+                        <h3> Disassembled Bytecode Analysis: Discovery #3 - Coordinate-Based Decryption</h3>
+                        <p>When you collect treasures, the game converts their 2D coordinates into a single integer
+                            value (<code>elevation × 1000 + horizontal_offset</code>), combines them with bit shifts
+                            and XORs, then uses that value to seed <em>another</em> RNG. That second RNG generates a
+                            keystream to XOR-decrypt the flag.</p>
+
+                        <p>In other words: <strong>predictable treasure coordinates = predictable decryption
+                                key</strong>.</p>
+
+                        <p>Here is the first step at line 380:</p>
+
+                        <div class="code-block">
+                            <div class="code-title">Bytecode</div>
+                            <pre>380            LOAD_FAST_CHECK          4 (treasures_collected)
+                LOAD_ATTR              101 (append + NULL|self)
+                LOAD_FAST               13 (<span class="redbox">collided_row</span>)
+                LOAD_CONST               8 (0)
+                BINARY_SUBSCR
+                LOAD_GLOBAL            102 (<span class="redbox">mountain_width</span>)
+                BINARY_OP                5 (<span class="redbox">*</span>)
+                LOAD_FAST               14 (<span class="redbox">collided_row_offset</span>)
+                BINARY_OP                0 (<span class="redbox">+</span>)
+            </pre>
+                        </div>
+
+                        <p>Here is the reconstructed source code:</p>
+                        <div class="code-block">
+                            <div class="code-title">Python</div>
+                            <pre><code class="language-python">treasures_collected.append(collided_row[0] * mountain_width + collided_row_offset)
+</code></pre>
+                        </div>
+
+                        <p>Once all 5 treasures are collected (<strong>line 381</strong>), the
+                            <code>SetFlag</code> function is called (<strong>line 382</strong>) with the mountain
+                            object and the list of
+                            treasure values.
+                        </p>
+
+                        <div class="code-block">
+                            <div class="code-title">Bytecode</div>
+                            <pre> 381            LOAD_GLOBAL            105 (len + NULL)
+                LOAD_FAST                4 (<span class="redbox">treasures_collected</span>)
+                CALL                     1
+                LOAD_CONST               9 (<span class="redbox">5</span>)
+                COMPARE_OP              88 (bool(<span class="redbox">==</span>))
+                POP_JUMP_IF_FALSE       14 (to L19)
+
+ 382            LOAD_GLOBAL            107 (<span class="redbox">SetFlag</span> + NULL)
+                LOAD_FAST_CHECK          6 (mnt)
+                LOAD_FAST                4 (<span class="redbox">treasures_collected</span>)
+                CALL                     2
+                POP_TOP</pre>
+                        </div>
+
+
+                        <p>Here is the reconstructed source code:</p>
+
+                        <div class="code-block">
+                            <div class="code-title">Python</div>
+                            <pre><code class="language-python">if len(treasures_collected) == 5:
+    SetFlag(mnt, treasures_collected)
+</code></pre>
+                        </div>
+
+                        <h5>SetFlag Decryption Function</h5>
+
+                        <p>The <code>SetFlag</code> function (starting at line 302) implements the flag decryption
+                            algorithm:
+                        <ol>
+                            <li>Creates a "hash" of the integer values created from the 5 treasure coordinates.</li>
+                            <li>Seeds another random number generator with that hash.</li>
+                            <li>XOR decryption of the cipher text to obtain the flag.</li>
+                        </ol>
+                        </p>
+
+                        <!-- Deep Dive: Detailed SetFlag Disassembly Analysis -->
+                        <details>
+                            <summary>Deep Dive: Detailed SetFlag Disassembly Analysis</summary>
+                            <div class="details-content">
+                                <p>The decryption algorithm works as follows:</p>
+
+                                <ol>
+                                    <li><strong>Lines 304-306:</strong> Folds all treasure values into a single
+                                        integer. It shifts the current value 8 bits to the left (multiplying by
+                                        256). Then it performs a bitwise XOR operation with the current treasure's
+                                        value.
+                                        <code>product = (product << 8) ^ treasure_val</code>
+                                    </li>
+                                    <li><strong>Line 307:</strong> Seeds the RNG with this combined value:
+                                        <code>random.seed(product)</code>
+                                    </li>
+                                    <li><strong>Lines 310-312:</strong> For each byte in the encrypted flag:
+                                        <ul>
+                                            <li>Generates a random byte: <code>r = random.randint(0, 255)</code>
+                                            </li>
+                                            <li>XOR decrypts: <code>chr(encoded_flag[i] ^ r)</code></li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Line 314:</strong> Formats the decrypted bytes as the flag string
+                                    </li>
+                                </ol>
+                                <div class="code-block">
+                                    <div class="code-title">Bytecode (manual.out, line 302)</div>
+
+
+                                    <pre>302  RESUME 0
+
+304  LOAD_CONST (0)
+     STORE_FAST (product)
+
+305  LOAD_FAST (treasure_list)
+     GET_ITER
+L1:  FOR_ITER (to L2)
+     STORE_FAST (treasure_val)
+
+306  LOAD_FAST (product)
+     LOAD_CONST (8)
+     <span class="redbox">BINARY_OP (<<)        # product << 8</span>
+     LOAD_FAST (treasure_val)
+     <span class="redbox">BINARY_OP (^)         # ... ^ treasure_val</span>
+     STORE_FAST (product)
+     JUMP_BACKWARD (to L1)
+
+305  L2: END_FOR
+
+307  LOAD_GLOBAL (random)
+     LOAD_ATTR (seed)
+     PUSH_NULL
+     LOAD_FAST (product)
+     CALL (1)              # random.seed(product)
+     POP_TOP
+
+309  BUILD_LIST 0
+     STORE_FAST (decoded)
+
+310  LOAD_GLOBAL (range)
+     LOAD_CONST (0)
+     LOAD_GLOBAL (len)
+     LOAD_FAST (mountain)
+     LOAD_ATTR (encoded_flag)
+     CALL (1)
+     CALL (2)
+     GET_ITER
+L3:  FOR_ITER (to L4)
+     STORE_FAST (i)
+
+311  <span class="redbox">LOAD_GLOBAL (random)</span>
+     LOAD_ATTR (randint)
+     LOAD_CONST (0)
+     LOAD_CONST (255)
+     CALL (2)
+     STORE_FAST (r)
+
+312  LOAD_FAST (decoded)
+     LOAD_ATTR (append)
+     LOAD_GLOBAL (chr)
+     LOAD_FAST (mountain)
+     LOAD_ATTR (encoded_flag)
+     LOAD_FAST (i)
+     BINARY_SUBSCR         # encoded_flag[i]
+     LOAD_FAST (r)
+     BINARY_OP (^)         # ... ^ r
+     CALL (1)              # chr(...)
+     CALL (1)              # decoded.append(...)
+     POP_TOP
+
+314  <span class="redbox">LOAD_CONST ('Flag: %s')</span>
+     LOAD_CONST ('')
+     LOAD_ATTR (join)
+     LOAD_FAST (decoded)
+     CALL (1)
+     BINARY_OP (%)
+     STORE_FAST (flag_text)
+
+315  LOAD_GLOBAL (print)
+     LOAD_FAST (flag_text)
+     CALL (1)
+     POP_TOP
+</code></pre>
+                                </div>
+
+                                <p>This is a classic stream cipher implementation: the treasure values serve as the
+                                    seed to a PRNG to
+                                    generate a keystream. Each byte of the encrypted flag is XOR'd with the
+                                    corresponding keystream byte to recover
+                                    the plaintext.</p>
+                            </div>
+                        </details>
+
+                    </div>
+                </section>
+            </section>
+            <!-- The Solution -->
+            <section>
+                <h2>The Solution</h2>
+                <p>With all three pieces reverse engineered, I wrote a script to produce the flag for each mountain
+                    without playing.</p>
+                <div class="code-block">
+                    <div class="code-title">Bash</div>
+                    <pre>$ <span class="user-input">python3 solve.py</span>
+Mountain Name   | Flag Result
+--------------------------------------------------
+Mount Snow      | frosty_yet_predictably_random
+Aspen           | frosty_yet_predictably_random
+Whistler        | frosty_yet_predictably_random
+Mount Baker     | frosty_yet_predictably_random
+Mount Norquay   | frosty_yet_predictably_random
+Mount Erciyes   | frosty_yet_predictably_random
+Dragonmount     | frosty_yet_predictably_random</pre>
+                </div>
+
+                <!-- Deep Dive: Script to Decrypt Flag -->
+                <details>
+                    <summary>Deep Dive: Script to Decrypt Flag</summary>
+                    <div class="details-content">
+
+                        <div class="code-block">
+                            <div class="code-title">Python - solve.py (Complete Exploit)</div>
+                            <pre><code class="language-python">import random
+import binascii
+
+# Format: "Name": (Height, Encoded_Flag_Bytes)
+MOUNTAINS = {
+    "Mount Snow": (3586, b'\x90\x00\x1d\xbc\x17b\xed6S"\xb0&lt;Y\xd6\xce\x169\xae\xe9|\xe2Gs\xb7\xfdy\xcf5\x98'),
+    "Aspen": (11211, b'U\xd7%x\xbfvj!\xfe\x9d\xb9\xc2\xd1k\x02y\x17\x9dK\x98\xf1\x92\x0f!\xf1\\\xa0\x1b\x0f'),
+    "Whistler": (7156, b'\x1cN\x13\x1a\x97\xd4\xb2!\xf9\xf6\xd4#\xee\xebh\xecs.\x08M!hr9?\xde\x0c\x86\x02'),
+    "Mount Baker": (10781, b'\xac\xf9#\xf4T\xf1%h\xbe3FI+h\r\x01V\xee\xc2C\x13\xf3\x97ef\xac\xe3z\x96'),
+    "Mount Norquay": (6998, b'\x0c\x1c\xad!\xc6,\xec0\x0b+"\x9f@.\xc8\x13\xadb\x86\xea{\xfeS\xe0S\x85\x90\x03q'),
+    "Mount Erciyes": (12848, b'n\xad\xb4l^I\xdb\xe1\xd0\x7f\x92\x92\x96\x1bq\xca`PvWg\x85\xb21^\x93F\x1a\xee'),
+    "Dragonmount": (16282, b'Z\xf9\xdf\x7f_\x02\xd8\x89\x12\xd2\x11p\xb6\x96\x19\x05x))v\xc3\xecv\xf4\xe2\\\x9a\xbe\xb5')
+}
+
+MOUNTAIN_WIDTH = 1000
+
+def GetTreasureLocations(name, height):
+    """
+    Replicates the deterministic treasure generation logic from GetTreasureLocations.
+    Seeds the RNG with the CRC32 of the mountain name.
+    """
+    raw_treasures = []
+    # Seed RNG with CRC32 of name as seen in disassembly line 238
+    random.seed(binascii.crc32(name.encode('utf-8')))
+    
+    prev_height = height
+    prev_horiz = 0
+    
+    for _ in range(5):
+        # Vertical drop (elevation delta)
+        e_delta = random.randint(200, 800)
+        
+        # Horizontal drift
+        lower = int(0 - e_delta / 4)
+        upper = int(e_delta / 4)
+        h_delta = random.randint(lower, upper)
+        
+        current_height = prev_height - e_delta
+        current_horiz = prev_horiz + h_delta
+        
+        raw_treasures.append({
+            'elevation': current_height,
+            'horizontal': current_horiz
+        })
+        
+        prev_height = current_height
+        prev_horiz = current_horiz
+        
+    return raw_treasures
+
+def DecryptFlag(encoded_flag, treasure_values):
+    """
+    Replicates the SetFlag decryption logic.
+    Combines treasure indices into a seed and performs XOR decryption.
+    """
+    product = 0
+    # Chain treasure indices: (product &lt;&lt; 8) ^ v
+    for v in treasure_values:
+        product = (product &lt;&lt; 8) ^ v
+        
+    # Seed RNG with the final product
+    random.seed(product)
+    
+    flag_chars = []
+    for i in range(len(encoded_flag)):
+        # Generate XOR key byte
+        key_byte = random.randint(0, 255)
+        # XOR encoded byte with key byte to recover character
+        decrypted_char = chr(encoded_flag[i] ^ key_byte)
+        flag_chars.append(decrypted_char)
+        
+    return "".join(flag_chars)
+
+if __name__ == "__main__":
+    print(f"{'Mountain Name':&lt;15} | {'Flag Result'}")
+    print("-" * 50)
+    
+    for name, (height, encoded_flag) in MOUNTAINS.items():
+        # 1. Predict raw coordinates
+        raw_treasures = GetTreasureLocations(name, height)
+        
+        # 2. Calculate correct treasure values with wrap-around logic
+        # Collision/Collection order is highest elevation to lowest
+        sorted_treasures = sorted(raw_treasures, key=lambda x: x['elevation'], reverse=True)
+        
+        treasure_values = []
+        for t in sorted_treasures:
+            V = int(t['elevation'])
+            # CRITICAL FIX: Use modulo for horizontal wrap-around (handles negative drift)
+            H_idx = t['horizontal'] % MOUNTAIN_WIDTH
+            
+            # Linearize 2D coordinates to 1D index
+            treasure_val = V * MOUNTAIN_WIDTH + H_idx
+            treasure_values.append(treasure_val)
+            
+        # 3. Perform decryption
+        flag = DecryptFlag(encoded_flag, treasure_values)
+        print(f"{name:&lt;15} | {flag}")
+</code></pre>
+                        </div>
+                    </div>
+                </details>
+                <div class="flag">🚩 <strong>Flag:</strong> frosty_yet_predictably_random</div>
+            </section>
+
+
+            <!-- Appendix Section -->
+            <section class="technical-appendix">
+
+                <!-- Alternate Solution: Manually creating assets and playing the game -->
+                <details>
+                    <summary>
+                        Alternate Solution: Manually creating assets and playing the game
+                    </summary>
+                    <p>After discovering the locations of the treasures, we don't have to mess with the cipher text or
+                        decryption.
+                        We can simply play the game and get treasures. We first need to create the missing assets
+                        that were found in the pycdc output:</p>
+                    <div class="code-block">
+                        <div class="code-title">Assets from pycdc</div>
+                        <pre>skierimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/skier.png</span>'), scale_factor)
+skier_leftimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/skier_left.png</span>'), scale_factor)
+skier_rightimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/skier_right.png</span>'), scale_factor)
+skier_crashimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/skier_crash.png</span>'), scale_factor)
+skier_pizzaimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/skier_pizza.png</span>'), scale_factor)
+treeimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/tree.png</span>'), scale_factor)
+yetiimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/yeti.png</span>'), scale_factor)
+treasureimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/treasure.png</span>'), scale_factor)
+boulderimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/boulder.png</span>'), scale_factor)
+victoryimage = pygame.transform.scale_by(pygame.image.load('<span class="redbox">img/victory.png</span>'), 0.7)
+gamefont = pygame.font.Font('<span class="redbox">fonts/VT323-Regular.ttf</span>', 24)</pre>
+                    </div>
+                    <p>I used Claude to generate the images.</p>
+                    <img src="images/a3c7_claude.png" alt="Using Claude to generate images for the game assets">
+                    <p class="caption">Get my images: <a
+                            href="https://claude.ai/public/artifacts/bafa14fb-1592-430b-9569-d4f74e85ae5f" target="_blank" rel="noopener noreferrer">https://claude.ai/public/artifacts/bafa14fb-1592-430b-9569-d4f74e85ae5f</a>
+                    </p>
+                    <p>The font file was found from <a href="https://fonts.google.com/specimen/VT323" target="_blank" rel="noopener noreferrer">Google</a>. After
+                        saving all the assets, we can play the game,
+                        collect treasures, and get the flag.</p>
+                    <img src="images/a3c7_win.png"
+                        alt="Gameplay screenshot showing the flag after collecting all treasures">
+                </details>
+
+                <!-- Alternate Solution: Disassembly with pycdas -->
+                <details>
+                    <summary>
+                        Alternate Solution: Disassembly with pycdas
+                    </summary>
+                    <p>From Decompyle++, we used the decompiler, <code>pycdc</code>, but it also has a disassembler,
+                        <code>pycdas</code>. Here's
+                        how it compares to Python's built-in dis module that I used:
+                    </p>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>dis</th>
+                                <th>pycdas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Language</strong></td>
+                                <td>Written in Python (Standard Library).</td>
+                                <td>Written in C++ (part of Decompyle++).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Primary Input</strong></td>
+                                <td>Live Python objects (functions, classes) or source strings.</td>
+                                <td>Compiled .pyc files or marshalled code objects.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Compatibility</strong></td>
+                                <td>Limited to the version of the Python interpreter currently running.</td>
+                                <td>Aims to support bytecode from any Python version (cross-version).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Installation</strong></td>
+                                <td>Built-in; no installation required.</td>
+                                <td>Third-party; requires building from source or external binaries.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </details>
+
+                <!-- Alternate Solution: AI/ML Assisted Decompilers -->
+                <details>
+                    <summary>
+                        Alternate Solution: AI/ML Assisted Decompilers
+                    </summary>
+                    <p> <a href="https://pylingual.io/" target="_blank" rel="noopener noreferrer">PyLingual</a> and <a
+                            href="https://github.com/cyberark/ByteCodeLLM" target="_blank" rel="noopener noreferrer">ByteCodeLLM</a> both use AI/ML to assist with
+                        decompilation. At the time of this, ByteCodeLLM failed with some coding errors, but PyLingual
+                        was able to get much further than Decompyle++. It was able to recreate methods such as
+                        <code>SetFlag</code>. However, it could not decompile the conversion of treasure coordinates to
+                        the single integer values: <code>treasure_val = V * MOUNTAIN_WIDTH + H_idx</code>
+                    </p>
+                    <img src="images/Act3_7_pylingual.png" alt="Act3_7_pylingual.png">
+
+                </details>
+
+                <!-- Side Note: Real vs. Fictional Mountains -->
+                <details>
+                    <summary>
+                        Side Note: Real Mountains (except for one)
+                    </summary>
+                    <p>The game references seven mountains, six of which are real ski resorts:
+                    </p>
+                    <ul>
+                        <li class="p1">Mount Snow (Vermont)</li>
+                        <li class="p1">Aspen (Colorado)</li>
+                        <li class="p1">Whistler (British Columbia)</li>
+                        <li class="p1">Mount Baker (Washington)</li>
+                        <li class="p1">Mount Norquay (Alberta)</li>
+                        <li class="p1">Mount Erciyes (Turkey)</li>
+                    </ul>
+
+                    <p>However, <strong>Dragonmount</strong> is fictional. It's the legendary mountain from Robert
+                        Jordan's "The
+                        Wheel of Time" fantasy series, created by the Dragon Lews Therin Telamon's death at the end of
+                        the Age
+                        of Legends.</p>
+                </details>
+
+                <!-- Challenge Reference Material -->
+                <div class="deep-dive-topic">
+                    <h3>Challenge Reference Material</h3>
+                    <h4>Challenge Descriptions</h4>
+                    <h5>Classic Mode Description</h5>
+                    <p>Go to the retro store and help Goose Olivia ski down the mountain and collect all five treasure
+                        chests to
+                        reveal the hidden flag in this classic SkiFree-inspired challenge.</p>
+                    <h5>CTF Mode Description</h5>
+                    <p>This game looks simple enough, doesn't it? Almost too simple. But between you and me... it seems
+                        nearly
+                        impossible to win fair and square. My advice? If you ain't cheatin', you ain't tryin'. *wink*
+                        Now
+                        get
+                        out
+                        there and show that mountain who's boss!</p>
+
+                    <h4>Official Hints</h4>
+                    <ul>
+                        <li>Extraction: Have you ever used <a
+                                href="https://github.com/extremecoders-re/pyinstxtractor" target="_blank" rel="noopener noreferrer">PyInstaller
+                                Extractor </a>?</li>
+                        <li>Decompilation!: Many Python decompilers don't understand Python 3.13, but <a
+                                href="https://github.com/zrax/pycdc" target="_blank" rel="noopener noreferrer">Decompyle++ </a> does!</li>
+                    </ul>
+                </div>
+            </section>
+            <!-- ============================================= -->
+            <!-- CHALLENGE CONTENT END                         -->
+            <!-- ============================================= -->
+
+            <div class="nav-buttons">
+                <a href="06-wire.html" class="nav-btn">← On the Wire</a>
+                <footer>
+                    <p>&copy; 2025 James Mar – SANS Holiday Hack Challenge Write-up</p>
+                    <a href="#" class="back-to-top">↑ Back to Top</a>
+                </footer>
+                <a href="08-snowblind.html" class="nav-btn">Snowblind Ambush →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+</body>
+
+</html>
